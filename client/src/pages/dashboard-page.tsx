@@ -2,7 +2,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { Redirect, useLocation } from "wouter";
 import Sidebar from "@/components/layout/Sidebar";
-import MobileNav from "@/components/layout/MobileNav";
 import Stats from "@/components/dashboard/Stats";
 import ClientList from "@/components/dashboard/ClientList";
 import ActionButtons from "@/components/dashboard/ActionButtons";
@@ -38,10 +37,9 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <MobileNav />
 
       <main className="main-content min-h-screen pb-16">
-        <div id="practitioner-dashboard" className="py-4 md:py-6">
+        <div id="practitioner-dashboard" className="p-4 md:p-6">
           {/* Header */}
           <header className="mb-6">
             <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
