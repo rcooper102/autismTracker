@@ -28,6 +28,7 @@ export default function Sidebar() {
       if (!res.ok) throw new Error("Failed to fetch practitioner details");
       const data = await res.json();
       console.log("Received practitioner data:", data);
+      console.log("Avatar URL in sidebar:", data.avatarUrl);
       return data;
     },
     enabled: !!user && user.role === "practitioner",

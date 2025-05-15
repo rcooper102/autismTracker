@@ -734,7 +734,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('GET /api/practitioners/me - Authenticated user:', {
         id: req.user.id,
         username: req.user.username,
-        role: req.user.role
+        role: req.user.role,
+        avatarUrl: req.user.avatarUrl // Check if avatarUrl is in the user object
       });
       
       // For now, we just return the user data with a placeholder for additional practitioner data

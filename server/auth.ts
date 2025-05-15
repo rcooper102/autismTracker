@@ -59,12 +59,22 @@ export function setupAuth(app: Express) {
     }),
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
+  passport.serializeUser((user, done) => {
+    console.log('Serializing user:', { id: user.id, avatarUrl: user.avatarUrl });
+    done(null, user.id);
+  });
+  
   passport.deserializeUser(async (id: number, done) => {
     try {
       const user = await storage.getUser(id);
+      console.log('Deserialized user from database:', { 
+        id: user?.id, 
+        avatarUrl: user?.avatarUrl,
+        hasAvatarField: user ? 'avatarUrl' in user : false 
+      });
       done(null, user);
     } catch (error) {
+      console.error('Error deserializing user:', error);
       done(error);
     }
   });
