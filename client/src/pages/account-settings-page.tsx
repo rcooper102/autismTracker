@@ -228,7 +228,7 @@ export default function AccountSettingsPage() {
   }
 
   return (
-    <div className="container max-w-5xl py-10">
+    <div className="container max-w-5xl py-10 px-4 md:px-6 lg:px-8 mx-auto">
       <h1 className="text-3xl font-bold mb-8">Account Settings</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6">
@@ -290,19 +290,19 @@ export default function AccountSettingsPage() {
         </div>
         
         {/* Main content */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Profile information */}
-          <Card>
-            <CardHeader>
+          <Card className="shadow-sm">
+            <CardHeader className="px-6">
               <CardTitle>Profile Information</CardTitle>
               <CardDescription>
                 Update your personal information and contact details
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-6">
               <Form {...profileForm}>
-                <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={profileForm.control}
                       name="firstName"
