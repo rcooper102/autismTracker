@@ -42,17 +42,16 @@ export default function Sidebar() {
       <div className="flex flex-col space-y-2">
         <div className="py-4 px-4 mb-2 bg-white/10 rounded-md flex flex-col items-center">
           <Avatar className="h-16 w-16 mb-3 border-2 border-white/30">
-            {practitioner?.avatarUrl && (
-              <AvatarImage 
-                src={practitioner.avatarUrl} 
-                alt={user.name || "User"} 
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  console.error("Sidebar avatar failed to load:", e);
-                  const target = e.target as HTMLImageElement;
-                  console.error("Failed URL in sidebar:", target.src);
-                }}
-              />
-            )}
+            {/* Always try to render the avatar image with fallback handling */}
+            <AvatarImage 
+              src={practitioner?.avatarUrl || ''} 
+              alt={user.name || "User"} 
+              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                console.error("Sidebar avatar failed to load:", e);
+                const target = e.target as HTMLImageElement;
+                console.error("Failed URL in sidebar:", target.src);
+              }}
+            />
             <AvatarFallback className="bg-white/20 text-white">
               {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-8 w-8" />}
             </AvatarFallback>

@@ -60,12 +60,15 @@ export default function AccountSettingsPage() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   // Fetch practitioner details
-  const { data: practitioner, isLoading } = useQuery({
+  const { data: practitioner, isLoading, refetch } = useQuery({
     queryKey: ["/api/practitioners/me"],
     queryFn: async () => {
+      console.log("Account page: Fetching practitioner data");
       const res = await fetch("/api/practitioners/me");
       if (!res.ok) throw new Error("Failed to fetch practitioner details");
-      return res.json();
+      const data = await res.json();
+      console.log("Account page: Received practitioner data:", data);
+      return data;
     },
   });
 
