@@ -13,7 +13,7 @@ export default function Stats({
 }: StatsProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-2 gap-6 mb-8">
         {[1, 2].map((i) => (
           <div key={i} className="bg-white rounded-lg shadow-sm p-5">
             <div className="flex items-center justify-between">
@@ -29,7 +29,7 @@ export default function Stats({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div className="grid grid-cols-2 gap-6 mb-8">
       <div className="bg-white rounded-lg shadow-sm p-5 transition-all hover:shadow-md">
         <div className="flex items-center justify-between">
           <span className="text-gray-500 text-sm font-medium">Total Clients</span>
