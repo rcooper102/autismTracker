@@ -59,9 +59,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log('Available avatar files:', files);
     
     res.json({
-      message: 'Test your avatar access',
+      message: "Avatar test endpoint",
       avatarFiles: files,
-      testImageTag: `<img src="${files[files.length-1]}" />`
+      uploadDirExists: fs.existsSync(uploadDir),
+      uploadDirContents: fs.readdirSync(uploadDir),
+      testImageUrl: files.length > 0 ? files[files.length-1] : null
     });
   });
 
