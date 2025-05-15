@@ -57,11 +57,17 @@ export default function AddClientPage() {
     defaultValues: {
       firstName: "",
       lastName: "",
+      dateOfBirth: "",
+      diagnosis: "",
       guardianName: "",
       guardianRelation: "parent",
       guardianEmail: "",
       guardianPhone: "",
+      treatmentPlan: "",
       treatmentGoals: [],
+      notes: "",
+      username: "",
+      password: "",
     },
   });
   

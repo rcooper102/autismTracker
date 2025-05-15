@@ -65,27 +65,40 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
           )}
         />
         
-        <div>
-          <Label className="block text-gray-700 font-medium mb-1">Treatment Goals</Label>
-          <div className="space-y-2">
-            {treatmentGoals.map((goal) => (
-              <div key={goal.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`goal-${goal.id}`}
-                  onCheckedChange={(checked) => 
-                    handleGoalChange(checked as boolean, goal.label)
-                  }
-                />
-                <label
-                  htmlFor={`goal-${goal.id}`}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {goal.label}
-                </label>
+        <FormField
+          control={form.control}
+          name="treatmentGoals"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Treatment Goals</FormLabel>
+              <div className="space-y-2">
+                {treatmentGoals.map((goal) => {
+                  const currentGoals = field.value || [];
+                  const isChecked = currentGoals.includes(goal.label);
+                  
+                  return (
+                    <div key={goal.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`goal-${goal.id}`}
+                        checked={isChecked}
+                        onCheckedChange={(checked) => 
+                          handleGoalChange(checked as boolean, goal.label)
+                        }
+                      />
+                      <label
+                        htmlFor={`goal-${goal.id}`}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {goal.label}
+                      </label>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
-        </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         
         <FormField
           control={form.control}
