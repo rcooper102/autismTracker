@@ -60,7 +60,7 @@ export default function GuardianInfoForm({ form }: GuardianInfoFormProps) {
           name="guardianEmail"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel><RequiredField>Email</RequiredField></FormLabel>
               <FormControl>
                 <Input type="email" placeholder="Enter guardian's email" {...field} />
               </FormControl>
@@ -74,7 +74,7 @@ export default function GuardianInfoForm({ form }: GuardianInfoFormProps) {
           name="guardianPhone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+              <FormLabel><RequiredField>Phone Number</RequiredField></FormLabel>
               <FormControl>
                 <Input type="tel" placeholder="Enter guardian's phone number" {...field} />
               </FormControl>
