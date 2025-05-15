@@ -50,19 +50,25 @@ export default function Sidebar() {
           <Avatar className="h-16 w-16 mb-3 border-2 border-white/30">
             {/* Always try to render the avatar image with fallback handling */}
             {practitioner?.avatarUrl ? (
-              <AvatarImage 
-                src={practitioner.avatarUrl.includes('?') ? 
-                  `${practitioner.avatarUrl}&_t=${Date.now()}` : 
-                  `${practitioner.avatarUrl}?_t=${Date.now()}`} 
-                alt={user.name || "User"} 
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  console.error("Sidebar avatar failed to load:", e);
-                  const target = e.target as HTMLImageElement;
-                  console.error("Failed URL in sidebar:", target.src);
-                }}
-              />
+              <>
+                {console.log("Sidebar attempting to load avatar from:", practitioner.avatarUrl)}
+                <AvatarImage 
+                  src={practitioner.avatarUrl.includes('?') ? 
+                    `${practitioner.avatarUrl}&_t=${Date.now()}` : 
+                    `${practitioner.avatarUrl}?_t=${Date.now()}`} 
+                  alt={user.name || "User"} 
+                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                    console.error("Sidebar avatar failed to load:", e);
+                    const target = e.target as HTMLImageElement;
+                    console.error("Failed URL in sidebar:", target.src);
+                  }}
+                />
+              </>
             ) : (
-              <AvatarImage src="" alt={user.name || "User"} />
+              <>
+                {console.log("Sidebar has no avatar URL from practitioner object:", practitioner)}
+                <AvatarImage src="" alt={user.name || "User"} />
+              </>
             )}
             <AvatarFallback className="bg-white/20 text-white">
               {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-8 w-8" />}

@@ -49,6 +49,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Always serve files from the uploads directory
   app.use('/uploads', express.static(uploadDir));
+  
+  // Add a test endpoint to verify avatar access
+  app.get('/api/avatar-test', (req, res) => {
+    const files = fs.readdirSync(uploadDir)
+      .filter(f => f.startsWith('avatar-'))
+      .map(f => `/uploads/${f}`);
+      
+    console.log('Available avatar files:', files);
+    
+    res.json({
+      message: 'Test your avatar access',
+      avatarFiles: files,
+      testImageTag: `<img src="${files[files.length-1]}" />`
+    });
+  });
 
   // Client management routes
   app.get("/api/clients", async (req, res) => {
