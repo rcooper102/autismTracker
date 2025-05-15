@@ -292,6 +292,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Practitioner profile management routes
+  // Keep track of practitioner profile data in memory since we don't have a database table for it
+  const practitionerProfiles = new Map<number, any>();
+
   app.get("/api/practitioners/me", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
       return res.status(403).json({ message: "Unauthorized. Practitioners only." });
@@ -302,15 +305,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // In a real app, you might have a separate practitioners table
       const { password, ...userWithoutPassword } = req.user;
       
-      // Include some defaults for the profile form
+      // Get any existing profile data or use defaults
+      const existingProfile = practitionerProfiles.get(req.user.id) || {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        phone: "(555) 123-4567",
+        bio: "Licensed therapist specializing in autism spectrum disorder",
+        avatarUrl: null,
+      };
+      
       res.json({
         ...userWithoutPassword,
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        bio: "",
-        avatarUrl: null,
+        ...existingProfile
       });
     } catch (error) {
       console.error("Error fetching practitioner profile:", error);

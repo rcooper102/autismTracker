@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -69,17 +69,32 @@ export default function AccountSettingsPage() {
     },
   });
 
-  // Profile form
-  const profileForm = useForm<ProfileFormValues>({
+  // Profile form with default values
+  const { reset, ...profileFormMethods } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: practitioner?.firstName || "",
-      lastName: practitioner?.lastName || "",
-      email: practitioner?.email || "",
-      phone: practitioner?.phone || "",
-      bio: practitioner?.bio || "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      bio: "",
     },
   });
+  
+  const profileForm = { reset, ...profileFormMethods };
+  
+  // Update form values when practitioner data is loaded
+  useEffect(() => {
+    if (practitioner) {
+      reset({
+        firstName: practitioner.firstName || "",
+        lastName: practitioner.lastName || "",
+        email: practitioner.email || "",
+        phone: practitioner.phone || "",
+        bio: practitioner.bio || "",
+      });
+    }
+  }, [practitioner, reset]);
 
   // Password form
   const passwordForm = useForm<PasswordFormValues>({
