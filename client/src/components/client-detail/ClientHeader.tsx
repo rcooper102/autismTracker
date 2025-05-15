@@ -43,8 +43,8 @@ export default function ClientHeader({ client, onBack }: ClientHeaderProps) {
           <span className="text-sm">Client since: {clientSince}</span>
         </div>
       </div>
-      <div className="flex space-x-2">
-        <Button variant="outline" className="flex items-center px-2 h-9">
+      <div className="flex">
+        <Button variant="outline" className="flex items-center px-2 h-9 mr-1">
           <i className="ri-file-download-line mr-1"></i> Export
         </Button>
         <Button className="flex items-center px-2 h-9">
