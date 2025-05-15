@@ -54,15 +54,21 @@ export default function Sidebar() {
                 `${practitioner.avatarUrl}&_t=${Date.now()}` : 
                 `${practitioner.avatarUrl}?_t=${Date.now()}`) 
               : null}
-            alt={user.name || "User"}
+            alt={(user.firstName && user.lastName) ? `${user.firstName} ${user.lastName}` : user.username}
             fallback={
               <span className="bg-white/20 text-white">
-                {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-8 w-8" />}
+                {user.firstName && user.lastName ? 
+                  `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase() : 
+                  <User className="h-8 w-8" />}
               </span>
             }
           />
           <div className="text-center">
-            <p className="font-medium text-white">{user.name}</p>
+            <p className="font-medium text-white">
+              {user.firstName && user.lastName 
+                ? `${user.firstName} ${user.lastName}` 
+                : user.username}
+            </p>
             <p className="text-sm text-white/70">{user.email}</p>
           </div>
         </div>
