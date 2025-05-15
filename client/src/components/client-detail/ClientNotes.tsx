@@ -228,7 +228,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
         <CardHeader className="pb-3">
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle>Client Notes</CardTitle>
+              <CardTitle className="text-lg">Client Notes</CardTitle>
             </div>
             {!isAddingNote && (
               <Button
