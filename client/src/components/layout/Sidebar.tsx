@@ -22,13 +22,18 @@ export default function Sidebar() {
     queryKey: ["/api/practitioners/me"],
     queryFn: async () => {
       console.log("Fetching practitioner data for avatar");
-      const res = await fetch("/api/practitioners/me");
+      // Add timestamp to prevent caching
+      const timestamp = Date.now();
+      const res = await fetch(`/api/practitioners/me?t=${timestamp}`);
       if (!res.ok) throw new Error("Failed to fetch practitioner details");
       const data = await res.json();
       console.log("Received practitioner data:", data);
       return data;
     },
     enabled: !!user && user.role === "practitioner",
+    // Force refetch every time component mounts
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   if (!user) return null;
@@ -43,15 +48,19 @@ export default function Sidebar() {
         <div className="py-4 px-4 mb-2 bg-white/10 rounded-md flex flex-col items-center">
           <Avatar className="h-16 w-16 mb-3 border-2 border-white/30">
             {/* Always try to render the avatar image with fallback handling */}
-            <AvatarImage 
-              src={practitioner?.avatarUrl || ''} 
-              alt={user.name || "User"} 
-              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                console.error("Sidebar avatar failed to load:", e);
-                const target = e.target as HTMLImageElement;
-                console.error("Failed URL in sidebar:", target.src);
-              }}
-            />
+            {practitioner?.avatarUrl ? (
+              <AvatarImage 
+                src={`${practitioner.avatarUrl}&t=${Date.now()}`} 
+                alt={user.name || "User"} 
+                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  console.error("Sidebar avatar failed to load:", e);
+                  const target = e.target as HTMLImageElement;
+                  console.error("Failed URL in sidebar:", target.src);
+                }}
+              />
+            ) : (
+              <AvatarImage src="" alt={user.name || "User"} />
+            )}
             <AvatarFallback className="bg-white/20 text-white">
               {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-8 w-8" />}
             </AvatarFallback>

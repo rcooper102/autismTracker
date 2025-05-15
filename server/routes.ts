@@ -832,14 +832,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get existing profile data or create empty object
       const existingProfile = practitionerProfiles.get(req.user.id) || {};
       
+      console.log('Avatar upload: existing profile data:', {
+        userId: req.user.id,
+        existingProfile
+      });
+      
       // Update the profile with the avatar URL
       const updatedProfile = {
         ...existingProfile,
         avatarUrl: fileUrl,
       };
       
+      console.log('Avatar upload: new profile data with avatarUrl:', {
+        userId: req.user.id,
+        updatedProfile
+      });
+      
       // Store the updated profile
       practitionerProfiles.set(req.user.id, updatedProfile);
+      
+      console.log('Avatar upload: profile data after update:', {
+        userId: req.user.id,
+        profile: practitionerProfiles.get(req.user.id)
+      });
       
       res.json({
         message: "Avatar uploaded successfully",

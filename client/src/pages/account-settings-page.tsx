@@ -180,11 +180,15 @@ export default function AccountSettingsPage() {
       return result;
     },
     onSuccess: (data) => {
-      // Clear the file and preview after successful upload
+      // Clear the file after successful upload
       setAvatarFile(null);
       
-      // Keep the preview to show the uploaded image
-      // Don't clear avatarPreview since we want to show the uploaded image
+      // Update the avatarUrl directly with the returned URL, including the timestamp
+      if (data && data.avatarUrl) {
+        console.log("Setting new avatar URL:", data.avatarUrl);
+        // Force a refetch of practitioner data to update the avatar in all components
+        refetch();
+      }
       
       toast({
         title: "Avatar uploaded",
@@ -254,16 +258,25 @@ export default function AccountSettingsPage() {
           <Card className="shadow-sm">
             <CardContent className="p-6 flex flex-col items-center">
               <Avatar className="h-24 w-24 mb-4">
-                <AvatarImage 
-                  src={avatarPreview || (practitioner?.avatarUrl ? practitioner.avatarUrl : "")}
-                  alt={user?.username || "User"} 
-                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                    console.error("Avatar image failed to load:", e);
-                    // If the image fails to load, log the URL that failed
-                    const target = e.target as HTMLImageElement;
-                    console.error("Failed URL:", target.src);
-                  }}
-                />
+                {avatarPreview ? (
+                  <AvatarImage 
+                    src={avatarPreview}
+                    alt={user?.username || "User"} 
+                  />
+                ) : practitioner?.avatarUrl ? (
+                  <AvatarImage 
+                    src={`${practitioner.avatarUrl}&t=${Date.now()}`}
+                    alt={user?.username || "User"} 
+                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                      console.error("Avatar image failed to load:", e);
+                      // If the image fails to load, log the URL that failed
+                      const target = e.target as HTMLImageElement;
+                      console.error("Failed URL:", target.src);
+                    }}
+                  />
+                ) : (
+                  <AvatarImage src="" alt={user?.username || "User"} />
+                )}
                 <AvatarFallback className="text-2xl">
                   {user?.username?.substring(0, 2).toUpperCase() || "U"}
                 </AvatarFallback>
