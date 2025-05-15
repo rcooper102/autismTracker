@@ -107,13 +107,12 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
           
           <div className="border-t border-gray-700 my-2"></div>
           
-          <Button 
-            variant="ghost" 
-            className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
-          >
-            <Settings className="mr-3 h-5 w-5 text-gray-400" />
-            <span>Settings</span>
-          </Button>
+          <SheetClose asChild>
+            <Link href="/account" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
+              <Settings className="mr-3 h-5 w-5 text-gray-400" />
+              <span>Account Settings</span>
+            </Link>
+          </SheetClose>
           
           <Button 
             variant="ghost" 

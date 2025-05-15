@@ -13,6 +13,7 @@ import ClientDetailPage from "@/pages/client-detail-page";
 import DataEntryPage from "@/pages/data-entry-page";
 import AddClientPage from "@/pages/add-client-page";
 import ClientsPage from "@/pages/clients-page";
+import AccountSettingsPage from "@/pages/account-settings-page";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <ProtectedRoute path="/clients/:id" component={ClientDetailPage} />
       <ProtectedRoute path="/log-data" component={DataEntryPage} />
       <ProtectedRoute path="/add-client" component={AddClientPage} />
+      <ProtectedRoute path="/account" component={AccountSettingsPage} />
       <Route component={NotFound} />
     </Switch>
   );

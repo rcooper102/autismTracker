@@ -133,10 +133,10 @@ export default function Header() {
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <div className="flex items-center w-full">
+                  <Link href="/account" className="flex items-center w-full">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </div>
+                    <span>Account Settings</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />

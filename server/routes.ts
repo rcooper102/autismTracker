@@ -255,6 +255,132 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Practitioner profile management routes
+  app.get("/api/practitioners/me", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    try {
+      // For now, we just return the user data with a placeholder for additional practitioner data
+      // In a real app, you might have a separate practitioners table
+      const { password, ...userWithoutPassword } = req.user;
+      
+      // Include some defaults for the profile form
+      res.json({
+        ...userWithoutPassword,
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        bio: "",
+        avatarUrl: null,
+      });
+    } catch (error) {
+      console.error("Error fetching practitioner profile:", error);
+      res.status(500).json({ message: "Failed to fetch practitioner profile" });
+    }
+  });
+
+  app.patch("/api/practitioners/me", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    try {
+      // Define a validation schema for practitioner profile updates
+      const profileUpdateSchema = z.object({
+        firstName: z.string().min(2, { message: "First name must be at least 2 characters" }).optional(),
+        lastName: z.string().min(2, { message: "Last name must be at least 2 characters" }).optional(),
+        email: z.string().email({ message: "Please enter a valid email address" }).optional(),
+        phone: z.string().optional(),
+        bio: z.string().optional(),
+      });
+
+      const validatedData = profileUpdateSchema.parse(req.body);
+      
+      // For now, we just return the updated data as if it was saved
+      // In a real app, you would update a practitioners table
+      const { password, ...userWithoutPassword } = req.user;
+      
+      res.json({
+        ...userWithoutPassword,
+        ...validatedData,
+        avatarUrl: null, // This would come from the database in a real app
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid profile data", errors: error.errors });
+      }
+      console.error("Error updating practitioner profile:", error);
+      res.status(500).json({ message: "Failed to update practitioner profile" });
+    }
+  });
+
+  // Placeholder for avatar upload - in a real app, this would save the file to a storage service
+  app.post("/api/practitioners/me/avatar", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    try {
+      // In a real app, you would:
+      // 1. Use multer or another middleware to handle file uploads
+      // 2. Process and validate the image
+      // 3. Upload to a storage service (S3, etc.)
+      // 4. Save the URL to the database
+      
+      // For now, we just return as if the upload was successful
+      res.json({
+        message: "Avatar uploaded successfully",
+        avatarUrl: "/placeholder-avatar.png" // This would be the real URL in a production app
+      });
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      res.status(500).json({ message: "Failed to upload avatar" });
+    }
+  });
+
+  // Password change endpoint
+  app.post("/api/user/change-password", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      // Define validation schema for password change
+      const passwordChangeSchema = z.object({
+        currentPassword: z.string().min(6, { message: "Current password is required" }),
+        newPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+      });
+
+      const validatedData = passwordChangeSchema.parse(req.body);
+      
+      // Import password utilities from auth
+      const { comparePasswords, hashPassword } = await import("./auth");
+      
+      // Verify current password
+      const passwordCorrect = await comparePasswords(
+        validatedData.currentPassword, 
+        req.user.password
+      );
+      
+      if (!passwordCorrect) {
+        return res.status(400).json({ message: "Current password is incorrect" });
+      }
+      
+      // In a real app, you would update the password in the database
+      // For now, we just return success
+      res.json({ message: "Password changed successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid password data", errors: error.errors });
+      }
+      console.error("Error changing password:", error);
+      res.status(500).json({ message: "Failed to change password" });
+    }
+  });
+
   // Create an HTTP server
   const httpServer = createServer(app);
 
