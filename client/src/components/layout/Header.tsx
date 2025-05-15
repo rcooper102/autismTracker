@@ -39,11 +39,9 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo and brand */}
           <div className="flex items-center">
-            <Link href="/">
-              <a className="flex items-center space-x-2">
-                <BrainCog className="h-8 w-8 text-primary" />
-                <span className="text-xl font-bold text-primary">AutiTrack</span>
-              </a>
+            <Link href="/" className="flex items-center space-x-2">
+              <BrainCog className="h-8 w-8 text-primary" />
+              <span className="text-xl font-bold text-primary">AutiTrack</span>
             </Link>
           </div>
 
@@ -51,15 +49,11 @@ export default function Header() {
           <nav className="hidden md:flex items-center space-x-4">
             {user.role === "practitioner" && (
               <>
-                <Link href="/">
-                  <a className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
-                    Dashboard
-                  </a>
+                <Link href="/" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                  Dashboard
                 </Link>
-                <Link href="/add-client">
-                  <a className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
-                    Add Client
-                  </a>
+                <Link href="/add-client" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                  Add Client
                 </Link>
                 <Button variant="ghost" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
                   Reports
@@ -68,15 +62,11 @@ export default function Header() {
             )}
             {user.role === "client" && (
               <>
-                <Link href="/log-data">
-                  <a className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
-                    Log Data
-                  </a>
+                <Link href="/log-data" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                  Log Data
                 </Link>
-                <Link href="/">
-                  <a className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
-                    Progress
-                  </a>
+                <Link href="/" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                  Progress
                 </Link>
               </>
             )}
@@ -100,11 +90,9 @@ export default function Header() {
                 {user.role === "practitioner" && (
                   <>
                     <DropdownMenuItem>
-                      <Link href="/">
-                        <a className="flex items-center w-full">
-                          <LayoutDashboard className="mr-2 h-4 w-4" />
-                          <span>Dashboard</span>
-                        </a>
+                      <Link href="/" className="flex items-center w-full">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        <span>Dashboard</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>

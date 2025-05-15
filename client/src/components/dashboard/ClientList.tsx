@@ -46,11 +46,9 @@ export default function ClientList({ clients, isLoading }: ClientListProps) {
         <p className="text-gray-500 mb-4">
           You don't have any clients at the moment. Add your first client to get started.
         </p>
-        <Link href="/add-client">
-          <a className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg">
-            <i className="ri-user-add-line mr-2"></i>
-            Add Your First Client
-          </a>
+        <Link href="/add-client" className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg">
+          <i className="ri-user-add-line mr-2"></i>
+          Add Your First Client
         </Link>
       </div>
     );
@@ -81,10 +79,8 @@ export default function ClientList({ clients, isLoading }: ClientListProps) {
     <div className="bg-white rounded-lg shadow mb-6">
       <div className="p-4 border-b flex justify-between items-center">
         <h2 className="font-semibold">Recent Client Activity</h2>
-        <Link href="/clients">
-          <a className="text-primary text-sm flex items-center">
-            View All <i className="ri-arrow-right-s-line ml-1"></i>
-          </a>
+        <Link href="/clients" className="text-primary text-sm flex items-center">
+          View All <i className="ri-arrow-right-s-line ml-1"></i>
         </Link>
       </div>
       <div className="divide-y">
@@ -94,23 +90,21 @@ export default function ClientList({ clients, isLoading }: ClientListProps) {
           const initials = `${client.firstName[0]}${client.lastName[0]}`;
           
           return (
-            <Link key={client.id} href={`/clients/${client.id}`}>
-              <a className="p-4 hover:bg-gray-50 transition-colors cursor-pointer block">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-10 h-10 rounded-full ${colorClass} flex items-center justify-center`}>
-                      <span className="font-medium">{initials}</span>
-                    </div>
-                    <div>
-                      <p className="font-medium">{`${client.firstName} ${client.lastName}`}</p>
-                      <p className="text-xs text-gray-500">
-                        Last entry: {getRandomTimeAgo()}
-                      </p>
-                    </div>
+            <Link key={client.id} href={`/clients/${client.id}`} className="p-4 hover:bg-gray-50 transition-colors cursor-pointer block">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-10 h-10 rounded-full ${colorClass} flex items-center justify-center`}>
+                    <span className="font-medium">{initials}</span>
                   </div>
-                  <span className={`px-2 py-1 ${color} rounded-full text-xs`}>{label}</span>
+                  <div>
+                    <p className="font-medium">{`${client.firstName} ${client.lastName}`}</p>
+                    <p className="text-xs text-gray-500">
+                      Last entry: {getRandomTimeAgo()}
+                    </p>
+                  </div>
                 </div>
-              </a>
+                <span className={`px-2 py-1 ${color} rounded-full text-xs`}>{label}</span>
+              </div>
             </Link>
           );
         })}
