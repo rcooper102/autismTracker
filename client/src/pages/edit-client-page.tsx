@@ -103,8 +103,13 @@ export default function EditClientPage() {
     try {
       // Try to parse notes as JSON to get avatarUrl
       const notesObj = JSON.parse(clientData.notes);
-      if (notesObj.avatarUrl) return notesObj.avatarUrl;
+      if (notesObj.avatarUrl) {
+        // Ensure the URL includes the full path
+        console.log("Found avatar URL in notes:", notesObj.avatarUrl);
+        return notesObj.avatarUrl;
+      }
     } catch (e) {
+      console.log("Failed to parse notes as JSON:", e);
       // Not JSON or no avatar URL
     }
     
@@ -115,11 +120,14 @@ export default function EditClientPage() {
   const getClientAvatar = (): string | null => {
     // Priority order: 1. Local preview, 2. Client avatar from notes
     if (avatarPreview) {
+      console.log("Using avatar preview:", avatarPreview);
       return avatarPreview;
     }
     
     if (client) {
-      return getAvatarUrl(client);
+      const url = getAvatarUrl(client);
+      console.log("Getting client avatar from notes:", url);
+      return url;
     }
     
     return null;
@@ -163,6 +171,9 @@ export default function EditClientPage() {
       if (avatarUrl) {
         setAvatarPreview(avatarUrl);
       }
+      
+      // Debug client data 
+      console.log("Client data:", JSON.stringify(client, null, 2));
 
       form.reset({
         firstName: client.firstName || "",
@@ -255,16 +266,24 @@ export default function EditClientPage() {
       return await res.json();
     },
     onSuccess: (data) => {
-      // Refresh the client data without losing the avatar preview
-      queryClient.invalidateQueries({queryKey: [`/api/clients/${id}`]});
+      // Don't clear the avatar preview - the uploaded image is now stored in avatarPreview
+      // after handleFileChange set it from the FileReader result.
+      // We don't want to lose this preview image while the new data loads.
       
-      // Keep the current avatar preview
-      // The preview will stay visible until the query completes and new data loads
+      // Call our upload completion handler
+      handleUploadComplete();
       
       toast({
         title: "Avatar uploaded",
         description: "Client avatar has been updated successfully.",
       });
+      
+      // Give a slight delay before refreshing the client data
+      // This allows the user to see the success message and prevents flicker
+      setTimeout(() => {
+        // Refresh the data but keep our avatar preview
+        queryClient.invalidateQueries({queryKey: [`/api/clients/${id}`]});
+      }, 500);
     },
     onError: (error: Error) => {
       toast({
@@ -289,6 +308,13 @@ export default function EditClientPage() {
       reader.readAsDataURL(file);
     }
   };
+  
+  // Handle upload completion
+  const handleUploadComplete = () => {
+    // We'll keep the current preview visible and set a flag to inform the app
+    // that a new avatar has been uploaded
+    console.log("Upload completed successfully!");
+  };
 
   // Form submission handlers
   const onSubmit = (values: EditClientFormValues) => {
@@ -301,7 +327,15 @@ export default function EditClientPage() {
 
   const handleUploadAvatar = () => {
     if (selectedFile) {
+      // We're already storing the preview in state, so we can use it even after upload
+      // Store the current preview URL before upload so we can keep displaying it
+      const currentPreview = avatarPreview;
+      
+      // Start the upload mutation
       uploadAvatarMutation.mutate(selectedFile);
+      
+      // Clear the selected file but keep the preview!
+      setSelectedFile(null);
     }
   };
 
