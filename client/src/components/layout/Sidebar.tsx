@@ -1,79 +1,98 @@
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  BrainCog,
+  LayoutDashboard,
+  UserPlus,
+  CalendarDays,
+  PieChart,
+  Settings,
+  LogOut,
+} from "lucide-react";
 
 export default function Sidebar() {
   const { user, logoutMutation } = useAuth();
-  const [location] = useLocation();
+
+  if (!user) return null;
 
   const handleLogout = () => {
     logoutMutation.mutate();
   };
 
-  const navItems = [
-    { label: "Dashboard", path: "/", icon: "ri-dashboard-line" },
-    { label: "Clients", path: "/clients", icon: "ri-user-line" },
-    { label: "Appointments", path: "/appointments", icon: "ri-calendar-line" },
-    { label: "Reports", path: "/reports", icon: "ri-file-chart-line" },
-    { label: "Settings", path: "/settings", icon: "ri-settings-line" },
-  ];
-
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 w-64 bg-white shadow-md flex flex-col hidden md:flex">
-      <div className="p-4 border-b">
-        <div className="flex items-center space-x-2">
-          <i className="ri-mental-health-line text-primary text-2xl"></i>
-          <h1 className="text-xl font-semibold text-primary">AutiTrack</h1>
+    <div className="hidden md:flex flex-col h-[calc(100vh-4rem)] bg-gray-900 text-white border-r border-gray-800 w-[240px] fixed top-16 left-0 py-6 px-4 overflow-y-auto">
+      <div className="flex flex-col space-y-2">
+        <div className="py-2 px-4 mb-2 bg-gray-800 rounded-md">
+          <p className="font-medium text-white">{user.name}</p>
+          <p className="text-sm text-gray-400">{user.email}</p>
         </div>
-      </div>
-      
-      {/* User Profile Section */}
-      <div className="p-4 border-b">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary">
-            <span className="font-medium">
-              {user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
-            </span>
-          </div>
-          <div>
-            <p className="font-medium">{user?.name}</p>
-            <p className="text-xs text-gray-500">
-              {user?.role === 'practitioner' ? 'Behavioral Therapist' : 'Client'}
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      {/* Navigation Links */}
-      <nav className="flex-1 p-4">
-        <ul className="space-y-2">
-          {navItems.map((item) => (
-            <li key={item.path}>
-              <Link href={item.path} className={cn(
-                  "flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors",
-                  location === item.path 
-                    ? "bg-primary-50 text-primary font-medium" 
-                    : "hover:bg-gray-100 text-gray-700"
-                )}>
-                  <i className={item.icon}></i>
-                  <span>{item.label}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      
-      {/* Logout Button */}
-      <div className="p-4 border-t">
-        <button 
+        
+        {user.role === "practitioner" && (
+          <>
+            <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
+              <LayoutDashboard className="mr-3 h-5 w-5 text-gray-400" />
+              <span>Dashboard</span>
+            </Link>
+            
+            <Link href="/clients" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
+              <UserPlus className="mr-3 h-5 w-5 text-gray-400" />
+              <span>Clients</span>
+            </Link>
+            
+            <Link href="/add-client" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
+              <UserPlus className="mr-3 h-5 w-5 text-gray-400" />
+              <span>Add Client</span>
+            </Link>
+            
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
+            >
+              <CalendarDays className="mr-3 h-5 w-5 text-gray-400" />
+              <span>Schedule</span>
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
+            >
+              <PieChart className="mr-3 h-5 w-5 text-gray-400" />
+              <span>Reports</span>
+            </Button>
+          </>
+        )}
+        
+        {user.role === "client" && (
+          <>
+            <Link href="/log-data" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
+              <PieChart className="mr-3 h-5 w-5 text-gray-400" />
+              <span>Log Data</span>
+            </Link>
+            
+            <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
+              <CalendarDays className="mr-3 h-5 w-5 text-gray-400" />
+              <span>Sessions</span>
+            </Link>
+          </>
+        )}
+        
+        <div className="border-t border-gray-700 my-2"></div>
+        
+        <Link href="/account" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
+          <Settings className="mr-3 h-5 w-5 text-gray-400" />
+          <span>Account Settings</span>
+        </Link>
+        
+        <Button 
+          variant="ghost" 
           onClick={handleLogout}
-          className="flex items-center space-x-2 px-3 py-2 w-full rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+          className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
         >
-          <i className="ri-logout-box-line"></i>
-          <span>Logout</span>
-        </button>
+          <LogOut className="mr-3 h-5 w-5 text-gray-400" />
+          <span>Log out</span>
+        </Button>
       </div>
-    </aside>
+    </div>
   );
 }

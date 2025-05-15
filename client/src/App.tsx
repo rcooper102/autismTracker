@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import Header from "@/components/layout/Header";
+import Sidebar from "@/components/layout/Sidebar";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
 import DashboardPage from "@/pages/dashboard-page";
@@ -39,9 +40,12 @@ function App() {
         <TooltipProvider>
           <div className="min-h-screen flex flex-col">
             <Header />
-            <main className="flex-1">
-              <Router />
-            </main>
+            <div className="flex flex-1">
+              <Sidebar />
+              <main className="flex-1 md:ml-[240px] p-4 md:p-6"> {/* Add margin-left and padding */}
+                <Router />
+              </main>
+            </div>
           </div>
           <Toaster />
         </TooltipProvider>

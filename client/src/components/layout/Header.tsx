@@ -45,32 +45,8 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4">
-            {user.role === "practitioner" && (
-              <>
-                <Link href="/" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
-                  Dashboard
-                </Link>
-                <Link href="/add-client" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
-                  Add Client
-                </Link>
-                <Button variant="ghost" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
-                  Reports
-                </Button>
-              </>
-            )}
-            {user.role === "client" && (
-              <>
-                <Link href="/log-data" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
-                  Log Data
-                </Link>
-                <Link href="/" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
-                  Progress
-                </Link>
-              </>
-            )}
-          </nav>
+          {/* Desktop Navigation is now in the Sidebar */}
+          <div className="hidden md:block"></div>
 
           {/* User dropdown */}
           <div className="flex items-center gap-4">
