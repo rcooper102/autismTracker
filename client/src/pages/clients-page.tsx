@@ -44,17 +44,6 @@ export default function ClientsPage() {
     "bg-red-100 text-red-700",
   ];
   
-  // Get status label and color
-  const getStatusLabel = (client: ClientWithUser) => {
-    // This is simplified - in a real app, you would have more logic to determine status
-    const lastActiveIndex = client.id % 4; // Just for demo purposes
-    
-    if (lastActiveIndex === 0) return { label: "New data", color: "bg-green-100 text-green-800" };
-    if (lastActiveIndex === 1) return { label: "Review needed", color: "bg-yellow-100 text-yellow-800" };
-    if (lastActiveIndex === 2) return { label: "Stable", color: "bg-gray-100 text-gray-800" };
-    return { label: "Flagged", color: "bg-red-100 text-red-800" };
-  };
-
   // Helper function to generate random time ago strings for demo purposes
   const getRandomTimeAgo = () => {
     const options = [
@@ -136,12 +125,11 @@ export default function ClientsPage() {
               <div className="divide-y">
                 {clients?.map((client, index) => {
                   const colorClass = colors[index % colors.length];
-                  const { label, color } = getStatusLabel(client);
                   const initials = `${client.firstName[0]}${client.lastName[0]}`;
                   
                   return (
                     <Link key={client.id} href={`/clients/${client.id}`} className="p-4 hover:bg-gray-50 transition-colors cursor-pointer block">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center">
                         <div className="flex items-center space-x-3">
                           <Avatar className="w-10 h-10" src={client.avatarUrl}>
                             <AvatarFallback className={colorClass}>
@@ -155,7 +143,6 @@ export default function ClientsPage() {
                             </p>
                           </div>
                         </div>
-                        <span className={`px-2 py-1 ${color} rounded-full text-xs`}>{label}</span>
                       </div>
                     </Link>
                   );
