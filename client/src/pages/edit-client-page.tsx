@@ -195,14 +195,35 @@ export default function EditClientPage() {
   // Update client mutation
   const updateClientMutation = useMutation({
     mutationFn: async (data: EditClientFormValues) => {
-      // Convert comma-separated goals to array
-      const treatmentGoals = data.treatmentGoals 
-        ? data.treatmentGoals.split(",").map(goal => goal.trim()).filter(Boolean) 
-        : [];
+      // Ensure treatment goals is an array
+      let treatmentGoals = [];
+      if (Array.isArray(data.treatmentGoals)) {
+        treatmentGoals = data.treatmentGoals;
+      } else if (typeof data.treatmentGoals === 'string') {
+        treatmentGoals = data.treatmentGoals.split(",").map(goal => goal.trim()).filter(Boolean);
+      }
+      
+      // Ensure treatment plan is an array
+      let treatmentPlan = [];
+      if (Array.isArray(data.treatmentPlan)) {
+        treatmentPlan = data.treatmentPlan;
+      } else if (typeof data.treatmentPlan === 'string') {
+        try {
+          const parsed = JSON.parse(data.treatmentPlan);
+          treatmentPlan = Array.isArray(parsed) ? parsed : [data.treatmentPlan];
+        } catch {
+          treatmentPlan = [data.treatmentPlan]; 
+        }
+      }
+
+      // Log what we're sending to the server
+      console.log("Sending treatment plan:", treatmentPlan);
+      console.log("Sending treatment goals:", treatmentGoals);
 
       const clientData = {
         ...data,
         treatmentGoals,
+        treatmentPlan,
       };
 
       const res = await apiRequest("PATCH", `/api/clients/${id}`, clientData);

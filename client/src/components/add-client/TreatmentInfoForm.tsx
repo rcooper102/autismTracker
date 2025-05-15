@@ -6,66 +6,86 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { RequiredField } from "@/components/ui/required-field";
 import clientConfig from "@/config/client-config.json";
+import { useEffect, useState } from "react";
 
 interface TreatmentInfoFormProps {
   form: UseFormReturn<any>;
 }
 
 export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
-  // Debug the form values
-  const formValues = form.getValues();
-  console.log("TreatmentInfoForm - Initial Form Values:", formValues);
-  console.log("TreatmentInfoForm - Treatment Plan:", formValues.treatmentPlan);
-  console.log("TreatmentInfoForm - Treatment Goals:", formValues.treatmentGoals);
+  // Local state to track selected items
+  const [selectedPlans, setSelectedPlans] = useState<string[]>([]);
+  const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   
-  // Convert treatment plan options from the config to the format used in this component
-  const treatmentPlans = clientConfig.treatmentPlanOptions.map(option => ({
-    id: option.value,
-    label: option.label
-  }));
+  // Treatment plan options from config
+  const treatmentPlans = clientConfig.treatmentPlanOptions;
+  const treatmentGoals = clientConfig.treatmentGoalOptions;
   
-  // Convert treatment goal options from the config to the format used in this component
-  const treatmentGoals = clientConfig.treatmentGoalOptions.map((option, index) => ({
-    id: `goal-${index}`,
-    label: option
-  }));
-
-  const handlePlanChange = (checked: boolean, plan: string) => {
-    // Get current plans and ensure it's an array
-    let currentPlans = form.getValues("treatmentPlan");
-    currentPlans = Array.isArray(currentPlans) ? currentPlans : [];
+  // Initialize from form values when component loads
+  useEffect(() => {
+    const formValues = form.getValues();
+    console.log("TreatmentInfoForm - Form Values on Load:", formValues);
     
-    console.log("Current plans before change:", currentPlans);
+    // Initialize selected plans from form
+    let plans: string[] = [];
+    if (Array.isArray(formValues.treatmentPlan)) {
+      plans = formValues.treatmentPlan;
+    } else if (typeof formValues.treatmentPlan === 'string') {
+      try {
+        const parsed = JSON.parse(formValues.treatmentPlan);
+        plans = Array.isArray(parsed) ? parsed : [];
+      } catch {
+        plans = formValues.treatmentPlan ? [formValues.treatmentPlan] : [];
+      }
+    }
     
-    if (checked) {
-      form.setValue("treatmentPlan", [...currentPlans, plan]);
-    } else {
-      form.setValue(
-        "treatmentPlan",
-        currentPlans.filter((p: string) => p !== plan)
+    // Special case handling for "Cognitive Behavioral Therapy"
+    if (plans.includes("Cognitive Behavioral Therapy")) {
+      plans = plans.map(plan => 
+        plan === "Cognitive Behavioral Therapy" ? "Cognitive Behavioral Therapy (CBT)" : plan
       );
     }
     
-    console.log("Plans after change:", form.getValues("treatmentPlan"));
+    setSelectedPlans(plans);
+    
+    // Initialize selected goals from form
+    let goals: string[] = [];
+    if (Array.isArray(formValues.treatmentGoals)) {
+      goals = formValues.treatmentGoals;
+    } else if (typeof formValues.treatmentGoals === 'string') {
+      goals = formValues.treatmentGoals.split(',').map(g => g.trim()).filter(Boolean);
+    }
+    
+    setSelectedGoals(goals);
+    
+    // Update form values
+    form.setValue("treatmentPlan", plans);
+    form.setValue("treatmentGoals", goals);
+    
+    console.log("Initialized plans:", plans);
+    console.log("Initialized goals:", goals);
+  }, [form]);
+  
+  // Handle plan checkbox toggle
+  const handlePlanToggle = (checked: boolean, planLabel: string) => {
+    const updatedPlans = checked
+      ? [...selectedPlans, planLabel]
+      : selectedPlans.filter(p => p !== planLabel);
+    
+    setSelectedPlans(updatedPlans);
+    form.setValue("treatmentPlan", updatedPlans);
+    console.log("Updated plans:", updatedPlans);
   };
-
-  const handleGoalChange = (checked: boolean, goal: string) => {
-    // Get current goals and ensure it's an array
-    let currentGoals = form.getValues("treatmentGoals");
-    currentGoals = Array.isArray(currentGoals) ? currentGoals : [];
+  
+  // Handle goal checkbox toggle
+  const handleGoalToggle = (checked: boolean, goalLabel: string) => {
+    const updatedGoals = checked
+      ? [...selectedGoals, goalLabel]
+      : selectedGoals.filter(g => g !== goalLabel);
     
-    console.log("Current goals before change:", currentGoals);
-    
-    if (checked) {
-      form.setValue("treatmentGoals", [...currentGoals, goal]);
-    } else {
-      form.setValue(
-        "treatmentGoals",
-        currentGoals.filter((g: string) => g !== goal)
-      );
-    }
-    
-    console.log("Goals after change:", form.getValues("treatmentGoals"));
+    setSelectedGoals(updatedGoals);
+    form.setValue("treatmentGoals", updatedGoals);
+    console.log("Updated goals:", updatedGoals);
   };
 
   return (
@@ -76,32 +96,24 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
         <FormField
           control={form.control}
           name="treatmentPlan"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel><RequiredField>Treatment Plans</RequiredField></FormLabel>
               <div className="space-y-2">
                 {treatmentPlans.map((plan) => {
-                  // Ensure we have an array of values
-                  const currentPlans = Array.isArray(field.value) ? field.value : [];
-                  
-                  // FIXED: Check if current plan is selected by checking for both label and label without "(CBT)" suffix
-                  const isChecked = currentPlans.includes(plan.label) || 
-                                    (plan.label === "Cognitive Behavioral Therapy (CBT)" && 
-                                     currentPlans.includes("Cognitive Behavioral Therapy"));
-                  
-                  console.log(`Plan ${plan.label} checked: ${isChecked}`, currentPlans);
+                  const isChecked = selectedPlans.includes(plan.label);
                   
                   return (
-                    <div key={plan.id} className="flex items-center space-x-2">
+                    <div key={plan.value} className="flex items-center space-x-2">
                       <Checkbox
-                        id={`plan-${plan.id}`}
+                        id={`plan-${plan.value}`}
                         checked={isChecked}
                         onCheckedChange={(checked) => 
-                          handlePlanChange(checked as boolean, plan.label)
+                          handlePlanToggle(checked as boolean, plan.label)
                         }
                       />
                       <label
-                        htmlFor={`plan-${plan.id}`}
+                        htmlFor={`plan-${plan.value}`}
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         {plan.label}
@@ -118,33 +130,27 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
         <FormField
           control={form.control}
           name="treatmentGoals"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Treatment Goals</FormLabel>
               <div className="space-y-2">
-                {treatmentGoals.map((goal) => {
-                  // Ensure we have an array of values
-                  const currentGoals = Array.isArray(field.value) ? field.value : [];
-                  
-                  // Check if this goal is in the currentGoals array
-                  const isChecked = currentGoals.includes(goal.label);
-                  
-                  console.log(`Goal ${goal.label} checked: ${isChecked}`, currentGoals);
+                {treatmentGoals.map((goal, index) => {
+                  const isChecked = selectedGoals.includes(goal);
                   
                   return (
-                    <div key={goal.id} className="flex items-center space-x-2">
+                    <div key={`goal-${index}`} className="flex items-center space-x-2">
                       <Checkbox
-                        id={`goal-${goal.id}`}
+                        id={`goal-${index}`}
                         checked={isChecked}
                         onCheckedChange={(checked) => 
-                          handleGoalChange(checked as boolean, goal.label)
+                          handleGoalToggle(checked as boolean, goal)
                         }
                       />
                       <label
-                        htmlFor={`goal-${goal.id}`}
+                        htmlFor={`goal-${index}`}
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
-                        {goal.label}
+                        {goal}
                       </label>
                     </div>
                   );
