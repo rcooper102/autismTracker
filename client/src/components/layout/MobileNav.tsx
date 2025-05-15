@@ -90,37 +90,37 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
           {user.role === "client" && (
             <>
               <SheetClose asChild>
-                <Link href="/log-data" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
-                  <PieChart className="mr-3 h-5 w-5 text-gray-600" />
+                <Link href="/log-data" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
+                  <PieChart className="mr-3 h-5 w-5 text-gray-400" />
                   <span>Log Data</span>
                 </Link>
               </SheetClose>
               
               <SheetClose asChild>
-                <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
-                  <CalendarDays className="mr-3 h-5 w-5 text-gray-600" />
+                <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
+                  <CalendarDays className="mr-3 h-5 w-5 text-gray-400" />
                   <span>Sessions</span>
                 </Link>
               </SheetClose>
             </>
           )}
           
-          <div className="border-t my-2"></div>
+          <div className="border-t border-gray-700 my-2"></div>
           
           <Button 
             variant="ghost" 
-            className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-100"
+            className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
           >
-            <Settings className="mr-3 h-5 w-5 text-gray-600" />
+            <Settings className="mr-3 h-5 w-5 text-gray-400" />
             <span>Settings</span>
           </Button>
           
           <Button 
             variant="ghost" 
             onClick={handleLogout}
-            className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-100"
+            className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
           >
-            <LogOut className="mr-3 h-5 w-5 text-gray-600" />
+            <LogOut className="mr-3 h-5 w-5 text-gray-400" />
             <span>Log out</span>
           </Button>
         </div>
