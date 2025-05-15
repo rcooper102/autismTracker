@@ -2,21 +2,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface StatsProps {
   totalClients: number;
-  activeSessions: number;
   pendingReviews: number;
   isLoading: boolean;
 }
 
 export default function Stats({
   totalClients,
-  activeSessions,
   pendingReviews,
   isLoading
 }: StatsProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {[1, 2, 3].map((i) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {[1, 2].map((i) => (
           <div key={i} className="bg-white rounded-lg shadow p-4">
             <div className="flex items-center justify-between">
               <Skeleton className="h-5 w-24" />
@@ -31,7 +29,7 @@ export default function Stats({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
       <div className="bg-white rounded-lg shadow p-4">
         <div className="flex items-center justify-between">
           <span className="text-gray-500 text-sm">Total Clients</span>
@@ -43,16 +41,6 @@ export default function Stats({
         <p className="text-xs text-green-500 mt-1">
           <i className="ri-arrow-up-line"></i> {Math.max(0, totalClients - 10)} new this month
         </p>
-      </div>
-      <div className="bg-white rounded-lg shadow p-4">
-        <div className="flex items-center justify-between">
-          <span className="text-gray-500 text-sm">Active Sessions</span>
-          <span className="text-secondary-500 bg-secondary-50 p-2 rounded-full">
-            <i className="ri-calendar-check-line"></i>
-          </span>
-        </div>
-        <p className="text-2xl font-semibold mt-2">{activeSessions}</p>
-        <p className="text-xs text-gray-500 mt-1">Last updated today</p>
       </div>
       <div className="bg-white rounded-lg shadow p-4">
         <div className="flex items-center justify-between">

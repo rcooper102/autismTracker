@@ -64,7 +64,6 @@ export default function DashboardPage() {
           {/* Stats */}
           <Stats 
             totalClients={stats?.totalClients || 0}
-            activeSessions={stats?.activeSessions || 0}
             pendingReviews={stats?.pendingReviews || 0}
             isLoading={isLoadingStats}
           />
