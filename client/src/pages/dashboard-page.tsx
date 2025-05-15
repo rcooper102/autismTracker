@@ -41,7 +41,7 @@ export default function DashboardPage() {
       <MobileNav />
 
       <main className="main-content min-h-screen pb-16">
-        <div id="practitioner-dashboard" className="p-4 md:p-6">
+        <div id="practitioner-dashboard" className="py-4 md:py-6">
           {/* Header */}
           <header className="mb-6">
             <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
