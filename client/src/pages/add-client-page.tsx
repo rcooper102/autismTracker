@@ -43,21 +43,23 @@ const addClientSchema = z.object({
 type AddClientFormValues = z.infer<typeof addClientSchema>;
 
 export default function AddClientPage() {
-  const { user } = useAuth();
+  const { user, isLoading: isLoadingUser } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   
   // Check if user is practitioner
   useEffect(() => {
-    if (user && user.role !== "practitioner") {
-      setLocation("/");
-      toast({
-        title: "Access denied",
-        description: "Only practitioners can add clients",
-        variant: "destructive",
-      });
+    if (!isLoadingUser && user) {
+      if (user.role !== "practitioner") {
+        setLocation("/");
+        toast({
+          title: "Access denied",
+          description: "Only practitioners can add clients",
+          variant: "destructive",
+        });
+      }
     }
-  }, [user, setLocation, toast]);
+  }, [user, isLoadingUser, setLocation, toast]);
   
   const form = useForm<AddClientFormValues>({
     resolver: zodResolver(addClientSchema),

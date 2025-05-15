@@ -10,31 +10,40 @@ import ActionButtons from "@/components/dashboard/ActionButtons";
 import UpcomingSessions from "@/components/dashboard/UpcomingSessions";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, isLoading: isLoadingUser } = useAuth();
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
+
+  // Handle redirects if user is a client
+  useEffect(() => {
+    if (!isLoadingUser && user) {
+      if (user.role === "client") {
+        setLocation("/log-data");
+        toast({
+          title: "Redirected",
+          description: "Clients are redirected to the data entry page",
+        });
+      }
+    }
+  }, [user, isLoadingUser, setLocation, toast]);
 
   // Fetch statistics for the practitioner dashboard
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["/api/statistics"],
-    enabled: user?.role === "practitioner",
+    enabled: !isLoadingUser && user?.role === "practitioner",
   });
 
   // Fetch clients for the practitioner
   const { data: clients, isLoading: isLoadingClients } = useQuery({
     queryKey: ["/api/clients"],
-    enabled: user?.role === "practitioner",
+    enabled: !isLoadingUser && user?.role === "practitioner",
   });
 
   // Fetch sessions for the practitioner
   const { data: sessions, isLoading: isLoadingSessions } = useQuery({
     queryKey: ["/api/sessions"],
-    enabled: user?.role === "practitioner",
+    enabled: !isLoadingUser && user?.role === "practitioner",
   });
-
-  // If user is a client, redirect to data entry page
-  if (user?.role === "client") {
-    return <Redirect to="/log-data" />;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
