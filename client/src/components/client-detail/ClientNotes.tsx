@@ -119,12 +119,18 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
 
   if (isLoading) {
     return (
-      <div className="pt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Client Notes</CardTitle>
-            <CardDescription>Loading notes...</CardDescription>
+      <div className="pt-4">
+        <Card className="overflow-hidden">
+          <CardHeader className="py-2 px-4">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-sm">Client Notes</CardTitle>
+            </div>
           </CardHeader>
+          <CardContent className="px-4 py-2">
+            <div className="text-center py-2 text-gray-500 text-xs">
+              Loading notes...
+            </div>
+          </CardContent>
         </Card>
       </div>
     );
@@ -132,47 +138,55 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
 
   if (isError) {
     return (
-      <div className="pt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Client Notes</CardTitle>
-            <CardDescription className="text-red-500">Error loading notes</CardDescription>
+      <div className="pt-4">
+        <Card className="overflow-hidden">
+          <CardHeader className="py-2 px-4">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-sm">Client Notes</CardTitle>
+            </div>
           </CardHeader>
+          <CardContent className="px-4 py-2">
+            <div className="text-center py-2 text-red-500 text-xs">
+              Error loading notes
+            </div>
+          </CardContent>
         </Card>
       </div>
     );
   }
 
   return (
-    <div className="pt-6">
-      <Card>
-        <CardHeader className="pb-3">
+    <div className="pt-4">
+      <Card className="overflow-hidden">
+        <CardHeader className="py-2 px-4">
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="text-lg">Client Notes</CardTitle>
+              <CardTitle className="text-sm">Client Notes</CardTitle>
             </div>
             {!isAddingNote && (
               <Button
                 variant="outline" 
                 size="sm"
+                className="h-7 py-0 px-2 text-xs"
                 onClick={() => setIsAddingNote(true)}
                 disabled={isAddingNote}
               >
-                <PlusCircle className="h-4 w-4 mr-2" />
+                <PlusCircle className="h-3.5 w-3.5 mr-1" />
                 Add Note
               </Button>
             )}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 py-2">
           {isAddingNote && (
-            <div className="mb-6 border p-4 rounded-md">
-              <h3 className="font-medium text-lg mb-2">New Note</h3>
-              <div className="space-y-4">
+            <div className="mb-3 border p-3 rounded-md">
+              <h3 className="font-medium text-sm mb-2">New Note</h3>
+              <div className="space-y-2">
                 <div>
                   <Input
                     type="text"
                     placeholder="Note Title"
+                    className="h-8 text-sm"
                     value={newNoteTitle}
                     onChange={(e) => setNewNoteTitle(e.target.value)}
                   />
@@ -180,16 +194,27 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                 <div>
                   <Textarea
                     placeholder="Enter note text..."
-                    rows={4}
+                    className="text-sm"
+                    rows={3}
                     value={newNoteText}
                     onChange={(e) => setNewNoteText(e.target.value)}
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={handleCancelAdd}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-7 text-xs"
+                    onClick={handleCancelAdd}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={handleCreateNote} disabled={createNoteMutation.isPending}>
+                  <Button 
+                    size="sm" 
+                    className="h-7 text-xs"
+                    onClick={handleCreateNote} 
+                    disabled={createNoteMutation.isPending}
+                  >
                     {createNoteMutation.isPending ? "Saving..." : "Save Note"}
                   </Button>
                 </div>
@@ -198,53 +223,51 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
           )}
 
           {notes.length === 0 && !isAddingNote ? (
-            <div className="text-center py-6 text-gray-500">
+            <div className="text-center py-3 text-gray-500 text-xs">
               No notes available. Click "Add Note" to create one.
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-2">
               {notes.map((note) => (
                 <Card key={note.id} className="border shadow-sm">
-                  <CardHeader className="pb-2">
+                  <CardHeader className="pb-1 pt-2 px-3">
                     <div className="flex justify-between items-center">
                       <Button 
                         variant="ghost" 
                         className="p-0 h-auto font-medium text-left hover:bg-transparent"
                         onClick={() => navigate(`/notes/${note.id}`)}
                       >
-                        <CardTitle>{note.title}</CardTitle>
+                        <CardTitle className="text-sm">{note.title}</CardTitle>
                       </Button>
                       <div className="flex space-x-1">
                         <Button
                           variant="ghost"
                           size="sm"
+                          className="h-7 w-7 p-0"
                           onClick={() => navigate(`/notes/${note.id}`)}
                           aria-label="Edit note"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
+                          className="h-7 w-7 p-0"
                           onClick={() => handleDeleteNote(note.id)}
                           disabled={isAddingNote}
                           aria-label="Delete note"
                         >
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                          <Trash2 className="h-3.5 w-3.5 text-red-500" />
                         </Button>
                       </div>
                     </div>
-                    <CardDescription>
-                      Last updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy h:mm a') : 'Unknown'}
+                    <CardDescription className="text-xs mt-0.5">
+                      Updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy') : 'Unknown'} • 
+                      {(note.entries && Array.isArray(note.entries) && note.entries.length > 0) ? 
+                        ` ${note.entries.length} entries` : 
+                        " No entries"}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="pt-0">
-                    <CardDescription className="text-gray-600">
-                      {(note.entries && Array.isArray(note.entries) && note.entries.length > 0) ? 
-                        `${note.entries.length} entries` : 
-                        "No entries yet"}
-                    </CardDescription>
-                  </CardContent>
                 </Card>
               ))}
             </div>
