@@ -44,10 +44,10 @@ export default function ClientHeader({ client, onBack }: ClientHeaderProps) {
         </div>
       </div>
       <div className="flex">
-        <Button variant="outline" className="flex items-center px-2 h-9 mr-1">
+        <Button variant="outline" className="gap-0 px-2 h-9 mr-1">
           <i className="ri-file-download-line mr-1"></i> Export
         </Button>
-        <Button className="flex items-center px-2 h-9">
+        <Button className="gap-0 px-2 h-9">
           <i className="ri-user-settings-line mr-1"></i> Manage
         </Button>
       </div>
