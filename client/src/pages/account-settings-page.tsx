@@ -257,41 +257,23 @@ export default function AccountSettingsPage() {
         <div className="space-y-6">
           <Card className="shadow-sm">
             <CardContent className="p-6 flex flex-col items-center">
-              <Avatar className="h-24 w-24 mb-4">
-                {avatarPreview ? (
-                  <>
-                    {console.log("Account settings: Rendering preview image:", avatarPreview)}
-                    <AvatarImage 
-                      src={avatarPreview}
-                      alt={user?.username || "User"} 
-                    />
-                  </>
-                ) : practitioner?.avatarUrl ? (
-                  <>
-                    {console.log("Account settings: Rendering avatar from DB URL:", practitioner.avatarUrl)}
-                    <AvatarImage 
-                      src={practitioner.avatarUrl.includes('?') ? 
-                        `${practitioner.avatarUrl}&_t=${Date.now()}` : 
-                        `${practitioner.avatarUrl}?_t=${Date.now()}`}
-                      alt={user?.username || "User"} 
-                      onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                        console.error("Avatar image failed to load:", e);
-                        // If the image fails to load, log the URL that failed
-                        const target = e.target as HTMLImageElement;
-                        console.error("Failed URL:", target.src);
-                      }}
-                    />
-                  </>
-                ) : (
-                  <>
-                    {console.log("Account settings: No avatar URL available")}
-                    <AvatarImage src="" alt={user?.username || "User"} />
-                  </>
-                )}
-                <AvatarFallback className="text-2xl">
-                  {user?.username?.substring(0, 2).toUpperCase() || "U"}
-                </AvatarFallback>
-              </Avatar>
+              <Avatar 
+                className="h-24 w-24 mb-4"
+                src={avatarPreview ? 
+                  avatarPreview : 
+                  practitioner?.avatarUrl ? 
+                    (practitioner.avatarUrl.includes('?') ? 
+                      `${practitioner.avatarUrl}&_t=${Date.now()}` : 
+                      `${practitioner.avatarUrl}?_t=${Date.now()}`) 
+                    : null
+                }
+                alt={user?.username || "User"}
+                fallback={
+                  <span className="text-2xl">
+                    {user?.username?.substring(0, 2).toUpperCase() || "U"}
+                  </span>
+                }
+              />
               
               <p className="font-medium text-center">{user?.username}</p>
               <p className="text-sm text-muted-foreground text-center">

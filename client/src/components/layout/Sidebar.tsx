@@ -47,33 +47,20 @@ export default function Sidebar() {
     <div className="hidden md:flex flex-col h-[calc(100vh-4rem)] bg-[rgb(32,148,243)] text-white w-[240px] fixed top-16 left-0 py-6 px-4 overflow-y-auto">
       <div className="flex flex-col space-y-2">
         <div className="py-4 px-4 mb-2 bg-white/10 rounded-md flex flex-col items-center">
-          <Avatar className="h-16 w-16 mb-3 border-2 border-white/30">
-            {/* Always try to render the avatar image with fallback handling */}
-            {practitioner?.avatarUrl ? (
-              <>
-                {console.log("Sidebar attempting to load avatar from:", practitioner.avatarUrl)}
-                <AvatarImage 
-                  src={practitioner.avatarUrl.includes('?') ? 
-                    `${practitioner.avatarUrl}&_t=${Date.now()}` : 
-                    `${practitioner.avatarUrl}?_t=${Date.now()}`} 
-                  alt={user.name || "User"} 
-                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                    console.error("Sidebar avatar failed to load:", e);
-                    const target = e.target as HTMLImageElement;
-                    console.error("Failed URL in sidebar:", target.src);
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                {console.log("Sidebar has no avatar URL from practitioner object:", practitioner)}
-                <AvatarImage src="" alt={user.name || "User"} />
-              </>
-            )}
-            <AvatarFallback className="bg-white/20 text-white">
-              {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-8 w-8" />}
-            </AvatarFallback>
-          </Avatar>
+          <Avatar 
+            className="h-16 w-16 mb-3 border-2 border-white/30"
+            src={practitioner?.avatarUrl ? 
+              (practitioner.avatarUrl.includes('?') ? 
+                `${practitioner.avatarUrl}&_t=${Date.now()}` : 
+                `${practitioner.avatarUrl}?_t=${Date.now()}`) 
+              : null}
+            alt={user.name || "User"}
+            fallback={
+              <span className="bg-white/20 text-white">
+                {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-8 w-8" />}
+              </span>
+            }
+          />
           <div className="text-center">
             <p className="font-medium text-white">{user.name}</p>
             <p className="text-sm text-white/70">{user.email}</p>
