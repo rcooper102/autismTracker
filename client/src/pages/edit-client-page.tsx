@@ -97,8 +97,8 @@ export default function EditClientPage() {
   });
 
   // Extract avatar URL from client notes if available
-  const getAvatarUrl = (clientData: any): string | null => {
-    if (!clientData?.notes) return null;
+  const getAvatarUrl = (clientData: any): string => {
+    if (!clientData?.notes) return '';
     
     try {
       // Try to parse notes as JSON to get avatarUrl
@@ -113,11 +113,11 @@ export default function EditClientPage() {
       // Not JSON or no avatar URL
     }
     
-    return null;
+    return '';
   };
   
   // Get the client's avatar URL or preview
-  const getClientAvatar = (): string | null => {
+  const getClientAvatar = (): string => {
     // Priority order: 1. Local preview, 2. Client avatar from notes
     if (avatarPreview) {
       console.log("Using avatar preview:", avatarPreview);
@@ -130,8 +130,22 @@ export default function EditClientPage() {
       return url;
     }
     
-    return null;
+    return '';
   };
+  
+  // Set avatar preview when component mounts or client data changes
+  useEffect(() => {
+    if (client?.notes) {
+      try {
+        const notesObj = JSON.parse(client.notes);
+        if (notesObj.avatarUrl) {
+          setAvatarPreview(notesObj.avatarUrl);
+        }
+      } catch (e) {
+        console.error("Error parsing notes JSON:", e);
+      }
+    }
+  }, [client?.notes]);
   
   // Set form values when client data is loaded
   useEffect(() => {
@@ -689,7 +703,7 @@ export default function EditClientPage() {
                       alt="Client Avatar" 
                       className="w-32 h-32 rounded-full object-cover border"
                     />
-                  ) : client?.notes && client.notes.includes("avatarUrl") ? (
+                  ) : (client?.notes && client.notes.includes("avatarUrl")) ? (
                     <img 
                       src={getAvatarUrl(client)} 
                       alt="Client Avatar" 
