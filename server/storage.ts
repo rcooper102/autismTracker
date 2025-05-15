@@ -238,8 +238,8 @@ export class DatabaseStorage implements IStorage {
       .select({ count: sql`count(*)` })
       .from(dataEntries)
       .where(and(
-        // Replace inArray with an OR condition for each client ID
-        sql`${dataEntries.clientId} IN (${sql.join(clientIds)})`,
+        // Use the in operator for this
+        sql`${dataEntries.clientId} IN (${clientIds.join(',')})`,
         gt(dataEntries.createdAt, twoDaysAgo)
       ));
     
