@@ -208,28 +208,13 @@ export default function NoteDetailPage() {
             ) : (
               <div className="flex items-center space-x-4">
                 <CardTitle className="text-xl">{note.title}</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Button 
-                    size="sm" 
-                    variant="ghost"
-                    onClick={handleStartEditing}
-                  >
-                    Edit Title
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
-                    onClick={() => {
-                      if (confirm("Are you sure you want to delete this note? This action cannot be undone.")) {
-                        deleteNoteMutation.mutate();
-                      }
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Note
-                  </Button>
-                </div>
+                <Button 
+                  size="sm" 
+                  variant="ghost"
+                  onClick={handleStartEditing}
+                >
+                  Edit Title
+                </Button>
               </div>
             )}
           </div>
@@ -289,6 +274,22 @@ export default function NoteDetailPage() {
           )}
         </CardContent>
       </Card>
+      
+      <div className="mt-8 border-t pt-6 flex justify-center">
+        <Button 
+          variant="outline"
+          className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
+          onClick={() => {
+            if (confirm("Are you sure you want to delete this note? This action cannot be undone.")) {
+              deleteNoteMutation.mutate();
+            }
+          }}
+          disabled={deleteNoteMutation.isPending}
+        >
+          <Trash2 className="h-4 w-4 mr-2" />
+          {deleteNoteMutation.isPending ? "Deleting..." : "Delete this note"}
+        </Button>
+      </div>
     </div>
   );
 }
