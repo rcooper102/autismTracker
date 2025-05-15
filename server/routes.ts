@@ -296,26 +296,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         app.use('/uploads', express.static(uploadDir));
       }
       
-      // Create field for avatarUrl in clients table if not already present
-      // In a real app, we'd have this as part of the database schema
-      // Here we're storing it as part of the notes field (JSON) as a workaround
-      let notesObj = {};
-      if (client.notes) {
-        try {
-          notesObj = JSON.parse(client.notes);
-        } catch (e) {
-          notesObj = { text: client.notes };
-        }
-      }
-      
-      notesObj = {
-        ...notesObj,
-        avatarUrl: relativeFilePath
-      };
-      
-      // Update client record with the avatar URL in notes
+      // Now we have a dedicated avatarUrl field, use it directly
+      // Update client record with the avatar URL
       await storage.updateClient(clientId, {
-        notes: JSON.stringify(notesObj)
+        avatarUrl: relativeFilePath
       });
       
       res.json({

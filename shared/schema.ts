@@ -29,6 +29,7 @@ export const clients = pgTable("clients", {
   guardianEmail: text("guardian_email"),
   treatmentPlan: json("treatment_plan").default([]),
   treatmentGoals: json("treatment_goals").default([]),
+  avatarUrl: text("avatar_url"),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
 });
