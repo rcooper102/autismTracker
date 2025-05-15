@@ -384,30 +384,36 @@ export default function EditClientPage() {
                 <FormField
                   control={form.control}
                   name="diagnosis"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Diagnosis</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange}
-                        value={field.value || ""}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select diagnosis" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="asd-1">Autism Spectrum Disorder (Level 1)</SelectItem>
-                          <SelectItem value="asd-2">Autism Spectrum Disorder (Level 2)</SelectItem>
-                          <SelectItem value="asd-3">Autism Spectrum Disorder (Level 3)</SelectItem>
-                          <SelectItem value="aspergers">Asperger's Syndrome</SelectItem>
-                          <SelectItem value="pdd-nos">PDD-NOS</SelectItem>
-                          <SelectItem value="other">Other (specify in notes)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    // Log to debug what value is received
+                    console.log("Current diagnosis value:", field.value);
+                    
+                    return (
+                      <FormItem>
+                        <FormLabel>Diagnosis</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select diagnosis" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="asd-1">Autism Spectrum Disorder (Level 1)</SelectItem>
+                            <SelectItem value="asd-2">Autism Spectrum Disorder (Level 2)</SelectItem>
+                            <SelectItem value="asd-3">Autism Spectrum Disorder (Level 3)</SelectItem>
+                            <SelectItem value="aspergers">Asperger's Syndrome</SelectItem>
+                            <SelectItem value="pdd-nos">PDD-NOS</SelectItem>
+                            <SelectItem value="other">Other (specify in notes)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 <FormField
