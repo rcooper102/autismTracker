@@ -748,17 +748,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email: "john.doe@example.com",
         phone: "(555) 123-4567",
         bio: "Licensed therapist specializing in autism spectrum disorder",
-        avatarUrl: null,
       };
       
+      // Use the avatarUrl from the user object instead of the in-memory profile
       console.log('GET /api/practitioners/me - Retrieved profile data:', { 
         userId: req.user.id,
         profileData: existingProfile,
-        hasAvatar: !!existingProfile.avatarUrl
+        hasAvatar: !!userWithoutPassword.avatarUrl
       });
       
       const responseData = {
-        ...userWithoutPassword,
+        ...userWithoutPassword,  // This includes the avatarUrl from the database
         ...existingProfile
       };
       
@@ -847,32 +847,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         app.use('/uploads', express.static(uploadDir));
       }
       
-      // Get existing profile data or create empty object
-      const existingProfile = practitionerProfiles.get(req.user.id) || {};
-      
-      console.log('Avatar upload: existing profile data:', {
+      // Update the user's avatar URL in the database
+      console.log('Avatar upload: updating avatar URL in database:', {
         userId: req.user.id,
-        existingProfile
+        avatarUrl: fileUrl
       });
       
-      // Update the profile with the avatar URL
+      // Save the avatar URL to the database
+      const updatedUser = await storage.updateUserAvatar(req.user.id, fileUrl);
+      
+      if (!updatedUser) {
+        console.error('Avatar upload: failed to update avatarUrl in database');
+        return res.status(500).json({ message: "Failed to update avatar in database" });
+      }
+      
+      console.log('Avatar upload: successfully updated user record with avatarUrl:', {
+        userId: req.user.id,
+        avatarUrl: updatedUser.avatarUrl
+      });
+      
+      // Remove this line once all code is migrated to use the database
+      // For backwards compatibility during transition
+      const existingProfile = practitionerProfiles.get(req.user.id) || {};
       const updatedProfile = {
         ...existingProfile,
         avatarUrl: fileUrl,
       };
-      
-      console.log('Avatar upload: new profile data with avatarUrl:', {
-        userId: req.user.id,
-        updatedProfile
-      });
-      
-      // Store the updated profile
       practitionerProfiles.set(req.user.id, updatedProfile);
-      
-      console.log('Avatar upload: profile data after update:', {
-        userId: req.user.id,
-        profile: practitionerProfiles.get(req.user.id)
-      });
       
       res.json({
         message: "Avatar uploaded successfully",
