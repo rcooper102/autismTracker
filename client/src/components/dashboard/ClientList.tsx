@@ -80,7 +80,7 @@ export default function ClientList({ clients, isLoading }: ClientListProps) {
       <div className="p-4 border-b flex justify-between items-center">
         <h2 className="font-semibold">Recent Client Activity</h2>
         <Link href="/clients" className="text-primary text-sm flex items-center">
-          View All <i className="ri-arrow-right-s-line ml-1"></i>
+          View All Clients <i className="ri-arrow-right-s-line ml-1"></i>
         </Link>
       </div>
       <div className="divide-y">

@@ -12,12 +12,14 @@ import DashboardPage from "@/pages/dashboard-page";
 import ClientDetailPage from "@/pages/client-detail-page";
 import DataEntryPage from "@/pages/data-entry-page";
 import AddClientPage from "@/pages/add-client-page";
+import ClientsPage from "@/pages/clients-page";
 
 function Router() {
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />
       <ProtectedRoute path="/" component={DashboardPage} />
+      <ProtectedRoute path="/clients" component={ClientsPage} />
       <ProtectedRoute path="/clients/:id" component={ClientDetailPage} />
       <ProtectedRoute path="/log-data" component={DataEntryPage} />
       <ProtectedRoute path="/add-client" component={AddClientPage} />
