@@ -21,43 +21,43 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="hidden md:flex flex-col h-[calc(100vh-4rem)] bg-gray-900 text-white border-r border-gray-800 w-[240px] fixed top-16 left-0 py-6 px-4 overflow-y-auto">
+    <div className="hidden md:flex flex-col h-[calc(100vh-4rem)] bg-[rgb(32,148,243)] text-white border-r border-gray-800 w-[240px] fixed top-16 left-0 py-6 px-4 overflow-y-auto">
       <div className="flex flex-col space-y-2">
-        <div className="py-2 px-4 mb-2 bg-gray-800 rounded-md">
+        <div className="py-2 px-4 mb-2 bg-white/10 rounded-md">
           <p className="font-medium text-white">{user.name}</p>
-          <p className="text-sm text-gray-400">{user.email}</p>
+          <p className="text-sm text-white/70">{user.email}</p>
         </div>
         
         {user.role === "practitioner" && (
           <>
-            <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
-              <LayoutDashboard className="mr-3 h-5 w-5 text-gray-400" />
+            <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-white/10 text-white">
+              <LayoutDashboard className="mr-3 h-5 w-5 text-white" />
               <span>Dashboard</span>
             </Link>
             
-            <Link href="/clients" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
-              <UserPlus className="mr-3 h-5 w-5 text-gray-400" />
+            <Link href="/clients" className="flex items-center py-2 px-3 rounded-md hover:bg-white/10 text-white">
+              <UserPlus className="mr-3 h-5 w-5 text-white" />
               <span>Clients</span>
             </Link>
             
-            <Link href="/add-client" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
-              <UserPlus className="mr-3 h-5 w-5 text-gray-400" />
+            <Link href="/add-client" className="flex items-center py-2 px-3 rounded-md hover:bg-white/10 text-white">
+              <UserPlus className="mr-3 h-5 w-5 text-white" />
               <span>Add Client</span>
             </Link>
             
             <Button 
               variant="ghost" 
-              className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
+              className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-white/10 text-white w-full"
             >
-              <CalendarDays className="mr-3 h-5 w-5 text-gray-400" />
+              <CalendarDays className="mr-3 h-5 w-5 text-white" />
               <span>Schedule</span>
             </Button>
             
             <Button 
               variant="ghost" 
-              className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
+              className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-white/10 text-white w-full"
             >
-              <PieChart className="mr-3 h-5 w-5 text-gray-400" />
+              <PieChart className="mr-3 h-5 w-5 text-white" />
               <span>Reports</span>
             </Button>
           </>
@@ -65,31 +65,31 @@ export default function Sidebar() {
         
         {user.role === "client" && (
           <>
-            <Link href="/log-data" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
-              <PieChart className="mr-3 h-5 w-5 text-gray-400" />
+            <Link href="/log-data" className="flex items-center py-2 px-3 rounded-md hover:bg-white/10 text-white">
+              <PieChart className="mr-3 h-5 w-5 text-white" />
               <span>Log Data</span>
             </Link>
             
-            <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
-              <CalendarDays className="mr-3 h-5 w-5 text-gray-400" />
+            <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-white/10 text-white">
+              <CalendarDays className="mr-3 h-5 w-5 text-white" />
               <span>Sessions</span>
             </Link>
           </>
         )}
         
-        <div className="border-t border-gray-700 my-2"></div>
+        <div className="border-t border-white/20 my-2"></div>
         
-        <Link href="/account" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
-          <Settings className="mr-3 h-5 w-5 text-gray-400" />
+        <Link href="/account" className="flex items-center py-2 px-3 rounded-md hover:bg-white/10 text-white">
+          <Settings className="mr-3 h-5 w-5 text-white" />
           <span>Account Settings</span>
         </Link>
         
         <Button 
           variant="ghost" 
           onClick={handleLogout}
-          className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
+          className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-white/10 text-white w-full"
         >
-          <LogOut className="mr-3 h-5 w-5 text-gray-400" />
+          <LogOut className="mr-3 h-5 w-5 text-white" />
           <span>Log out</span>
         </Button>
       </div>

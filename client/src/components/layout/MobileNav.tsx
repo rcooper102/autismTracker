@@ -36,52 +36,52 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent side="left" className="w-[280px] sm:w-[350px] bg-gray-900 text-white border-r border-gray-800">
+      <SheetContent side="left" className="w-[280px] sm:w-[350px] bg-[rgb(32,148,243)] text-white border-r border-gray-800">
         <SheetHeader className="mb-6">
           <SheetTitle className="flex items-center space-x-2 text-white">
             <BrainCog className="h-6 w-6 text-white" />
             <span className="text-xl font-bold text-white">AutiTrack</span>
           </SheetTitle>
-          <SheetDescription className="text-gray-400">
+          <SheetDescription className="text-white/70">
             {user.role === "practitioner" ? "Healthcare Provider" : "Client"} Portal
           </SheetDescription>
         </SheetHeader>
         
         <div className="flex flex-col space-y-2">
-          <div className="py-2 px-4 mb-2 bg-gray-800 rounded-md">
+          <div className="py-2 px-4 mb-2 bg-white/10 rounded-md">
             <p className="font-medium text-white">{user.name}</p>
-            <p className="text-sm text-gray-400">{user.email}</p>
+            <p className="text-sm text-white/70">{user.email}</p>
           </div>
           
           {user.role === "practitioner" && (
             <>
               <SheetClose asChild>
-                <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
-                  <LayoutDashboard className="mr-3 h-5 w-5 text-gray-400" />
+                <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-white/10 text-white">
+                  <LayoutDashboard className="mr-3 h-5 w-5 text-white" />
                   <span>Dashboard</span>
                 </Link>
               </SheetClose>
               
               <SheetClose asChild>
-                <Link href="/add-client" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
-                  <UserPlus className="mr-3 h-5 w-5 text-gray-400" />
+                <Link href="/add-client" className="flex items-center py-2 px-3 rounded-md hover:bg-white/10 text-white">
+                  <UserPlus className="mr-3 h-5 w-5 text-white" />
                   <span>Add Client</span>
                 </Link>
               </SheetClose>
               
               <Button 
                 variant="ghost" 
-                className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
+                className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-white/10 text-white w-full"
               >
-                <CalendarDays className="mr-3 h-5 w-5 text-gray-400" />
+                <CalendarDays className="mr-3 h-5 w-5 text-white" />
                 <span>Schedule</span>
               </Button>
               
               <Button 
                 variant="ghost" 
-                className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white"
+                className="flex items-center justify-start py-2 px-3 rounded-md hover:bg-white/10 text-white w-full"
               >
-                <PieChart className="mr-3 h-5 w-5 text-gray-400" />
+                <PieChart className="mr-3 h-5 w-5 text-white" />
                 <span>Reports</span>
               </Button>
             </>
