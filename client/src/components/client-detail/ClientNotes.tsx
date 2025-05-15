@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { ClientNote } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
@@ -19,12 +20,10 @@ interface ClientNotesProps {
 export default function ClientNotes({ clientId }: ClientNotesProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState("");
   const [newNoteText, setNewNoteText] = useState("");
-  const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
-  const [editingNoteTitle, setEditingNoteTitle] = useState("");
-  const [editingNoteText, setEditingNoteText] = useState("");
 
   // Fetch client notes
   const { 
@@ -61,39 +60,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
     },
   });
 
-  // Update a note mutation
-  const updateNoteMutation = useMutation({
-    mutationFn: async ({ 
-      noteId, 
-      data 
-    }: { 
-      noteId: number; 
-      data: { 
-        title?: string; 
-        entries?: Array<{ text: string; date?: string | Date }> 
-      } 
-    }) => {
-      const res = await apiRequest("PATCH", `/api/clients/${clientId}/notes/${noteId}`, data);
-      return await res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/clients/${clientId}/notes`] });
-      setEditingNoteId(null);
-      setEditingNoteTitle("");
-      setEditingNoteText("");
-      toast({
-        title: "Note updated",
-        description: "Your note has been updated successfully.",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: `Failed to update note: ${error.message}`,
-        variant: "destructive",
-      });
-    },
-  });
+
 
   // Delete a note mutation
   const deleteNoteMutation = useMutation({
@@ -294,13 +261,19 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                       />
                     ) : (
                       <div className="flex justify-between items-center">
-                        <CardTitle>{note.title}</CardTitle>
+                        <Button 
+                          variant="ghost" 
+                          className="p-0 h-auto font-medium text-left hover:bg-transparent"
+                          onClick={() => navigate(`/notes/${note.id}`)}
+                        >
+                          <CardTitle>{note.title}</CardTitle>
+                        </Button>
                         <div className="flex space-x-1">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => navigate(`/notes/${note.id}`)}
-                            disabled={isAddingNote || editingNoteId !== null}
+                            aria-label="Edit note"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -308,7 +281,8 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteNote(note.id)}
-                            disabled={isAddingNote || editingNoteId !== null}
+                            disabled={isAddingNote}
+                            aria-label="Delete note"
                           >
                             <Trash2 className="h-4 w-4 text-red-500" />
                           </Button>
@@ -319,52 +293,13 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                       Last updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy h:mm a') : 'Unknown'}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    {editingNoteId === note.id && (
-                      <div className="mb-4">
-                        <Textarea
-                          placeholder="Add a new entry..."
-                          rows={3}
-                          value={editingNoteText}
-                          onChange={(e) => setEditingNoteText(e.target.value)}
-                          className="mb-2"
-                        />
-                        <CardDescription>
-                          This will add a new entry at the top of the note history
-                        </CardDescription>
-                      </div>
-                    )}
-                    <ScrollArea className="h-[200px] pr-4">
-                      <div className="space-y-3">
-                        {(note.entries as { text: string; date: string }[] || []).map((entry, index) => (
-                          <div key={index} className="text-sm">
-                            <div className="text-gray-500 text-xs mb-1">
-                              {format(new Date(entry.date), 'MMM d, yyyy h:mm a')}
-                            </div>
-                            <div className="text-gray-800 whitespace-pre-wrap">{entry.text}</div>
-                            {index < (note.entries as { text: string; date: string }[]).length - 1 && (
-                              <Separator className="my-2" />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
+                  <CardContent className="pt-0">
+                    <CardDescription className="text-gray-600">
+                      {(note.entries && Array.isArray(note.entries) && note.entries.length > 0) ? 
+                        `${note.entries.length} entries` : 
+                        "No entries yet"}
+                    </CardDescription>
                   </CardContent>
-                  {editingNoteId === note.id && (
-                    <CardFooter className="flex justify-end space-x-2 pb-4">
-                      <Button variant="outline" size="sm" onClick={handleCancelEdit}>
-                        <X className="h-4 w-4 mr-1" /> Cancel
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        onClick={() => handleUpdateNote(note.id)}
-                        disabled={updateNoteMutation.isPending}
-                      >
-                        <Check className="h-4 w-4 mr-1" /> 
-                        {updateNoteMutation.isPending ? "Saving..." : "Save Changes"}
-                      </Button>
-                    </CardFooter>
-                  )}
                 </Card>
               ))}
             </div>
