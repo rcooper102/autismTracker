@@ -58,8 +58,6 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
     },
   });
 
-
-
   // Delete a note mutation
   const deleteNoteMutation = useMutation({
     mutationFn: async (noteId: number) => {
@@ -107,24 +105,10 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
     });
   };
 
-
-
-  const handleEditNote = (note: ClientNote) => {
-    setEditingNoteId(note.id);
-    setEditingNoteTitle(note.title);
-    setEditingNoteText(""); // Clear text for a new entry
-  };
-
   const handleDeleteNote = (noteId: number) => {
     if (window.confirm("Are you sure you want to delete this note?")) {
       deleteNoteMutation.mutate(noteId);
     }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingNoteId(null);
-    setEditingNoteTitle("");
-    setEditingNoteText("");
   };
 
   const handleCancelAdd = () => {
@@ -172,7 +156,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                 variant="outline" 
                 size="sm"
                 onClick={() => setIsAddingNote(true)}
-                disabled={isAddingNote || editingNoteId !== null}
+                disabled={isAddingNote}
               >
                 <PlusCircle className="h-4 w-4 mr-2" />
                 Add Note
@@ -222,36 +206,34 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
               {notes.map((note) => (
                 <Card key={note.id} className="border shadow-sm">
                   <CardHeader className="pb-2">
-                    {(
-                      <div className="flex justify-between items-center">
-                        <Button 
-                          variant="ghost" 
-                          className="p-0 h-auto font-medium text-left hover:bg-transparent"
+                    <div className="flex justify-between items-center">
+                      <Button 
+                        variant="ghost" 
+                        className="p-0 h-auto font-medium text-left hover:bg-transparent"
+                        onClick={() => navigate(`/notes/${note.id}`)}
+                      >
+                        <CardTitle>{note.title}</CardTitle>
+                      </Button>
+                      <div className="flex space-x-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => navigate(`/notes/${note.id}`)}
+                          aria-label="Edit note"
                         >
-                          <CardTitle>{note.title}</CardTitle>
+                          <Edit className="h-4 w-4" />
                         </Button>
-                        <div className="flex space-x-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigate(`/notes/${note.id}`)}
-                            aria-label="Edit note"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteNote(note.id)}
-                            disabled={isAddingNote}
-                            aria-label="Delete note"
-                          >
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteNote(note.id)}
+                          disabled={isAddingNote}
+                          aria-label="Delete note"
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
                       </div>
-                    )}
+                    </div>
                     <CardDescription>
                       Last updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy h:mm a') : 'Unknown'}
                     </CardDescription>
