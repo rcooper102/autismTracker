@@ -3,6 +3,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import clientConfig from "@/config/client-config.json";
+import { ReactNode } from "react";
 
 interface ClientInfoProps {
   client: Client & { user?: any };
@@ -31,11 +32,11 @@ export default function ClientInfo({ client }: ClientInfoProps) {
     return planOption ? planOption.label : plan;
   };
   
-  // Format treatment plan array to readable text
-  const formatTreatmentPlan = (plan: string[] | null) => {
+  // Format treatment plan array to list items
+  const formatTreatmentPlan = (plan: string[] | null): ReactNode => {
     if (!plan || plan.length === 0) return "Not specified";
     
-    return plan.map(p => getTreatmentPlanLabel(p)).join(", ");
+    return plan.map((p, index) => getTreatmentPlanLabel(p));
   };
   return (
     <Card className="mb-6">
@@ -67,7 +68,15 @@ export default function ClientInfo({ client }: ClientInfoProps) {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Treatment Plan</label>
-          <p className="text-gray-900">{formatTreatmentPlan(client.treatmentPlan)}</p>
+          {client.treatmentPlan && Array.isArray(client.treatmentPlan) && client.treatmentPlan.length > 0 ? (
+            <ul className="list-disc pl-5 space-y-1 text-gray-900">
+              {client.treatmentPlan.map((plan, index) => (
+                <li key={index}>{getTreatmentPlanLabel(plan)}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-900">Not specified</p>
+          )}
         </div>
         <div className="pt-3">
           <Link href={`/clients/${client.id}/edit`}>
