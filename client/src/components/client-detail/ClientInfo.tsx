@@ -35,7 +35,7 @@ export default function ClientInfo({ client }: ClientInfoProps) {
           <p className="text-gray-900">{client.treatmentPlan || "Not specified"}</p>
         </div>
         <div className="pt-3">
-          <Link href={`/edit-client/${client.id}`}>
+          <Link href={`/clients/${client.id}/edit`}>
             <Button 
               variant="outline"
               className="w-full flex items-center justify-center"
