@@ -70,18 +70,11 @@ export default function EditClientPage() {
   
   // Set avatar preview when client data changes
   useEffect(() => {
-    if (client?.notes) {
-      try {
-        const notesObj = JSON.parse(client.notes);
-        if (notesObj.avatarUrl) {
-          console.log("Found avatar URL in client data:", notesObj.avatarUrl);
-          setAvatarPreview(notesObj.avatarUrl);
-        }
-      } catch (e) {
-        console.error("Error parsing notes JSON in effect:", e);
-      }
+    if (client?.avatarUrl) {
+      console.log("Found avatarUrl in client data:", client.avatarUrl);
+      setAvatarPreview(client.avatarUrl);
     }
-  }, [client?.notes]);
+  }, [client?.avatarUrl]);
 
   // Client info form
   const form = useForm<EditClientFormValues>({
@@ -111,38 +104,26 @@ export default function EditClientPage() {
     },
   });
 
-  // Extract avatar URL from client notes if available
+  // Get avatar URL directly from client data
   const getAvatarUrl = (clientData: any): string => {
-    if (!clientData?.notes) return '';
-    
-    try {
-      // Try to parse notes as JSON to get avatarUrl
-      const notesObj = JSON.parse(clientData.notes);
-      if (notesObj.avatarUrl) {
-        // Ensure the URL includes the full path
-        console.log("Found avatar URL in notes:", notesObj.avatarUrl);
-        return notesObj.avatarUrl;
-      }
-    } catch (e) {
-      console.log("Failed to parse notes as JSON:", e);
-      // Not JSON or no avatar URL
+    if (clientData?.avatarUrl) {
+      console.log("Using avatarUrl from client:", clientData.avatarUrl);
+      return clientData.avatarUrl;
     }
-    
     return '';
   };
   
   // Get the client's avatar URL or preview
   const getClientAvatar = (): string => {
-    // Priority order: 1. Local preview, 2. Client avatar from notes
+    // Priority order: 1. Local preview, 2. Client avatarUrl
     if (avatarPreview) {
       console.log("Using avatar preview:", avatarPreview);
       return avatarPreview;
     }
     
-    if (client) {
-      const url = getAvatarUrl(client);
-      console.log("Getting client avatar from notes:", url);
-      return url;
+    if (client?.avatarUrl) {
+      console.log("Getting client avatar:", client.avatarUrl);
+      return client.avatarUrl;
     }
     
     return '';
@@ -327,15 +308,9 @@ export default function EditClientPage() {
 
   // Manual helper to force reload the avatar whenever needed
   const refreshAvatarIfNeeded = () => {
-    if (client?.notes) {
-      try {
-        const notesObj = JSON.parse(client.notes);
-        if (notesObj.avatarUrl && !avatarPreview) {
-          setAvatarPreview(notesObj.avatarUrl);
-        }
-      } catch (e) {
-        console.error("Error parsing notes JSON:", e);
-      }
+    if (client?.avatarUrl && !avatarPreview) {
+      console.log("Refreshing avatar from client data:", client.avatarUrl);
+      setAvatarPreview(client.avatarUrl);
     }
   };
 
