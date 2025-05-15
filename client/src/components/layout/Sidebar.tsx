@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   BrainCog,
   LayoutDashboard,
@@ -9,6 +10,7 @@ import {
   PieChart,
   Settings,
   LogOut,
+  User,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -23,9 +25,17 @@ export default function Sidebar() {
   return (
     <div className="hidden md:flex flex-col h-[calc(100vh-4rem)] bg-[rgb(32,148,243)] text-white w-[240px] fixed top-16 left-0 py-6 px-4 overflow-y-auto">
       <div className="flex flex-col space-y-2">
-        <div className="py-2 px-4 mb-2 bg-white/10 rounded-md">
-          <p className="font-medium text-white">{user.name}</p>
-          <p className="text-sm text-white/70">{user.email}</p>
+        <div className="py-3 px-4 mb-2 bg-white/10 rounded-md flex items-center">
+          <Avatar className="h-10 w-10 mr-3 border-2 border-white/30">
+            <AvatarImage src={user.avatarUrl} alt={user.name || "User"} />
+            <AvatarFallback className="bg-white/20 text-white">
+              {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-6 w-6" />}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="font-medium text-white">{user.name}</p>
+            <p className="text-sm text-white/70">{user.email}</p>
+          </div>
         </div>
         
         {user.role === "practitioner" && (
