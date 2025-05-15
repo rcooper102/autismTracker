@@ -229,16 +229,14 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
           ) : (
             <div className="space-y-2">
               {notes.map((note) => (
-                <Card key={note.id} className="border shadow-sm">
+                <Card 
+                  key={note.id} 
+                  className="border shadow-sm hover:shadow cursor-pointer" 
+                  onClick={() => navigate(`/notes/${note.id}`)}
+                >
                   <CardHeader className="pb-2 pt-2 px-3">
                     <div className="flex justify-between items-center">
-                      <Button 
-                        variant="ghost" 
-                        className="p-0 h-auto font-medium text-left hover:bg-transparent"
-                        onClick={() => navigate(`/notes/${note.id}`)}
-                      >
-                        <CardTitle className="text-sm">{note.title}</CardTitle>
-                      </Button>
+                      <CardTitle className="text-sm">{note.title}</CardTitle>
                     </div>
                     <p className="text-xs text-gray-500 mt-0">
                       Updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy') : 'Unknown'} • 

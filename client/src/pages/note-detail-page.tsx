@@ -1,7 +1,7 @@
 import { useParams, useLocation, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { ChevronLeft, Save, Plus, Check, X } from "lucide-react";
+import { ChevronLeft, Save, Plus, Check, X, Trash2 } from "lucide-react";
 import { 
   Card, 
   CardContent, 
@@ -53,7 +53,7 @@ export default function NoteDetailPage() {
           date: new Date().toISOString(),
         };
         
-        const currentEntries = note?.entries ? [...note.entries] : [];
+        const currentEntries = note?.entries && Array.isArray(note.entries) ? [...note.entries] : [];
         updateData.entries = [newEntry, ...currentEntries];
       }
       
@@ -76,6 +76,36 @@ export default function NoteDetailPage() {
     onError: (error: Error) => {
       toast({
         title: "Failed to update note",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Delete note mutation
+  const deleteNoteMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest(
+        "DELETE",
+        `/api/notes/${noteId}`,
+        {}
+      );
+    },
+    onSuccess: () => {
+      toast({
+        title: "Note deleted",
+        description: "The note has been permanently deleted.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/clients', note?.clientId, 'notes'] });
+      if (note?.clientId) {
+        navigate(`/clients/${note.clientId}`);
+      } else {
+        navigate('/');
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to delete note",
         description: error.message,
         variant: "destructive",
       });
