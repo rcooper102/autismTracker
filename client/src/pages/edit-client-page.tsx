@@ -111,6 +111,20 @@ export default function EditClientPage() {
     return null;
   };
   
+  // Get the client's avatar URL or preview
+  const getClientAvatar = (): string | null => {
+    // Priority order: 1. Local preview, 2. Client avatar from notes
+    if (avatarPreview) {
+      return avatarPreview;
+    }
+    
+    if (client) {
+      return getAvatarUrl(client);
+    }
+    
+    return null;
+  };
+  
   // Set form values when client data is loaded
   useEffect(() => {
     if (client) {
@@ -240,13 +254,17 @@ export default function EditClientPage() {
       
       return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Refresh the client data without losing the avatar preview
       queryClient.invalidateQueries({queryKey: [`/api/clients/${id}`]});
+      
+      // Keep the current avatar preview
+      // The preview will stay visible until the query completes and new data loads
+      
       toast({
         title: "Avatar uploaded",
         description: "Client avatar has been updated successfully.",
       });
-      setSelectedFile(null);
     },
     onError: (error: Error) => {
       toast({
@@ -628,10 +646,10 @@ export default function EditClientPage() {
             <CardContent>
               <div className="flex flex-col items-center">
                 <div className="relative mb-4">
-                  {avatarPreview ? (
+                  {getClientAvatar() ? (
                     <img 
-                      src={avatarPreview} 
-                      alt="Avatar Preview" 
+                      src={getClientAvatar() || ''} 
+                      alt="Client Avatar" 
                       className="w-32 h-32 rounded-full object-cover border"
                     />
                   ) : (
