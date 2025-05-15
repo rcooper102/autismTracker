@@ -18,7 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { ClientNote } from "@shared/schema";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function NoteDetailPage() {
   const { noteId } = useParams();
@@ -27,6 +27,8 @@ export default function NoteDetailPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingTitle, setEditingTitle] = useState("");
   const [newEntryText, setNewEntryText] = useState("");
+  const [editingEntryIndex, setEditingEntryIndex] = useState<number | null>(null);
+  const [editingEntryText, setEditingEntryText] = useState("");
 
   // Fetch the note data
   const { data: note, isLoading, error } = useQuery<ClientNote>({
@@ -40,7 +42,15 @@ export default function NoteDetailPage() {
 
   // Update note mutation
   const updateNoteMutation = useMutation({
-    mutationFn: async ({ title, text }: { title?: string; text?: string }) => {
+    mutationFn: async ({ 
+      title, 
+      text, 
+      entries 
+    }: { 
+      title?: string; 
+      text?: string; 
+      entries?: { text: string; date: string }[] 
+    }) => {
       const updateData: any = {};
       
       if (title !== undefined) {
@@ -56,6 +66,11 @@ export default function NoteDetailPage() {
         
         const currentEntries = note?.entries && Array.isArray(note.entries) ? [...note.entries] : [];
         updateData.entries = [newEntry, ...currentEntries];
+      }
+      
+      if (entries !== undefined) {
+        // If entries is provided directly, use it to replace the current entries
+        updateData.entries = entries;
       }
       
       const res = await apiRequest(
@@ -134,6 +149,51 @@ export default function NoteDetailPage() {
       setEditingTitle(note.title);
       setIsEditing(true);
     }
+  };
+  
+  const handleStartEditingEntry = (index: number) => {
+    if (note && note.entries && Array.isArray(note.entries)) {
+      const entry = note.entries[index] as { text: string; date: string };
+      setEditingEntryIndex(index);
+      setEditingEntryText(entry.text);
+    }
+  };
+  
+  const handleUpdateEntry = () => {
+    if (editingEntryIndex === null || !note || !note.entries || !Array.isArray(note.entries)) return;
+    
+    if (editingEntryText.trim() === "") {
+      handleDeleteEntry(editingEntryIndex);
+      return;
+    }
+    
+    const updatedEntries = [...note.entries];
+    updatedEntries[editingEntryIndex] = {
+      ...updatedEntries[editingEntryIndex],
+      text: editingEntryText
+    };
+    
+    updateNoteMutation.mutate({ 
+      entries: updatedEntries as { text: string; date: string }[]
+    });
+    
+    setEditingEntryIndex(null);
+    setEditingEntryText("");
+  };
+  
+  const handleCancelEditEntry = () => {
+    setEditingEntryIndex(null);
+    setEditingEntryText("");
+  };
+  
+  const handleDeleteEntry = (index: number) => {
+    if (!note || !note.entries || !Array.isArray(note.entries)) return;
+    
+    const updatedEntries = (note.entries as { text: string; date: string }[]).filter((_, i) => i !== index);
+    
+    updateNoteMutation.mutate({ 
+      entries: updatedEntries
+    });
   };
 
   if (isLoading) {
@@ -262,10 +322,64 @@ export default function NoteDetailPage() {
               <div className="space-y-6">
                 {(note.entries as { text: string; date: string }[] || []).map((entry, index) => (
                   <div key={index} className="border-b pb-4 last:border-0">
-                    <div className="text-gray-500 text-sm mb-2 font-medium">
-                      {format(new Date(entry.date), 'MMM d, yyyy h:mm a')}
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="text-gray-500 text-sm font-medium">
+                        {format(new Date(entry.date), 'MMM d, yyyy h:mm a')}
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => handleStartEditingEntry(index)}
+                          aria-label="Edit entry"
+                        >
+                          <Edit className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-red-500 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => {
+                            if (confirm("Are you sure you want to delete this entry?")) {
+                              handleDeleteEntry(index);
+                            }
+                          }}
+                          aria-label="Delete entry"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </div>
-                    <RichTextContent content={entry.text} className="text-gray-800" />
+                    
+                    {editingEntryIndex === index ? (
+                      <div className="space-y-3">
+                        <RichTextEditor
+                          content={editingEntryText}
+                          onChange={setEditingEntryText}
+                          placeholder="Edit entry..."
+                        />
+                        <div className="flex justify-end space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleCancelEditEntry}
+                          >
+                            <X className="h-3.5 w-3.5 mr-1" />
+                            Cancel
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={handleUpdateEntry}
+                          >
+                            <Check className="h-3.5 w-3.5 mr-1" />
+                            Save
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <RichTextContent content={entry.text} className="text-gray-800" />
+                    )}
                   </div>
                 ))}
               </div>
