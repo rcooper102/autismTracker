@@ -234,7 +234,7 @@ export default function AccountSettingsPage() {
       <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6">
         {/* Sidebar */}
         <div className="space-y-6">
-          <Card>
+          <Card className="shadow-sm">
             <CardContent className="p-6 flex flex-col items-center">
               <Avatar className="h-24 w-24 mb-4">
                 <AvatarImage 
@@ -376,19 +376,22 @@ export default function AccountSettingsPage() {
                     )}
                   />
                   
-                  <Button 
-                    type="submit" 
-                    disabled={updateProfileMutation.isPending || !profileForm.formState.isDirty}
-                  >
-                    {updateProfileMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
+                  <div className="pt-2">
+                    <Button 
+                      type="submit" 
+                      className="w-full md:w-auto" 
+                      disabled={updateProfileMutation.isPending || !profileForm.formState.isDirty}
+                    >
+                      {updateProfileMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        "Save Changes"
+                      )}
+                    </Button>
+                  </div>
                 </form>
               </Form>
             </CardContent>
@@ -450,19 +453,22 @@ export default function AccountSettingsPage() {
                     )}
                   />
                   
-                  <Button 
-                    type="submit" 
-                    disabled={changePasswordMutation.isPending}
-                  >
-                    {changePasswordMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Changing...
-                      </>
-                    ) : (
-                      "Change Password"
-                    )}
-                  </Button>
+                  <div className="pt-2">
+                    <Button 
+                      type="submit" 
+                      className="w-full md:w-auto" 
+                      disabled={changePasswordMutation.isPending}
+                    >
+                      {changePasswordMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Changing...
+                        </>
+                      ) : (
+                        "Change Password"
+                      )}
+                    </Button>
+                  </div>
                 </form>
               </Form>
             </CardContent>
