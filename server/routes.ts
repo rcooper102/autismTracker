@@ -586,6 +586,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch note" });
     }
   });
+  
+  // Update a note by ID
+  app.patch("/api/notes/:noteId", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const noteId = parseInt(req.params.noteId);
+    
+    try {
+      const note = await storage.getClientNote(noteId);
+      
+      if (!note) {
+        return res.status(404).json({ message: "Note not found" });
+      }
+      
+      // Check authorization
+      if (req.user.role === "practitioner") {
+        const client = await storage.getClient(note.clientId);
+        
+        if (!client || client.practitionerId !== req.user.id) {
+          return res.status(403).json({ message: "Not authorized to update this note" });
+        }
+      } else {
+        return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+      }
+      
+      // Define validation schema for note updates
+      const noteUpdateSchema = z.object({
+        title: z.string().optional(),
+        entries: z.array(z.object({
+          text: z.string(),
+          date: z.string().or(z.date()).optional()
+        })).optional()
+      });
+
+      const validatedData = noteUpdateSchema.parse(req.body);
+      
+      const updatedNote = await storage.updateClientNote(noteId, validatedData);
+      
+      if (!updatedNote) {
+        return res.status(404).json({ message: "Note not found" });
+      }
+      
+      res.json(updatedNote);
+    } catch (error) {
+      console.error("Error updating note:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid note data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update note" });
+    }
+  });
+  
+  // Delete a note by ID
+  app.delete("/api/notes/:noteId", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const noteId = parseInt(req.params.noteId);
+    
+    try {
+      const note = await storage.getClientNote(noteId);
+      
+      if (!note) {
+        return res.status(404).json({ message: "Note not found" });
+      }
+      
+      // Check authorization
+      const client = await storage.getClient(note.clientId);
+      
+      if (!client || client.practitionerId !== req.user.id) {
+        return res.status(403).json({ message: "Not authorized to delete this note" });
+      }
+      
+      const success = await storage.deleteClientNote(noteId);
+      
+      if (success) {
+        res.json({ message: "Note deleted successfully" });
+      } else {
+        res.status(500).json({ message: "Failed to delete note" });
+      }
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      res.status(500).json({ message: "Failed to delete note" });
+    }
+  });
 
   app.delete("/api/clients/:clientId/notes/:noteId", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
