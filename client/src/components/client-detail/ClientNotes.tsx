@@ -198,10 +198,10 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
 
   if (isLoading) {
     return (
-      <div className="py-6">
+      <div className="pt-6">
         <Card>
           <CardHeader>
-            <CardTitle>Client Notes</CardTitle>
+            <CardTitle className="text-lg">Client Notes</CardTitle>
             <CardDescription>Loading notes...</CardDescription>
           </CardHeader>
         </Card>
@@ -211,10 +211,10 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
 
   if (isError) {
     return (
-      <div className="py-6">
+      <div className="pt-6">
         <Card>
           <CardHeader>
-            <CardTitle>Client Notes</CardTitle>
+            <CardTitle className="text-lg">Client Notes</CardTitle>
             <CardDescription className="text-red-500">Error loading notes</CardDescription>
           </CardHeader>
         </Card>
@@ -223,7 +223,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
   }
 
   return (
-    <div className="py-6">
+    <div className="pt-6">
       <Card>
         <CardHeader className="pb-3">
           <div className="flex justify-between items-center">
