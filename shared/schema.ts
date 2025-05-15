@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, json } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -57,6 +57,16 @@ export const sessions = pgTable("sessions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Client notes schema for tracking client notes
+export const clientNotes = pgTable("client_notes", {
+  id: serial("id").primaryKey(),
+  clientId: integer("client_id").notNull().references(() => clients.id),
+  title: text("title").notNull(),
+  entries: jsonb("entries").default([]).notNull(), // Array of {text: string, date: timestamp}
+  lastUpdated: timestamp("last_updated").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert Schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -78,6 +88,12 @@ export const insertSessionSchema = createInsertSchema(sessions).omit({
   createdAt: true,
 });
 
+export const insertClientNoteSchema = createInsertSchema(clientNotes).omit({
+  id: true,
+  createdAt: true,
+  lastUpdated: true,
+});
+
 // Relation definitions
 export const usersRelations = relations(users, ({ many }) => ({
   clientsAsUser: many(clients, { relationName: "user_clients" }),
@@ -97,7 +113,8 @@ export const clientsRelations = relations(clients, ({ one, many }) => ({
     relationName: "practitioner_clients"
   }),
   dataEntries: many(dataEntries),
-  sessions: many(sessions)
+  sessions: many(sessions),
+  clientNotes: many(clientNotes)
 }));
 
 export const dataEntriesRelations = relations(dataEntries, ({ one }) => ({
@@ -118,6 +135,13 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   })
 }));
 
+export const clientNotesRelations = relations(clientNotes, ({ one }) => ({
+  client: one(clients, {
+    fields: [clientNotes.clientId],
+    references: [clients.id]
+  })
+}));
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -130,6 +154,9 @@ export type DataEntry = typeof dataEntries.$inferSelect;
 
 export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type Session = typeof sessions.$inferSelect;
+
+export type InsertClientNote = z.infer<typeof insertClientNoteSchema>;
+export type ClientNote = typeof clientNotes.$inferSelect;
 
 // Extended types for the application
 export type ClientWithUser = Client & {
