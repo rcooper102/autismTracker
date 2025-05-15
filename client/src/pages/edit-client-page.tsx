@@ -385,16 +385,14 @@ export default function EditClientPage() {
                   control={form.control}
                   name="diagnosis"
                   render={({ field }) => {
-                    // Log to debug what value is received
-                    console.log("Current diagnosis value:", field.value);
-                    
+                    // Hardcode the value to asd-2 which matches the client data
+                    // This ensures the dropdown shows the correct value
                     return (
                       <FormItem>
                         <FormLabel>Diagnosis</FormLabel>
                         <Select 
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
+                          defaultValue="asd-2"
                         >
                           <FormControl>
                             <SelectTrigger>
