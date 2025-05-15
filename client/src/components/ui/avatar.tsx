@@ -57,11 +57,19 @@ export interface AvatarImageProps extends React.ImgHTMLAttributes<HTMLImageEleme
   onError?: () => void;
 }
 
-export function AvatarImage({ className, onError, ...props }: AvatarImageProps) {
+export function AvatarImage({ className, onError, src, ...props }: AvatarImageProps) {
+  // Add cache buster to image URL to prevent caching issues
+  const imgSrc = src ? (
+    src.includes('?') ? 
+      `${src}&_t=${Date.now()}` : 
+      `${src}?_t=${Date.now()}`
+  ) : undefined;
+  
   return (
     <img 
       className={cn("h-full w-full object-cover", className)} 
       onError={onError}
+      src={imgSrc}
       {...props} 
     />
   );

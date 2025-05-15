@@ -143,33 +143,11 @@ export default function ClientsPage() {
                     <Link key={client.id} href={`/clients/${client.id}`} className="p-4 hover:bg-gray-50 transition-colors cursor-pointer block">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                          <Avatar className="w-10 h-10">
+                          <Avatar className="w-10 h-10" src={client.avatarUrl}>
                             <AvatarFallback className={colorClass}>
                               <span className="font-medium">{initials}</span>
                             </AvatarFallback>
                           </Avatar>
-                          
-                          {/* Display avatar directly for debugging */}
-                          {client.avatarUrl && (
-                            <div className="mt-2 text-xs flex flex-col items-center">
-                              <div className="text-gray-500 mb-1">Avatar URL:</div>
-                              <div className="border p-2 text-xs overflow-auto max-w-[150px]">
-                                {client.avatarUrl}
-                              </div>
-                              <div className="mt-2 border p-1 bg-gray-50">
-                                <img 
-                                  src={client.avatarUrl} 
-                                  alt="Direct avatar test"
-                                  className="w-20 h-20 object-cover"
-                                  onError={(e) => {
-                                    console.error("Error loading image:", client.avatarUrl);
-                                    e.currentTarget.style.display = 'none';
-                                  }}
-                                  onLoad={() => console.log("Image loaded successfully:", client.avatarUrl)}
-                                />
-                              </div>
-                            </div>
-                          )}
                           <div>
                             <p className="font-medium">{`${client.firstName} ${client.lastName}`}</p>
                             <p className="text-xs text-gray-500">
