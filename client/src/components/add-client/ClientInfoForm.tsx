@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { RequiredField } from "@/components/ui/required-field";
 
 interface ClientInfoFormProps {
   form: UseFormReturn<any>;
@@ -20,7 +21,7 @@ export default function ClientInfoForm({ form }: ClientInfoFormProps) {
           name="firstName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>First Name</FormLabel>
+              <FormLabel><RequiredField>First Name</RequiredField></FormLabel>
               <FormControl>
                 <Input placeholder="Enter first name" {...field} />
               </FormControl>
@@ -34,7 +35,7 @@ export default function ClientInfoForm({ form }: ClientInfoFormProps) {
           name="lastName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Last Name</FormLabel>
+              <FormLabel><RequiredField>Last Name</RequiredField></FormLabel>
               <FormControl>
                 <Input placeholder="Enter last name" {...field} />
               </FormControl>

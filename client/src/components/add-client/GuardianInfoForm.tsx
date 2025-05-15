@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { RequiredField } from "@/components/ui/required-field";
 
 interface GuardianInfoFormProps {
   form: UseFormReturn<any>;
@@ -19,7 +20,7 @@ export default function GuardianInfoForm({ form }: GuardianInfoFormProps) {
           name="guardianName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel><RequiredField>Full Name</RequiredField></FormLabel>
               <FormControl>
                 <Input placeholder="Enter guardian's full name" {...field} />
               </FormControl>
