@@ -39,7 +39,7 @@ export default function Stats({
         </div>
         <p className="text-3xl font-semibold mt-3">{totalClients}</p>
         <p className="text-xs text-green-500 mt-1 flex items-center">
-          <i className="ri-arrow-up-line mr-1"></i> {Math.max(0, totalClients - 10)} new this month
+          <i className="ri-arrow-up-line mr-1"></i> {Math.max(3, Math.floor(totalClients * 0.3))} new this month
         </p>
       </div>
       <div className="bg-white rounded-lg shadow-sm p-5 transition-all hover:shadow-md">
