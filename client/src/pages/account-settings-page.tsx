@@ -269,20 +269,26 @@ export default function AccountSettingsPage() {
                 </label>
                 
                 {avatarFile && (
-                  <Button 
-                    onClick={handleAvatarUpload} 
-                    className="w-full mt-2"
-                    disabled={uploadAvatarMutation.isPending}
-                  >
-                    {uploadAvatarMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Uploading...
-                      </>
-                    ) : (
-                      "Upload Photo"
-                    )}
-                  </Button>
+                  <div className="w-full mt-3">
+                    <Button 
+                      onClick={handleAvatarUpload} 
+                      className="w-full"
+                      disabled={uploadAvatarMutation.isPending}
+                      variant="outline"
+                    >
+                      {uploadAvatarMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload Photo
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 )}
               </div>
             </CardContent>
