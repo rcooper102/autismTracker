@@ -60,13 +60,28 @@ export default function EditClientPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
 
   // Fetch client data
-  const { data: client, isLoading } = useQuery<Client>({
+  const { data: client, isLoading } = useQuery({
     queryKey: [`/api/clients/${id}`],
-    enabled: !!id,
+    enabled: !!id
   });
+  
+  // Set avatar preview when client data changes
+  useEffect(() => {
+    if (client?.notes) {
+      try {
+        const notesObj = JSON.parse(client.notes);
+        if (notesObj.avatarUrl) {
+          console.log("Found avatar URL in client data:", notesObj.avatarUrl);
+          setAvatarPreview(notesObj.avatarUrl);
+        }
+      } catch (e) {
+        console.error("Error parsing notes JSON in effect:", e);
+      }
+    }
+  }, [client?.notes]);
 
   // Client info form
   const form = useForm<EditClientFormValues>({
@@ -133,19 +148,7 @@ export default function EditClientPage() {
     return '';
   };
   
-  // Set avatar preview when component mounts or client data changes
-  useEffect(() => {
-    if (client?.notes) {
-      try {
-        const notesObj = JSON.parse(client.notes);
-        if (notesObj.avatarUrl) {
-          setAvatarPreview(notesObj.avatarUrl);
-        }
-      } catch (e) {
-        console.error("Error parsing notes JSON:", e);
-      }
-    }
-  }, [client?.notes]);
+  // This was moved to the onSuccess callback in the useQuery hook
   
   // Set form values when client data is loaded
   useEffect(() => {
