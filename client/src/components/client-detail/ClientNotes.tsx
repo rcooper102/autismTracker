@@ -230,7 +230,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
             <div className="space-y-2">
               {notes.map((note) => (
                 <Card key={note.id} className="border shadow-sm">
-                  <CardHeader className="pb-1 pt-2 px-3">
+                  <CardHeader className="pb-2 pt-2 px-3">
                     <div className="flex justify-between items-center">
                       <Button 
                         variant="ghost" 
