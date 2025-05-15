@@ -12,6 +12,12 @@ interface TreatmentInfoFormProps {
 }
 
 export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
+  // Debug the form values
+  const formValues = form.getValues();
+  console.log("TreatmentInfoForm - Initial Form Values:", formValues);
+  console.log("TreatmentInfoForm - Treatment Plan:", formValues.treatmentPlan);
+  console.log("TreatmentInfoForm - Treatment Goals:", formValues.treatmentGoals);
+  
   // Convert treatment plan options from the config to the format used in this component
   const treatmentPlans = clientConfig.treatmentPlanOptions.map(option => ({
     id: option.value,
@@ -25,7 +31,11 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
   }));
 
   const handlePlanChange = (checked: boolean, plan: string) => {
-    const currentPlans = form.getValues("treatmentPlan") || [];
+    // Get current plans and ensure it's an array
+    let currentPlans = form.getValues("treatmentPlan");
+    currentPlans = Array.isArray(currentPlans) ? currentPlans : [];
+    
+    console.log("Current plans before change:", currentPlans);
     
     if (checked) {
       form.setValue("treatmentPlan", [...currentPlans, plan]);
@@ -35,10 +45,16 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
         currentPlans.filter((p: string) => p !== plan)
       );
     }
+    
+    console.log("Plans after change:", form.getValues("treatmentPlan"));
   };
 
   const handleGoalChange = (checked: boolean, goal: string) => {
-    const currentGoals = form.getValues("treatmentGoals") || [];
+    // Get current goals and ensure it's an array
+    let currentGoals = form.getValues("treatmentGoals");
+    currentGoals = Array.isArray(currentGoals) ? currentGoals : [];
+    
+    console.log("Current goals before change:", currentGoals);
     
     if (checked) {
       form.setValue("treatmentGoals", [...currentGoals, goal]);
@@ -48,6 +64,8 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
         currentGoals.filter((g: string) => g !== goal)
       );
     }
+    
+    console.log("Goals after change:", form.getValues("treatmentGoals"));
   };
 
   return (
@@ -66,10 +84,12 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
                   // Ensure we have an array of values
                   const currentPlans = Array.isArray(field.value) ? field.value : [];
                   
-                  // Check if this plan is in the currentPlans array
-                  const isChecked = currentPlans.includes(plan.label);
+                  // FIXED: Check if current plan is selected by checking for both label and label without "(CBT)" suffix
+                  const isChecked = currentPlans.includes(plan.label) || 
+                                    (plan.label === "Cognitive Behavioral Therapy (CBT)" && 
+                                     currentPlans.includes("Cognitive Behavioral Therapy"));
                   
-                  console.log(`Plan ${plan.label} checked: ${isChecked}`);
+                  console.log(`Plan ${plan.label} checked: ${isChecked}`, currentPlans);
                   
                   return (
                     <div key={plan.id} className="flex items-center space-x-2">
@@ -109,7 +129,7 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
                   // Check if this goal is in the currentGoals array
                   const isChecked = currentGoals.includes(goal.label);
                   
-                  console.log(`Goal ${goal.label} checked: ${isChecked}`);
+                  console.log(`Goal ${goal.label} checked: ${isChecked}`, currentGoals);
                   
                   return (
                     <div key={goal.id} className="flex items-center space-x-2">
