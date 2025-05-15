@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ClientWithUser } from "@shared/schema";
 
 interface ClientListProps {
@@ -97,12 +97,11 @@ export default function ClientList({ clients, isLoading }: ClientListProps) {
                   <Avatar 
                     src={client.avatarUrl || null}
                     alt={`${client.firstName} ${client.lastName}`}
-                    fallback={
-                      <div className={`h-full w-full ${colorClass} flex items-center justify-center`}>
-                        <span className="font-medium">{initials}</span>
-                      </div>
-                    }
-                  />
+                  >
+                    <AvatarFallback className={colorClass}>
+                      <span className="font-medium">{initials}</span>
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <p className="font-medium">{`${client.firstName} ${client.lastName}`}</p>
                     <p className="text-xs text-gray-500">

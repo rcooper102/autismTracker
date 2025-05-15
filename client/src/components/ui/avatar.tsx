@@ -45,19 +45,37 @@ export function Avatar({
   return (
     <div className={cn(avatarVariants({ size, className }))} {...props}>
       {src && !imageError ? (
-        <img
-          src={src}
-          alt={alt}
-          className="h-full w-full object-cover"
-          onError={handleImageError}
-        />
+        <AvatarImage src={src} alt={alt} onError={handleImageError} />
       ) : (
-        fallback || (
-          <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
-            <User className="h-1/2 w-1/2" />
-          </div>
-        )
+        fallback || <AvatarFallback>{alt.slice(0, 2)}</AvatarFallback>
       )}
+    </div>
+  );
+}
+
+export interface AvatarImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  onError?: () => void;
+}
+
+export function AvatarImage({ className, onError, ...props }: AvatarImageProps) {
+  return (
+    <img 
+      className={cn("h-full w-full object-cover", className)} 
+      onError={onError}
+      {...props} 
+    />
+  );
+}
+
+export interface AvatarFallbackProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+export function AvatarFallback({ className, children, ...props }: AvatarFallbackProps) {
+  return (
+    <div 
+      className={cn("flex h-full w-full items-center justify-center bg-muted text-muted-foreground", className)} 
+      {...props}
+    >
+      {children || <User className="h-1/2 w-1/2" />}
     </div>
   );
 }

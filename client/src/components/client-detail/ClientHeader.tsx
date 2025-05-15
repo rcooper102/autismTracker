@@ -1,6 +1,6 @@
 import { Client } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { Link } from "wouter";
 
@@ -45,7 +45,11 @@ export default function ClientHeader({ client, onBack }: ClientHeaderProps) {
             alt={fullName}
             size="lg"
             className="mr-4"
-          />
+          >
+            <AvatarFallback>
+              {client.firstName[0]}{client.lastName[0]}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <h1 className="text-2xl font-semibold text-gray-800">{fullName}</h1>
             <div className="flex items-center mt-1 text-gray-500">
