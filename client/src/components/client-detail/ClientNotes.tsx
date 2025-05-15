@@ -177,7 +177,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
             )}
           </div>
         </CardHeader>
-        <CardContent className="px-4 py-2">
+        <CardContent className="px-4 pt-2 pb-4">
           {isAddingNote && (
             <div className="mb-3 border p-3 rounded-md">
               <h3 className="font-medium text-sm mb-2">New Note</h3>
