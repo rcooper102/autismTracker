@@ -548,6 +548,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get a single note by ID
+  app.get("/api/notes/:noteId", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const noteId = parseInt(req.params.noteId);
+    
+    try {
+      const note = await storage.getClientNote(noteId);
+      
+      if (!note) {
+        return res.status(404).json({ message: "Note not found" });
+      }
+      
+      // Check authorization
+      if (req.user.role === "practitioner") {
+        const client = await storage.getClient(note.clientId);
+        
+        if (!client || client.practitionerId !== req.user.id) {
+          return res.status(403).json({ message: "Not authorized to access this note" });
+        }
+      } else if (req.user.role === "client") {
+        const client = await storage.getClientByUserId(req.user.id);
+        
+        if (!client || client.id !== note.clientId) {
+          return res.status(403).json({ message: "Not authorized to access this note" });
+        }
+      } else {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      res.json(note);
+    } catch (error) {
+      console.error("Error fetching note:", error);
+      res.status(500).json({ message: "Failed to fetch note" });
+    }
+  });
+
   app.delete("/api/clients/:clientId/notes/:noteId", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
       return res.status(403).json({ message: "Unauthorized. Practitioners only." });

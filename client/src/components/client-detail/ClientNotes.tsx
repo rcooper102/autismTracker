@@ -299,7 +299,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleEditNote(note)}
+                            onClick={() => navigate(`/notes/${note.id}`)}
                             disabled={isAddingNote || editingNoteId !== null}
                           >
                             <Edit className="h-4 w-4" />
