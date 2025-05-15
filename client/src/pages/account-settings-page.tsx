@@ -156,6 +156,8 @@ export default function AccountSettingsPage() {
   // Avatar upload mutation
   const uploadAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
+      console.log("Uploading file:", file.name, file.type, file.size);
+      
       const formData = new FormData();
       formData.append("avatar", file);
       
@@ -166,19 +168,31 @@ export default function AccountSettingsPage() {
       });
       
       if (!res.ok) {
+        console.error("Avatar upload failed with status:", res.status);
         throw new Error("Avatar upload failed");
       }
       
-      return await res.json();
+      const result = await res.json();
+      console.log("Upload successful, response:", result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Clear the file and preview after successful upload
+      setAvatarFile(null);
+      
+      // Keep the preview to show the uploaded image
+      // Don't clear avatarPreview since we want to show the uploaded image
+      
       toast({
         title: "Avatar uploaded",
         description: "Your avatar has been successfully uploaded.",
       });
+      
+      // Force refresh the practitioner data
       queryClient.invalidateQueries({ queryKey: ["/api/practitioners/me"] });
     },
     onError: (error: Error) => {
+      console.error("Upload mutation error:", error);
       toast({
         title: "Upload failed",
         description: error.message,
