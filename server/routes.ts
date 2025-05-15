@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { z } from "zod";
-import { insertClientSchema, insertDataEntrySchema, insertSessionSchema } from "@shared/schema";
+import { insertClientSchema, insertDataEntrySchema, insertSessionSchema, insertUserSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes (/api/register, /api/login, /api/logout, /api/user)
@@ -38,6 +38,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid client data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create client" });
+    }
+  });
+  
+  // New endpoint that creates both a user and a client profile without auto-login
+  app.post("/api/clients/with-user", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    try {
+      // Import hashPassword from auth.ts
+      const { hashPassword } = await import("./auth");
+      
+      // 1. Validate and create the user
+      const userData = insertUserSchema.parse(req.body.user);
+      
+      // Check if username already exists
+      const existingUser = await storage.getUserByUsername(userData.username);
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+      
+      // Hash the password
+      const hashedUser = {
+        ...userData,
+        password: await hashPassword(userData.password),
+      };
+      
+      // Create the user
+      const newUser = await storage.createUser(hashedUser);
+      
+      // 2. Create the client profile linked to the new user
+      const clientData = insertClientSchema.parse({
+        ...req.body,
+        userId: newUser.id,
+        practitionerId: req.user.id
+      });
+      
+      const client = await storage.createClient(clientData);
+      
+      // Return both the client and (password-less) user data
+      const { password, ...userWithoutPassword } = newUser;
+      res.status(201).json({
+        client,
+        user: userWithoutPassword,
+      });
+    } catch (error) {
+      console.error("Error creating client with user:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create client with user" });
     }
   });
 

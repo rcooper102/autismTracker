@@ -82,35 +82,41 @@ export default function AddClientPage() {
   
   const createClientMutation = useMutation({
     mutationFn: async (data: AddClientFormValues) => {
-      // Create a user account for the client first
-      const userResponse = await apiRequest("POST", "/api/register", {
-        username: data.username,
-        password: data.password,
-        name: `${data.firstName} ${data.lastName}`,
-        email: data.guardianEmail,
-        role: "client",
-      });
-      
-      const user = await userResponse.json();
-      
-      // Then create the client profile linked to that user
-      const clientData = {
-        userId: user.id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
-        diagnosis: data.diagnosis,
-        guardianName: data.guardianName,
-        guardianRelation: data.guardianRelation,
-        guardianPhone: data.guardianPhone,
-        guardianEmail: data.guardianEmail,
-        treatmentPlan: data.treatmentPlan,
-        treatmentGoals: data.treatmentGoals,
-        notes: data.notes,
-      };
-      
-      const clientResponse = await apiRequest("POST", "/api/clients", clientData);
-      return await clientResponse.json();
+      // Instead of using /api/register which logs us in as the new user,
+      // we'll update the server-side API to have a special endpoint that doesn't log in
+      try {
+        // First create the client user account (but don't log in as them)
+        const clientUser = {
+          username: data.username,
+          password: data.password,
+          name: `${data.firstName} ${data.lastName}`,
+          email: data.guardianEmail,
+          role: "client",
+        };
+        
+        // Next create the client profile in a single request
+        const clientData = {
+          user: clientUser, // Send the user data to be created
+          firstName: data.firstName,
+          lastName: data.lastName,
+          dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
+          diagnosis: data.diagnosis,
+          guardianName: data.guardianName,
+          guardianRelation: data.guardianRelation,
+          guardianPhone: data.guardianPhone,
+          guardianEmail: data.guardianEmail,
+          treatmentPlan: data.treatmentPlan,
+          treatmentGoals: data.treatmentGoals,
+          notes: data.notes,
+        };
+        
+        // This will create both the user and client profile in one request
+        const clientResponse = await apiRequest("POST", "/api/clients/with-user", clientData);
+        return await clientResponse.json();
+      } catch (error) {
+        console.error("Error creating client:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       toast({
