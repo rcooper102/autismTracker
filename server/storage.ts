@@ -120,13 +120,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateClient(id: number, clientData: Partial<Client>): Promise<Client | undefined> {
-    const [updatedClient] = await db
-      .update(clients)
-      .set(clientData)
-      .where(eq(clients.id, id))
-      .returning();
+    // Handle date conversion if dateOfBirth is a string
+    const processedData = { ...clientData };
     
-    return updatedClient;
+    if (processedData.dateOfBirth && typeof processedData.dateOfBirth === 'string') {
+      // Convert string to Date object if it's a valid date string, otherwise set to null
+      try {
+        processedData.dateOfBirth = new Date(processedData.dateOfBirth);
+      } catch (e) {
+        console.error("Invalid date format:", processedData.dateOfBirth);
+        processedData.dateOfBirth = null;
+      }
+    }
+    
+    try {
+      const [updatedClient] = await db
+        .update(clients)
+        .set(processedData)
+        .where(eq(clients.id, id))
+        .returning();
+      
+      return updatedClient;
+    } catch (error) {
+      console.error("Error updating client:", error);
+      return undefined;
+    }
   }
 
   // Data entry operations
