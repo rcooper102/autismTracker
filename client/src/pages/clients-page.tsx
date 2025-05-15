@@ -6,8 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Sidebar from "@/components/layout/Sidebar";
 import MobileNav from "@/components/layout/MobileNav";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useState, useEffect } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function ClientsPage() {
   const { user } = useAuth();
@@ -18,13 +18,21 @@ export default function ClientsPage() {
   const { data: clients, isLoading } = useQuery<ClientWithUser[]>({
     queryKey: ["/api/clients"],
     enabled: !!user && user.role === "practitioner",
-    onSuccess: (data) => {
-      console.log("Clients data:", data);
-      // Check if any clients have avatarUrl
-      const clientsWithAvatars = data?.filter(client => client.avatarUrl);
-      console.log("Clients with avatars:", clientsWithAvatars);
-    }
   });
+  
+  // Add logging when clients data changes
+  useEffect(() => {
+    if (clients && clients.length > 0) {
+      console.log("Full clients data structure:", JSON.stringify(clients, null, 2));
+      // Check if any clients have avatarUrl
+      const clientsWithAvatars = clients.filter(client => client.avatarUrl);
+      console.log("Clients with avatars:", clientsWithAvatars);
+      // Log each avatar URL
+      clients.forEach((client, index) => {
+        console.log(`Client #${index+1} (${client.firstName} ${client.lastName}) - avatarUrl:`, client.avatarUrl || "none");
+      });
+    }
+  }, [clients]);
   
   // Generate colors for initials circles
   const colors = [
@@ -136,8 +144,7 @@ export default function ClientsPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <Avatar className="w-10 h-10">
-                            {client.avatarUrl ? (
-                              // Using client's avatarUrl field directly from the client record
+                            {client.avatarUrl && (
                               <img 
                                 src={client.avatarUrl.includes('?') ? 
                                   `${client.avatarUrl}&_t=${Date.now()}` : 
@@ -145,7 +152,8 @@ export default function ClientsPage() {
                                 className="h-full w-full object-cover"
                                 alt={`${client.firstName} ${client.lastName}`}
                               />
-                            ) : (
+                            )}
+                            {!client.avatarUrl && (
                               <AvatarFallback className={colorClass}>
                                 <span className="font-medium">{initials}</span>
                               </AvatarFallback>
