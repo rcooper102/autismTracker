@@ -79,7 +79,7 @@ async function main() {
     `);
     
     // Create default practitioner user
-    const existingUser = await db.select().from(users).where(users.username.equals("practitioner"));
+    const existingUser = await db.select().from(users).where(sql`${users.username} = 'practitioner'`);
     
     if (existingUser.length === 0) {
       console.log("Creating default practitioner user...");

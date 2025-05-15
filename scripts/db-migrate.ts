@@ -2,6 +2,7 @@ import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
 import { db, pool } from "../server/db";
 import { users } from "../shared/schema";
+import { eq } from "drizzle-orm";
 
 const scryptAsync = promisify(scrypt);
 
@@ -16,7 +17,7 @@ async function main() {
   
   // Create default practitioner user
   try {
-    const existingUser = await db.select().from(users).where(users.username.equals("practitioner"));
+    const existingUser = await db.select().from(users).where(eq(users.username, "practitioner"));
     
     if (existingUser.length === 0) {
       console.log("Creating default practitioner user...");
