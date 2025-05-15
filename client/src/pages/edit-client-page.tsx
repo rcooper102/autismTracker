@@ -675,6 +675,7 @@ export default function EditClientPage() {
             <CardContent>
               <div className="flex flex-col items-center">
                 <div className="relative mb-4">
+                  {console.log("Rendering avatar - preview:", avatarPreview, "client avatarUrl:", client?.avatarUrl)}
                   {avatarPreview ? (
                     <img 
                       src={avatarPreview} 

@@ -46,6 +46,9 @@ const upload = multer({
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes (/api/register, /api/login, /api/logout, /api/user)
   setupAuth(app);
+  
+  // Always serve files from the uploads directory
+  app.use('/uploads', express.static(uploadDir));
 
   // Client management routes
   app.get("/api/clients", async (req, res) => {
@@ -290,11 +293,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create relative file path and URL
       const relativeFilePath = `/uploads/${file.filename}`;
       
-      // Serve static files from uploads directory if not already configured
-      if (!app._router.stack.some((layer: any) => 
-        layer.route && layer.route.path === '/uploads')) {
-        app.use('/uploads', express.static(uploadDir));
-      }
+      // No need to set up uploads directory serving here as it's now done in registerRoutes
       
       // Get current client to access current notes
       const currentClient = await storage.getClient(clientId);
