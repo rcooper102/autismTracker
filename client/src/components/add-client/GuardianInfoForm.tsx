@@ -34,7 +34,7 @@ export default function GuardianInfoForm({ form }: GuardianInfoFormProps) {
           name="guardianRelation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Relationship to Client</FormLabel>
+              <FormLabel><RequiredField>Relationship to Client</RequiredField></FormLabel>
               <Select 
                 onValueChange={field.onChange}
                 defaultValue={field.value}

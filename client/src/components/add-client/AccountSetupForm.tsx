@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { RequiredField } from "@/components/ui/required-field";
 
 interface AccountSetupFormProps {
   form: UseFormReturn<any>;
@@ -33,7 +34,7 @@ export default function AccountSetupForm({ form }: AccountSetupFormProps) {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel><RequiredField>Username</RequiredField></FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="e.g., jason_dawson" 
@@ -52,7 +53,7 @@ export default function AccountSetupForm({ form }: AccountSetupFormProps) {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Temporary Password</FormLabel>
+                <FormLabel><RequiredField>Temporary Password</RequiredField></FormLabel>
                 <div className="relative">
                   <FormControl>
                     <Input 

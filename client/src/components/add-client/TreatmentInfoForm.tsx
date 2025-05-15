@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { RequiredField } from "@/components/ui/required-field";
 
 interface TreatmentInfoFormProps {
   form: UseFormReturn<any>;
@@ -41,7 +42,7 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
           name="treatmentPlan"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Treatment Plan</FormLabel>
+              <FormLabel><RequiredField>Treatment Plan</RequiredField></FormLabel>
               <Select 
                 onValueChange={field.onChange}
                 defaultValue={field.value}
