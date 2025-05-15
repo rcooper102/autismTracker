@@ -14,6 +14,7 @@ import GuardianInfoForm from "@/components/add-client/GuardianInfoForm";
 import TreatmentInfoForm from "@/components/add-client/TreatmentInfoForm";
 import AccountSetupForm from "@/components/add-client/AccountSetupForm";
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 
 const addClientSchema = z.object({
@@ -141,45 +142,47 @@ export default function AddClientPage() {
 
           {/* Add Client Form */}
           <div className="bg-white rounded-lg shadow p-6">
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                {/* Client Information Form */}
-                <ClientInfoForm form={form} />
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  {/* Client Information Form */}
+                  <ClientInfoForm form={form} />
+                  
+                  {/* Guardian Information Form */}
+                  <GuardianInfoForm form={form} />
+                </div>
                 
-                {/* Guardian Information Form */}
-                <GuardianInfoForm form={form} />
-              </div>
-              
-              {/* Treatment Information Form */}
-              <TreatmentInfoForm form={form} />
-              
-              {/* Account Setup Form */}
-              <AccountSetupForm form={form} />
-              
-              {/* Form Buttons */}
-              <div className="border-t pt-6 flex justify-end space-x-4">
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  type="submit"
-                  disabled={createClientMutation.isPending}
-                >
-                  {createClientMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Client Account...
-                    </>
-                  ) : (
-                    "Create Client Account"
-                  )}
-                </Button>
-              </div>
-            </form>
+                {/* Treatment Information Form */}
+                <TreatmentInfoForm form={form} />
+                
+                {/* Account Setup Form */}
+                <AccountSetupForm form={form} />
+                
+                {/* Form Buttons */}
+                <div className="border-t pt-6 flex justify-end space-x-4">
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit"
+                    disabled={createClientMutation.isPending}
+                  >
+                    {createClientMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating Client Account...
+                      </>
+                    ) : (
+                      "Create Client Account"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Form>
           </div>
         </div>
       </main>

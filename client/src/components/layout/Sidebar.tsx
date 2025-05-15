@@ -50,8 +50,7 @@ export default function Sidebar() {
         <ul className="space-y-2">
           {navItems.map((item) => (
             <li key={item.path}>
-              <Link href={item.path}>
-                <a className={cn(
+              <Link href={item.path} className={cn(
                   "flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors",
                   location === item.path 
                     ? "bg-primary-50 text-primary font-medium" 
@@ -59,7 +58,6 @@ export default function Sidebar() {
                 )}>
                   <i className={item.icon}></i>
                   <span>{item.label}</span>
-                </a>
               </Link>
             </li>
           ))}
