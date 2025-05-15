@@ -66,7 +66,7 @@ export default function ClientAvatarGrid({ clients, isLoading }: ClientAvatarGri
       <div className="p-4 border-b flex justify-between items-center">
         <h2 className="font-semibold">My Clients</h2>
         <Link href="/clients" className="text-primary text-sm flex items-center">
-          Manage Clients <i className="ri-arrow-right-s-line ml-1"></i>
+          <i className="ri-user-settings-line mr-1"></i> Manage Clients <i className="ri-arrow-right-s-line ml-1"></i>
         </Link>
       </div>
       <div className="p-4">
