@@ -7,6 +7,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import MobileNav from "@/components/layout/MobileNav";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export default function ClientsPage() {
   const { user } = useAuth();
@@ -128,9 +129,22 @@ export default function ClientsPage() {
                     <Link key={client.id} href={`/clients/${client.id}`} className="p-4 hover:bg-gray-50 transition-colors cursor-pointer block">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                          <div className={`w-10 h-10 rounded-full ${colorClass} flex items-center justify-center`}>
-                            <span className="font-medium">{initials}</span>
-                          </div>
+                          <Avatar className="w-10 h-10">
+                            {client.avatarUrl ? (
+                              // Using Avatar component to handle image with fallback
+                              <img 
+                                src={client.avatarUrl.includes('?') ? 
+                                  `${client.avatarUrl}&_t=${Date.now()}` : 
+                                  `${client.avatarUrl}?_t=${Date.now()}`}
+                                className="h-full w-full object-cover"
+                                alt={`${client.firstName} ${client.lastName}`}
+                              />
+                            ) : (
+                              <AvatarFallback className={colorClass}>
+                                <span className="font-medium">{initials}</span>
+                              </AvatarFallback>
+                            )}
+                          </Avatar>
                           <div>
                             <p className="font-medium">{`${client.firstName} ${client.lastName}`}</p>
                             <p className="text-xs text-gray-500">
