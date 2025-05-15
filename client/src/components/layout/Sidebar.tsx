@@ -50,7 +50,9 @@ export default function Sidebar() {
             {/* Always try to render the avatar image with fallback handling */}
             {practitioner?.avatarUrl ? (
               <AvatarImage 
-                src={`${practitioner.avatarUrl}&t=${Date.now()}`} 
+                src={practitioner.avatarUrl.includes('?') ? 
+                  `${practitioner.avatarUrl}&_t=${Date.now()}` : 
+                  `${practitioner.avatarUrl}?_t=${Date.now()}`} 
                 alt={user.name || "User"} 
                 onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                   console.error("Sidebar avatar failed to load:", e);

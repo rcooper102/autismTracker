@@ -731,6 +731,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
+      console.log('GET /api/practitioners/me - Authenticated user:', {
+        id: req.user.id,
+        username: req.user.username,
+        role: req.user.role
+      });
+      
       // For now, we just return the user data with a placeholder for additional practitioner data
       // In a real app, you might have a separate practitioners table
       const { password, ...userWithoutPassword } = req.user;
@@ -745,10 +751,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         avatarUrl: null,
       };
       
-      res.json({
+      console.log('GET /api/practitioners/me - Retrieved profile data:', { 
+        userId: req.user.id,
+        profileData: existingProfile,
+        hasAvatar: !!existingProfile.avatarUrl
+      });
+      
+      const responseData = {
         ...userWithoutPassword,
         ...existingProfile
+      };
+      
+      console.log('GET /api/practitioners/me - Sending response:', {
+        responseWithAvatar: !!responseData.avatarUrl
       });
+      
+      res.json(responseData);
     } catch (error) {
       console.error("Error fetching practitioner profile:", error);
       res.status(500).json({ message: "Failed to fetch practitioner profile" });

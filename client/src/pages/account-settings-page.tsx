@@ -265,7 +265,9 @@ export default function AccountSettingsPage() {
                   />
                 ) : practitioner?.avatarUrl ? (
                   <AvatarImage 
-                    src={`${practitioner.avatarUrl}&t=${Date.now()}`}
+                    src={practitioner.avatarUrl.includes('?') ? 
+                      `${practitioner.avatarUrl}&_t=${Date.now()}` : 
+                      `${practitioner.avatarUrl}?_t=${Date.now()}`}
                     alt={user?.username || "User"} 
                     onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                       console.error("Avatar image failed to load:", e);
