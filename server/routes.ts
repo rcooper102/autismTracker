@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { z } from "zod";
-import { insertClientSchema, insertDataEntrySchema, insertSessionSchema, insertUserSchema, users } from "@shared/schema";
+import { insertClientSchema, insertDataEntrySchema, insertSessionSchema, insertUserSchema, insertClientNoteSchema, users } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -440,6 +440,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid session data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create session" });
+    }
+  });
+
+  // Client Notes routes
+  app.get("/api/clients/:clientId/notes", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    
+    // Check authorization
+    if (req.user?.role === "practitioner") {
+      const client = await storage.getClient(clientId);
+      
+      if (!client || client.practitionerId !== req.user.id) {
+        return res.status(403).json({ message: "Not authorized to access this client" });
+      }
+    } else if (req.user?.role === "client") {
+      const client = await storage.getClientByUserId(req.user.id);
+      
+      if (!client || client.id !== clientId) {
+        return res.status(403).json({ message: "Not authorized to access this client" });
+      }
+    } else {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const notes = await storage.getClientNotesByClientId(clientId);
+    res.json(notes);
+  });
+
+  app.post("/api/clients/:clientId/notes", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    
+    // Verify the client belongs to this practitioner
+    const client = await storage.getClient(clientId);
+    if (!client || client.practitionerId !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to create notes for this client" });
+    }
+
+    try {
+      const validatedData = insertClientNoteSchema.parse({
+        ...req.body,
+        clientId
+      });
+
+      const note = await storage.createClientNote(validatedData);
+      res.status(201).json(note);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid note data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create note" });
+    }
+  });
+
+  app.patch("/api/clients/:clientId/notes/:noteId", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    const noteId = parseInt(req.params.noteId);
+    
+    // Verify the client belongs to this practitioner
+    const client = await storage.getClient(clientId);
+    if (!client || client.practitionerId !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to update notes for this client" });
+    }
+    
+    // Verify the note belongs to this client
+    const note = await storage.getClientNote(noteId);
+    if (!note || note.clientId !== clientId) {
+      return res.status(404).json({ message: "Note not found or doesn't belong to this client" });
+    }
+
+    try {
+      // Define validation schema for note updates
+      const noteUpdateSchema = z.object({
+        title: z.string().optional(),
+        entries: z.array(z.object({
+          text: z.string(),
+          date: z.string().or(z.date()).optional()
+        })).optional()
+      });
+
+      const validatedData = noteUpdateSchema.parse(req.body);
+      
+      const updatedNote = await storage.updateClientNote(noteId, validatedData);
+      
+      if (!updatedNote) {
+        return res.status(404).json({ message: "Note not found" });
+      }
+      
+      res.json(updatedNote);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid note data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update note" });
+    }
+  });
+
+  app.delete("/api/clients/:clientId/notes/:noteId", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    const noteId = parseInt(req.params.noteId);
+    
+    // Verify the client belongs to this practitioner
+    const client = await storage.getClient(clientId);
+    if (!client || client.practitionerId !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to delete notes for this client" });
+    }
+    
+    // Verify the note belongs to this client
+    const note = await storage.getClientNote(noteId);
+    if (!note || note.clientId !== clientId) {
+      return res.status(404).json({ message: "Note not found or doesn't belong to this client" });
+    }
+
+    const success = await storage.deleteClientNote(noteId);
+    
+    if (success) {
+      res.json({ message: "Note deleted successfully" });
+    } else {
+      res.status(500).json({ message: "Failed to delete note" });
     }
   });
 

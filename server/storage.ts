@@ -2,7 +2,8 @@ import {
   users, type User, type InsertUser,
   clients, type Client, type InsertClient, type ClientWithUser,
   dataEntries, type DataEntry, type InsertDataEntry,
-  sessions, type Session, type InsertSession
+  sessions, type Session, type InsertSession,
+  clientNotes, type ClientNote, type InsertClientNote
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -39,6 +40,13 @@ export interface IStorage {
   getSessionsByPractitionerId(practitionerId: number): Promise<Session[]>;
   createSession(session: InsertSession): Promise<Session>;
   updateSession(id: number, session: Partial<Session>): Promise<Session | undefined>;
+  
+  // Client notes operations
+  getClientNote(id: number): Promise<ClientNote | undefined>;
+  getClientNotesByClientId(clientId: number): Promise<ClientNote[]>;
+  createClientNote(note: InsertClientNote): Promise<ClientNote>;
+  updateClientNote(id: number, note: Partial<ClientNote>): Promise<ClientNote | undefined>;
+  deleteClientNote(id: number): Promise<boolean>;
   
   // Statistics operations
   countClientsByPractitionerId(practitionerId: number): Promise<number>;
@@ -294,6 +302,53 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error counting pending reviews:", error);
       return 3; // Fallback to a non-zero value in case of error
+    }
+  }
+  
+  // Client notes operations
+  async getClientNote(id: number): Promise<ClientNote | undefined> {
+    const [note] = await db.select().from(clientNotes).where(eq(clientNotes.id, id));
+    return note;
+  }
+
+  async getClientNotesByClientId(clientId: number): Promise<ClientNote[]> {
+    const notes = await db
+      .select()
+      .from(clientNotes)
+      .where(eq(clientNotes.clientId, clientId))
+      .orderBy(desc(clientNotes.lastUpdated));
+    
+    return notes;
+  }
+
+  async createClientNote(noteData: InsertClientNote): Promise<ClientNote> {
+    const [note] = await db.insert(clientNotes).values(noteData).returning();
+    return note;
+  }
+
+  async updateClientNote(id: number, noteData: Partial<ClientNote>): Promise<ClientNote | undefined> {
+    // Always update the lastUpdated timestamp when a note is modified
+    const dataToUpdate = {
+      ...noteData,
+      lastUpdated: new Date()
+    };
+    
+    const [updatedNote] = await db
+      .update(clientNotes)
+      .set(dataToUpdate)
+      .where(eq(clientNotes.id, id))
+      .returning();
+    
+    return updatedNote;
+  }
+
+  async deleteClientNote(id: number): Promise<boolean> {
+    try {
+      await db.delete(clientNotes).where(eq(clientNotes.id, id));
+      return true;
+    } catch (error) {
+      console.error("Error deleting client note:", error);
+      return false;
     }
   }
 }
