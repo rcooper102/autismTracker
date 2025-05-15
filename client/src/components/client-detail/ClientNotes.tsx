@@ -169,7 +169,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
         <CardHeader className="py-2 px-4">
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="text-sm">Client Notes</CardTitle>
+              <CardTitle className="text-lg">Client Notes</CardTitle>
             </div>
             <Button
               size="sm"
@@ -195,7 +195,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                 >
                   <CardHeader className="pb-2 pt-2 px-3">
                     <div className="flex justify-between items-center">
-                      <CardTitle className="text-sm">{note.title}</CardTitle>
+                      <CardTitle className="text-lg">{note.title}</CardTitle>
                     </div>
                     <p className="text-xs text-gray-500 mt-0">
                       Updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy') : 'Unknown'} • 
@@ -222,7 +222,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label htmlFor="title" className="text-sm font-medium">
+              <label htmlFor="title" className="text-base font-medium">
                 Note Title
               </label>
               <Input
@@ -234,7 +234,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="content" className="text-sm font-medium">
+              <label htmlFor="content" className="text-base font-medium">
                 Note Content
               </label>
               <RichTextEditor
