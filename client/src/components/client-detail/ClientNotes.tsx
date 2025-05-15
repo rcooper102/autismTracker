@@ -239,27 +239,6 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                       >
                         <CardTitle className="text-sm">{note.title}</CardTitle>
                       </Button>
-                      <div className="flex space-x-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 w-7 p-0"
-                          onClick={() => navigate(`/notes/${note.id}`)}
-                          aria-label="Edit note"
-                        >
-                          <Edit className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 w-7 p-0"
-                          onClick={() => handleDeleteNote(note.id)}
-                          disabled={isAddingNote}
-                          aria-label="Delete note"
-                        >
-                          <Trash2 className="h-3.5 w-3.5 text-red-500" />
-                        </Button>
-                      </div>
                     </div>
                     <p className="text-xs text-gray-500 mt-0">
                       Updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy') : 'Unknown'} • 
