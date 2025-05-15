@@ -123,16 +123,33 @@ export class DatabaseStorage implements IStorage {
     // Create a clean data object to avoid modifying the original
     const cleanData: Record<string, any> = {};
     
-    // Copy all valid properties except dateOfBirth
+    // Copy all valid properties except special handling cases
     Object.keys(clientData).forEach(key => {
-      if (key !== 'dateOfBirth') {
+      if (key !== 'dateOfBirth' && key !== 'treatmentPlan' && key !== 'treatmentGoals') {
         // @ts-ignore
         cleanData[key] = clientData[key];
       }
     });
     
+    // Special handling for treatmentPlan
+    if ('treatmentPlan' in clientData) {
+      // Ensure it's an array
+      cleanData.treatmentPlan = Array.isArray(clientData.treatmentPlan) 
+        ? clientData.treatmentPlan 
+        : [];
+    }
+    
+    // Special handling for treatmentGoals
+    if ('treatmentGoals' in clientData) {
+      // Ensure it's an array
+      cleanData.treatmentGoals = Array.isArray(clientData.treatmentGoals) 
+        ? clientData.treatmentGoals 
+        : [];
+    }
+    
     // Special handling for dateOfBirth
-    if (clientData.dateOfBirth !== undefined) {
+    if ('dateOfBirth' in clientData) {
+      // @ts-ignore
       if (clientData.dateOfBirth === null || clientData.dateOfBirth === '') {
         // Explicitly set null for empty dates
         cleanData.dateOfBirth = null;

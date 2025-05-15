@@ -152,16 +152,16 @@ export default function EditClientPage() {
         userEmail = client.user.email;
       }
       
-      // Convert JSON treatment goals to string if available
-      let goalString = "";
+      // Ensure treatment goals is an array
+      let treatmentGoals = [];
       if (client.treatmentGoals && Array.isArray(client.treatmentGoals)) {
-        goalString = client.treatmentGoals.join(", ");
+        treatmentGoals = client.treatmentGoals;
       }
       
-      // Convert JSON treatment plan to string if available
-      let planString = "";
-      if (client.treatmentPlan) {
-        planString = JSON.stringify(client.treatmentPlan);
+      // Ensure treatment plan is an array
+      let treatmentPlan = [];
+      if (client.treatmentPlan && Array.isArray(client.treatmentPlan)) {
+        treatmentPlan = client.treatmentPlan;
       }
       
       // Check for avatar in notes
@@ -172,6 +172,8 @@ export default function EditClientPage() {
       
       // Debug client data 
       console.log("Client data:", JSON.stringify(client, null, 2));
+      console.log("Setting treatment plan:", treatmentPlan);
+      console.log("Setting treatment goals:", treatmentGoals);
 
       form.reset({
         firstName: client.firstName || "",
@@ -179,8 +181,8 @@ export default function EditClientPage() {
         email: userEmail,
         dateOfBirth: formattedDateOfBirth,
         diagnosis: client.diagnosis || "",
-        treatmentPlan: planString,
-        treatmentGoals: goalString,
+        treatmentPlan: treatmentPlan,
+        treatmentGoals: treatmentGoals,
         guardianName: client.guardianName || "",
         guardianRelation: client.guardianRelation || "",
         guardianPhone: client.guardianPhone || "",

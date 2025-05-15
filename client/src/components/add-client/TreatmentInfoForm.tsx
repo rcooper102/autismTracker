@@ -63,10 +63,13 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
               <FormLabel><RequiredField>Treatment Plans</RequiredField></FormLabel>
               <div className="space-y-2">
                 {treatmentPlans.map((plan) => {
-                  const currentPlans = field.value || [];
-                  const isChecked = Array.isArray(currentPlans) ? 
-                    currentPlans.includes(plan.label) :
-                    false;
+                  // Ensure we have an array of values
+                  const currentPlans = Array.isArray(field.value) ? field.value : [];
+                  
+                  // Check if this plan is in the currentPlans array
+                  const isChecked = currentPlans.includes(plan.label);
+                  
+                  console.log(`Plan ${plan.label} checked: ${isChecked}`);
                   
                   return (
                     <div key={plan.id} className="flex items-center space-x-2">
@@ -100,8 +103,13 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
               <FormLabel>Treatment Goals</FormLabel>
               <div className="space-y-2">
                 {treatmentGoals.map((goal) => {
-                  const currentGoals = field.value || [];
+                  // Ensure we have an array of values
+                  const currentGoals = Array.isArray(field.value) ? field.value : [];
+                  
+                  // Check if this goal is in the currentGoals array
                   const isChecked = currentGoals.includes(goal.label);
+                  
+                  console.log(`Goal ${goal.label} checked: ${isChecked}`);
                   
                   return (
                     <div key={goal.id} className="flex items-center space-x-2">
