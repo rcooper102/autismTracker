@@ -172,12 +172,10 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
               <CardTitle className="text-sm">Client Notes</CardTitle>
             </div>
             <Button
-              variant="outline" 
               size="sm"
               className="h-7 py-0 px-2 text-xs"
               onClick={openDialog}
             >
-              <PlusCircle className="h-3.5 w-3.5 mr-1" />
               Add Note
             </Button>
           </div>
