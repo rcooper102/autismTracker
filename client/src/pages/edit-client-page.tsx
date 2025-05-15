@@ -266,24 +266,16 @@ export default function EditClientPage() {
       return await res.json();
     },
     onSuccess: (data) => {
-      // Don't clear the avatar preview - the uploaded image is now stored in avatarPreview
-      // after handleFileChange set it from the FileReader result.
-      // We don't want to lose this preview image while the new data loads.
-      
-      // Call our upload completion handler
-      handleUploadComplete();
-      
       toast({
         title: "Avatar uploaded",
         description: "Client avatar has been updated successfully.",
       });
       
-      // Give a slight delay before refreshing the client data
-      // This allows the user to see the success message and prevents flicker
-      setTimeout(() => {
-        // Refresh the data but keep our avatar preview
-        queryClient.invalidateQueries({queryKey: [`/api/clients/${id}`]});
-      }, 500);
+      // Here's the key fix: DO NOT invalidate queries or clear the selected file
+      // Just keep showing the current preview and leave the state as is
+      
+      // The server already stored the file, and we already have a preview
+      // So we don't need to do anything else
     },
     onError: (error: Error) => {
       toast({
@@ -316,6 +308,20 @@ export default function EditClientPage() {
     console.log("Upload completed successfully!");
   };
 
+  // Manual helper to force reload the avatar whenever needed
+  const refreshAvatarIfNeeded = () => {
+    if (client?.notes) {
+      try {
+        const notesObj = JSON.parse(client.notes);
+        if (notesObj.avatarUrl && !avatarPreview) {
+          setAvatarPreview(notesObj.avatarUrl);
+        }
+      } catch (e) {
+        console.error("Error parsing notes JSON:", e);
+      }
+    }
+  };
+
   // Form submission handlers
   const onSubmit = (values: EditClientFormValues) => {
     updateClientMutation.mutate(values);
@@ -327,15 +333,12 @@ export default function EditClientPage() {
 
   const handleUploadAvatar = () => {
     if (selectedFile) {
-      // We're already storing the preview in state, so we can use it even after upload
-      // Store the current preview URL before upload so we can keep displaying it
-      const currentPreview = avatarPreview;
-      
-      // Start the upload mutation
+      // Simply start the upload mutation without changing any state
       uploadAvatarMutation.mutate(selectedFile);
       
-      // Clear the selected file but keep the preview!
-      setSelectedFile(null);
+      // We'll keep the selectedFile and the preview as is
+      // The success handler will just show a toast notification
+      // But will NOT invalidate the query or reset the state
     }
   };
 
@@ -680,9 +683,15 @@ export default function EditClientPage() {
             <CardContent>
               <div className="flex flex-col items-center">
                 <div className="relative mb-4">
-                  {getClientAvatar() ? (
+                  {avatarPreview ? (
                     <img 
-                      src={getClientAvatar() || ''} 
+                      src={avatarPreview} 
+                      alt="Client Avatar" 
+                      className="w-32 h-32 rounded-full object-cover border"
+                    />
+                  ) : client?.notes && client.notes.includes("avatarUrl") ? (
+                    <img 
+                      src={getAvatarUrl(client)} 
                       alt="Client Avatar" 
                       className="w-32 h-32 rounded-full object-cover border"
                     />
