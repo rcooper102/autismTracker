@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useQuery } from "@tanstack/react-query";
 import {
   BrainCog,
   LayoutDashboard,
@@ -16,18 +17,34 @@ import {
 export default function Sidebar() {
   const { user, logoutMutation } = useAuth();
 
+  // Fetch practitioner data to get avatarUrl if user is a practitioner
+  const { data: practitioner } = useQuery({
+    queryKey: ["/api/practitioners/me"],
+    queryFn: async () => {
+      const res = await fetch("/api/practitioners/me");
+      if (!res.ok) throw new Error("Failed to fetch practitioner details");
+      return res.json();
+    },
+    enabled: !!user && user.role === "practitioner",
+  });
+
   if (!user) return null;
 
   const handleLogout = () => {
     logoutMutation.mutate();
   };
 
+  // Use practitioner data for avatar if available
+  const avatarUrl = practitioner?.avatarUrl;
+
   return (
     <div className="hidden md:flex flex-col h-[calc(100vh-4rem)] bg-[rgb(32,148,243)] text-white w-[240px] fixed top-16 left-0 py-6 px-4 overflow-y-auto">
       <div className="flex flex-col space-y-2">
         <div className="py-4 px-4 mb-2 bg-white/10 rounded-md flex flex-col items-center">
           <Avatar className="h-16 w-16 mb-3 border-2 border-white/30">
-            {/* Using fallback since avatarUrl isn't set up yet */}
+            {avatarUrl && (
+              <AvatarImage src={avatarUrl} alt={user.name || "User"} />
+            )}
             <AvatarFallback className="bg-white/20 text-white">
               {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-8 w-8" />}
             </AvatarFallback>
