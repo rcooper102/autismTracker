@@ -5,7 +5,7 @@ import { ClientNote } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { PenLine, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -167,18 +167,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
     <div className="pt-4">
       <Card className="overflow-hidden">
         <CardHeader className="py-2 px-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle className="text-lg">Client Notes</CardTitle>
-            </div>
-            <Button
-              size="sm"
-              className="h-7 py-0 px-2 text-xs"
-              onClick={openDialog}
-            >
-              Add Note
-            </Button>
-          </div>
+          <CardTitle className="text-lg">Client Notes</CardTitle>
         </CardHeader>
         <CardContent className="px-4 pt-2 pb-4">
           {notes.length === 0 ? (
@@ -210,6 +199,15 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
               </table>
             </div>
           )}
+          <div className="pt-3">
+            <Button 
+              variant="outline"
+              className="w-full flex items-center justify-center"
+              onClick={openDialog}
+            >
+              <PenLine className="h-4 w-4 mr-2" /> Add Note
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
