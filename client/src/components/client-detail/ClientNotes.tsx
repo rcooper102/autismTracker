@@ -229,7 +229,6 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
           <div className="flex justify-between items-center">
             <div>
               <CardTitle>Client Notes</CardTitle>
-              <CardDescription>Document important notes for this client</CardDescription>
             </div>
             {!isAddingNote && (
               <Button
