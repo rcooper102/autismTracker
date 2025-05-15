@@ -342,14 +342,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = profileUpdateSchema.parse(req.body);
       
-      // For now, we just return the updated data as if it was saved
-      // In a real app, you would update a practitioners table
+      // Get existing profile data or create empty object
+      const existingProfile = practitionerProfiles.get(req.user.id) || {};
+      
+      // Update the profile data
+      const updatedProfile = {
+        ...existingProfile,
+        ...validatedData,
+      };
+      
+      // Store the updated profile
+      practitionerProfiles.set(req.user.id, updatedProfile);
+      
+      // Return the updated user data
       const { password, ...userWithoutPassword } = req.user;
       
       res.json({
         ...userWithoutPassword,
-        ...validatedData,
-        avatarUrl: null, // This would come from the database in a real app
+        ...updatedProfile,
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -387,6 +397,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         layer.route && layer.route.path === '/uploads')) {
         app.use('/uploads', express.static(uploadDir));
       }
+      
+      // Get existing profile data or create empty object
+      const existingProfile = practitionerProfiles.get(req.user.id) || {};
+      
+      // Update the profile with the avatar URL
+      const updatedProfile = {
+        ...existingProfile,
+        avatarUrl: fileUrl,
+      };
+      
+      // Store the updated profile
+      practitionerProfiles.set(req.user.id, updatedProfile);
       
       res.json({
         message: "Avatar uploaded successfully",
