@@ -4,13 +4,11 @@ import { useLocation } from "wouter";
 import { ClientNote } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Edit, Trash2, Check, X } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PlusCircle, Edit, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 
 interface ClientNotesProps {
@@ -109,35 +107,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
     });
   };
 
-  const handleUpdateNote = (noteId: number) => {
-    if (!editingNoteTitle.trim()) {
-      toast({
-        title: "Error",
-        description: "Note title is required",
-        variant: "destructive",
-      });
-      return;
-    }
 
-    const note = notes.find(n => n.id === noteId);
-    if (!note) return;
-
-    // Get the existing entries
-    let entries = [...(note.entries as Array<{ text: string; date: string | Date }> || [])];
-
-    // Add the new entry if there's text
-    if (editingNoteText.trim()) {
-      entries.unshift({ text: editingNoteText, date: new Date() });
-    }
-
-    updateNoteMutation.mutate({
-      noteId,
-      data: {
-        title: editingNoteTitle,
-        entries
-      }
-    });
-  };
 
   const handleEditNote = (note: ClientNote) => {
     setEditingNoteId(note.id);
@@ -252,14 +222,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
               {notes.map((note) => (
                 <Card key={note.id} className="border shadow-sm">
                   <CardHeader className="pb-2">
-                    {editingNoteId === note.id ? (
-                      <Input
-                        type="text"
-                        value={editingNoteTitle}
-                        onChange={(e) => setEditingNoteTitle(e.target.value)}
-                        className="font-medium text-lg"
-                      />
-                    ) : (
+                    {(
                       <div className="flex justify-between items-center">
                         <Button 
                           variant="ghost" 
