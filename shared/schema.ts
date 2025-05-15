@@ -1,0 +1,99 @@
+import { pgTable, text, serial, integer, boolean, timestamp, json } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+// User schema for both practitioners and clients
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  role: text("role").notNull().default("client"), // 'practitioner' or 'client'
+  name: text("name").notNull(),
+  email: text("email"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Client information schema
+export const clients = pgTable("clients", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  practitionerId: integer("practitioner_id").notNull().references(() => users.id),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  dateOfBirth: timestamp("date_of_birth"),
+  diagnosis: text("diagnosis"),
+  guardianName: text("guardian_name"),
+  guardianRelation: text("guardian_relation"),
+  guardianPhone: text("guardian_phone"),
+  guardianEmail: text("guardian_email"),
+  treatmentPlan: text("treatment_plan"),
+  treatmentGoals: json("treatment_goals").default([]),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Client data entries schema
+export const dataEntries = pgTable("data_entries", {
+  id: serial("id").primaryKey(),
+  clientId: integer("client_id").notNull().references(() => clients.id),
+  mood: text("mood").notNull(),
+  anxietyLevel: integer("anxiety_level"), // 1-5
+  sleepQuality: integer("sleep_quality"), // 1-5
+  challenges: json("challenges").default([]),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Sessions schema for future appointments
+export const sessions = pgTable("sessions", {
+  id: serial("id").primaryKey(),
+  clientId: integer("client_id").notNull().references(() => clients.id),
+  practitionerId: integer("practitioner_id").notNull().references(() => users.id),
+  date: timestamp("date").notNull(),
+  status: text("status").default("pending"), // 'pending', 'confirmed', 'completed', 'cancelled'
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Insert Schemas
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertClientSchema = createInsertSchema(clients).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertDataEntrySchema = createInsertSchema(dataEntries).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSessionSchema = createInsertSchema(sessions).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Types
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+
+export type InsertClient = z.infer<typeof insertClientSchema>;
+export type Client = typeof clients.$inferSelect;
+
+export type InsertDataEntry = z.infer<typeof insertDataEntrySchema>;
+export type DataEntry = typeof dataEntries.$inferSelect;
+
+export type InsertSession = z.infer<typeof insertSessionSchema>;
+export type Session = typeof sessions.$inferSelect;
+
+// Extended types for the application
+export type ClientWithUser = Client & {
+  user: User;
+};
+
+export type DataEntryWithClient = DataEntry & {
+  client: Client;
+};
