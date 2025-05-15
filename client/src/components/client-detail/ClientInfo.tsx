@@ -1,6 +1,7 @@
 import { Client } from "@shared/schema";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 interface ClientInfoProps {
   client: Client & { user?: any };
@@ -34,12 +35,14 @@ export default function ClientInfo({ client }: ClientInfoProps) {
           <p className="text-gray-900">{client.treatmentPlan || "Not specified"}</p>
         </div>
         <div className="pt-3">
-          <Button 
-            variant="outline"
-            className="w-full flex items-center justify-center"
-          >
-            <i className="ri-file-text-line mr-2"></i> View Full Profile
-          </Button>
+          <Link href={`/edit-client/${client.id}`}>
+            <Button 
+              variant="outline"
+              className="w-full flex items-center justify-center"
+            >
+              <i className="ri-edit-line mr-2"></i> Edit Client
+            </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>
