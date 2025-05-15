@@ -194,7 +194,7 @@ export class DatabaseStorage implements IStorage {
   // Statistics operations
   async countClientsByPractitionerId(practitionerId: number): Promise<number> {
     const result = await db
-      .select({ count: db.fn.count() })
+      .select({ count: sql`count(*)` })
       .from(clients)
       .where(eq(clients.practitionerId, practitionerId));
     
@@ -205,7 +205,7 @@ export class DatabaseStorage implements IStorage {
     const now = new Date();
     
     const result = await db
-      .select({ count: db.fn.count() })
+      .select({ count: sql`count(*)` })
       .from(sessions)
       .where(and(
         eq(sessions.practitionerId, practitionerId),
@@ -235,10 +235,11 @@ export class DatabaseStorage implements IStorage {
     
     // Count recent data entries for these clients
     const result = await db
-      .select({ count: db.fn.count() })
+      .select({ count: sql`count(*)` })
       .from(dataEntries)
       .where(and(
-        db.inArray(dataEntries.clientId, clientIds),
+        // Replace inArray with an OR condition for each client ID
+        sql`${dataEntries.clientId} IN (${sql.join(clientIds)})`,
         gt(dataEntries.createdAt, twoDaysAgo)
       ));
     
