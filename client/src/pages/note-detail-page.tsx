@@ -85,20 +85,26 @@ export default function NoteDetailPage() {
   // Delete note mutation
   const deleteNoteMutation = useMutation({
     mutationFn: async () => {
+      // Store the client ID before deleting the note
+      const clientId = note?.clientId;
+      
       await apiRequest(
         "DELETE",
         `/api/notes/${noteId}`,
         {}
       );
+      
+      return { clientId };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "Note deleted",
         description: "The note has been permanently deleted.",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/clients', note?.clientId, 'notes'] });
-      if (note?.clientId) {
-        navigate(`/clients/${note.clientId}`);
+      
+      if (data.clientId) {
+        queryClient.invalidateQueries({ queryKey: ['/api/clients', data.clientId, 'notes'] });
+        navigate(`/clients/${data.clientId}`);
       } else {
         navigate('/');
       }
@@ -165,9 +171,12 @@ export default function NoteDetailPage() {
   return (
     <div className="container mx-auto py-6">
       <div className="mb-6">
-        <Button variant="outline" onClick={() => navigate(-1)}>
+        <Button 
+          variant="outline" 
+          onClick={() => note?.clientId ? navigate(`/clients/${note.clientId}`) : navigate("/")}
+        >
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Back
+          Back to Client
         </Button>
       </div>
 
@@ -199,13 +208,28 @@ export default function NoteDetailPage() {
             ) : (
               <div className="flex items-center space-x-4">
                 <CardTitle className="text-xl">{note.title}</CardTitle>
-                <Button 
-                  size="sm" 
-                  variant="ghost"
-                  onClick={handleStartEditing}
-                >
-                  Edit Title
-                </Button>
+                <div className="flex items-center space-x-2">
+                  <Button 
+                    size="sm" 
+                    variant="ghost"
+                    onClick={handleStartEditing}
+                  >
+                    Edit Title
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
+                    onClick={() => {
+                      if (confirm("Are you sure you want to delete this note? This action cannot be undone.")) {
+                        deleteNoteMutation.mutate();
+                      }
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Note
+                  </Button>
+                </div>
               </div>
             )}
           </div>
