@@ -31,7 +31,7 @@ const addClientSchema = z.object({
   guardianPhone: z.string().min(10, "Valid phone number is required"),
   
   // Treatment Information
-  treatmentPlan: z.string().min(1, "Treatment plan is required"),
+  treatmentPlan: z.array(z.string()).min(1, "At least one treatment plan is required"),
   treatmentGoals: z.array(z.string()).optional(),
   notes: z.string().optional(),
   
@@ -63,7 +63,7 @@ export default function AddClientPage() {
       guardianRelation: "parent",
       guardianEmail: "",
       guardianPhone: "",
-      treatmentPlan: "",
+      treatmentPlan: [],
       treatmentGoals: [],
       notes: "",
       username: "",

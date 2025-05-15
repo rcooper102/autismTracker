@@ -11,6 +11,15 @@ interface TreatmentInfoFormProps {
 }
 
 export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
+  const treatmentPlans = [
+    { id: "cbt", label: "Cognitive Behavioral Therapy" },
+    { id: "aba", label: "Applied Behavior Analysis" },
+    { id: "social-skills", label: "Social Skills Training" },
+    { id: "speech", label: "Speech Therapy" },
+    { id: "occupational", label: "Occupational Therapy" },
+    { id: "custom", label: "Custom Plan (specify in notes)" },
+  ];
+  
   const treatmentGoals = [
     { id: "social", label: "Improve social interaction skills" },
     { id: "anxiety", label: "Reduce anxiety in specific settings" },
@@ -18,6 +27,19 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
     { id: "executive", label: "Improve executive functioning" },
     { id: "routines", label: "Establish consistent routines" },
   ];
+
+  const handlePlanChange = (checked: boolean, plan: string) => {
+    const currentPlans = form.getValues("treatmentPlan") || [];
+    
+    if (checked) {
+      form.setValue("treatmentPlan", [...currentPlans, plan]);
+    } else {
+      form.setValue(
+        "treatmentPlan",
+        currentPlans.filter((p: string) => p !== plan)
+      );
+    }
+  };
 
   const handleGoalChange = (checked: boolean, goal: string) => {
     const currentGoals = form.getValues("treatmentGoals") || [];
@@ -42,25 +64,33 @@ export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
           name="treatmentPlan"
           render={({ field }) => (
             <FormItem>
-              <FormLabel><RequiredField>Treatment Plan</RequiredField></FormLabel>
-              <Select 
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select treatment plan" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="cbt">Cognitive Behavioral Therapy</SelectItem>
-                  <SelectItem value="aba">Applied Behavior Analysis</SelectItem>
-                  <SelectItem value="social-skills">Social Skills Training</SelectItem>
-                  <SelectItem value="speech">Speech Therapy</SelectItem>
-                  <SelectItem value="occupational">Occupational Therapy</SelectItem>
-                  <SelectItem value="custom">Custom Plan (specify in notes)</SelectItem>
-                </SelectContent>
-              </Select>
+              <FormLabel><RequiredField>Treatment Plans</RequiredField></FormLabel>
+              <div className="space-y-2">
+                {treatmentPlans.map((plan) => {
+                  const currentPlans = field.value || [];
+                  const isChecked = Array.isArray(currentPlans) ? 
+                    currentPlans.includes(plan.label) :
+                    false;
+                  
+                  return (
+                    <div key={plan.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`plan-${plan.id}`}
+                        checked={isChecked}
+                        onCheckedChange={(checked) => 
+                          handlePlanChange(checked as boolean, plan.label)
+                        }
+                      />
+                      <label
+                        htmlFor={`plan-${plan.id}`}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {plan.label}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
               <FormMessage />
             </FormItem>
           )}

@@ -27,7 +27,7 @@ export const clients = pgTable("clients", {
   guardianRelation: text("guardian_relation"),
   guardianPhone: text("guardian_phone"),
   guardianEmail: text("guardian_email"),
-  treatmentPlan: text("treatment_plan"),
+  treatmentPlan: json("treatment_plan").default([]),
   treatmentGoals: json("treatment_goals").default([]),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
