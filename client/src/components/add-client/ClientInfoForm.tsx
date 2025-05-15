@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { RequiredField } from "@/components/ui/required-field";
+import clientConfig from "@/config/client-config.json";
 
 interface ClientInfoFormProps {
   form: UseFormReturn<any>;
@@ -74,12 +75,11 @@ export default function ClientInfoForm({ form }: ClientInfoFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="asd-1">Autism Spectrum Disorder (Level 1)</SelectItem>
-                  <SelectItem value="asd-2">Autism Spectrum Disorder (Level 2)</SelectItem>
-                  <SelectItem value="asd-3">Autism Spectrum Disorder (Level 3)</SelectItem>
-                  <SelectItem value="aspergers">Asperger's Syndrome</SelectItem>
-                  <SelectItem value="pdd-nos">PDD-NOS</SelectItem>
-                  <SelectItem value="other">Other (specify in notes)</SelectItem>
+                  {clientConfig.diagnosisOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />

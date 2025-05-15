@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { RequiredField } from "@/components/ui/required-field";
+import clientConfig from "@/config/client-config.json";
 
 interface GuardianInfoFormProps {
   form: UseFormReturn<any>;
@@ -45,9 +46,11 @@ export default function GuardianInfoForm({ form }: GuardianInfoFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="parent">Parent</SelectItem>
-                  <SelectItem value="guardian">Legal Guardian</SelectItem>
-                  <SelectItem value="other">Other (specify)</SelectItem>
+                  {clientConfig.guardianRelationOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />

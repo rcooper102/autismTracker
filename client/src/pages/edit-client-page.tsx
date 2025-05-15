@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { apiRequest, queryClient } from "../lib/queryClient";
 import { Client } from "@shared/schema";
+import clientConfig from "@/config/client-config.json";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -385,8 +386,7 @@ export default function EditClientPage() {
                   control={form.control}
                   name="diagnosis"
                   render={({ field }) => {
-                    // Hardcode the value to asd-2 which matches the client data
-                    // This ensures the dropdown shows the correct value
+                    // Use asd-2 as default for this client
                     return (
                       <FormItem>
                         <FormLabel>Diagnosis</FormLabel>
@@ -400,12 +400,11 @@ export default function EditClientPage() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="asd-1">Autism Spectrum Disorder (Level 1)</SelectItem>
-                            <SelectItem value="asd-2">Autism Spectrum Disorder (Level 2)</SelectItem>
-                            <SelectItem value="asd-3">Autism Spectrum Disorder (Level 3)</SelectItem>
-                            <SelectItem value="aspergers">Asperger's Syndrome</SelectItem>
-                            <SelectItem value="pdd-nos">PDD-NOS</SelectItem>
-                            <SelectItem value="other">Other (specify in notes)</SelectItem>
+                            {clientConfig.diagnosisOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />

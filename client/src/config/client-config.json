@@ -1,0 +1,122 @@
+{
+  "diagnosisOptions": [
+    {
+      "value": "asd-1",
+      "label": "Autism Spectrum Disorder (Level 1)"
+    },
+    {
+      "value": "asd-2",
+      "label": "Autism Spectrum Disorder (Level 2)"
+    },
+    {
+      "value": "asd-3",
+      "label": "Autism Spectrum Disorder (Level 3)"
+    },
+    {
+      "value": "aspergers",
+      "label": "Asperger's Syndrome"
+    },
+    {
+      "value": "pdd-nos",
+      "label": "PDD-NOS"
+    },
+    {
+      "value": "other",
+      "label": "Other (specify in notes)"
+    }
+  ],
+  "treatmentPlanOptions": [
+    {
+      "value": "behavioral-therapy",
+      "label": "Behavioral Therapy"
+    },
+    {
+      "value": "speech-therapy",
+      "label": "Speech Therapy"
+    },
+    {
+      "value": "occupational-therapy",
+      "label": "Occupational Therapy"
+    },
+    {
+      "value": "social-skills",
+      "label": "Social Skills Training"
+    },
+    {
+      "value": "dietary-interventions",
+      "label": "Dietary Interventions"
+    },
+    {
+      "value": "sensory-integration",
+      "label": "Sensory Integration Therapy"
+    },
+    {
+      "value": "developmental-therapy",
+      "label": "Developmental Therapy"
+    },
+    {
+      "value": "medication-management",
+      "label": "Medication Management"
+    },
+    {
+      "value": "parent-training",
+      "label": "Parent Training & Education"
+    },
+    {
+      "value": "cognitive-therapy",
+      "label": "Cognitive Behavioral Therapy (CBT)"
+    }
+  ],
+  "treatmentGoalOptions": [
+    "Improve communication skills",
+    "Develop social interaction abilities",
+    "Reduce repetitive behaviors",
+    "Enhance daily living skills",
+    "Improve emotional regulation",
+    "Develop coping mechanisms",
+    "Increase independence",
+    "Improve academic performance",
+    "Enhance fine motor skills",
+    "Develop sensory processing abilities",
+    "Reduce anxiety and stress",
+    "Improve attention and focus",
+    "Develop problem-solving skills",
+    "Build self-advocacy skills",
+    "Improve family relationships",
+    "Enhance peer relationships",
+    "Develop play skills",
+    "Improve sleep patterns",
+    "Enhance nutritional intake",
+    "Reduce challenging behaviors"
+  ],
+  "guardianRelationOptions": [
+    {
+      "value": "parent",
+      "label": "Parent"
+    },
+    {
+      "value": "grandparent",
+      "label": "Grandparent"
+    },
+    {
+      "value": "sibling",
+      "label": "Sibling"
+    },
+    {
+      "value": "aunt-uncle",
+      "label": "Aunt/Uncle"
+    },
+    {
+      "value": "foster-parent",
+      "label": "Foster Parent"
+    },
+    {
+      "value": "legal-guardian",
+      "label": "Legal Guardian"
+    },
+    {
+      "value": "other",
+      "label": "Other (specify in notes)"
+    }
+  ]
+}
