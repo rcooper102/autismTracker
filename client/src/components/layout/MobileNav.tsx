@@ -36,7 +36,7 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent side="left" className="w-[280px] sm:w-[350px] bg-[rgb(32,148,243)] text-white border-r border-gray-800">
+      <SheetContent side="left" className="w-[280px] sm:w-[350px] bg-[rgb(32,148,243)] text-white">
         <SheetHeader className="mb-6">
           <SheetTitle className="flex items-center space-x-2 text-white">
             <BrainCog className="h-6 w-6 text-white" />

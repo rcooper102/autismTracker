@@ -21,7 +21,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="hidden md:flex flex-col h-[calc(100vh-4rem)] bg-[rgb(32,148,243)] text-white border-r border-gray-800 w-[240px] fixed top-16 left-0 py-6 px-4 overflow-y-auto">
+    <div className="hidden md:flex flex-col h-[calc(100vh-4rem)] bg-[rgb(32,148,243)] text-white w-[240px] fixed top-16 left-0 py-6 px-4 overflow-y-auto">
       <div className="flex flex-col space-y-2">
         <div className="py-2 px-4 mb-2 bg-white/10 rounded-md">
           <p className="font-medium text-white">{user.name}</p>
