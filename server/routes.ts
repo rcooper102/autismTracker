@@ -156,6 +156,175 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     res.status(403).json({ message: "Unauthorized" });
   });
+  
+  // Update client information
+  app.patch("/api/clients/:clientId", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    
+    // Verify the client belongs to this practitioner
+    const client = await storage.getClient(clientId);
+    if (!client || client.practitionerId !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to update this client" });
+    }
+    
+    try {
+      // Define validation schema for client updates
+      const clientUpdateSchema = z.object({
+        firstName: z.string().min(2).optional(),
+        lastName: z.string().min(2).optional(),
+        email: z.string().email().optional(),
+        dateOfBirth: z.string().optional().nullable(),
+        diagnosis: z.string().optional().nullable(),
+        treatmentPlan: z.any().optional(),
+        treatmentGoals: z.array(z.string()).optional(),
+        guardianName: z.string().optional().nullable(),
+        guardianRelation: z.string().optional().nullable(),
+        guardianPhone: z.string().optional().nullable(),
+        guardianEmail: z.string().email().optional().nullable(),
+        notes: z.string().optional().nullable(),
+      });
+
+      const validatedData = clientUpdateSchema.parse(req.body);
+      
+      // Update client record
+      const updatedClient = await storage.updateClient(clientId, validatedData);
+      
+      // If email was updated, update the user's email as well
+      if (validatedData.email && client.userId) {
+        const user = await storage.getUser(client.userId);
+        if (user) {
+          await db.update(users)
+            .set({ email: validatedData.email })
+            .where(eq(users.id, user.id));
+        }
+      }
+      
+      if (!updatedClient) {
+        return res.status(404).json({ message: "Client not found" });
+      }
+      
+      res.json(updatedClient);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid client data", errors: error.errors });
+      }
+      console.error("Error updating client:", error);
+      res.status(500).json({ message: "Failed to update client" });
+    }
+  });
+  
+  // Reset client password
+  app.patch("/api/clients/:clientId/reset-password", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    
+    // Verify the client belongs to this practitioner
+    const client = await storage.getClient(clientId);
+    if (!client || client.practitionerId !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to update this client" });
+    }
+    
+    try {
+      // Define validation schema for password reset
+      const passwordResetSchema = z.object({
+        password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+      });
+
+      const validatedData = passwordResetSchema.parse(req.body);
+      
+      // Import password utility from auth
+      const { hashPassword } = await import("./auth");
+      
+      // Hash the new password
+      const hashedPassword = await hashPassword(validatedData.password);
+      
+      // Update the user's password
+      if (!client.userId) {
+        return res.status(404).json({ message: "Client user account not found" });
+      }
+      
+      await db.update(users)
+        .set({ password: hashedPassword })
+        .where(eq(users.id, client.userId));
+      
+      res.json({ message: "Password reset successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid password data", errors: error.errors });
+      }
+      console.error("Error resetting password:", error);
+      res.status(500).json({ message: "Failed to reset password" });
+    }
+  });
+  
+  // Upload client avatar
+  app.post("/api/clients/:clientId/avatar", upload.single('avatar'), async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    
+    // Verify the client belongs to this practitioner
+    const client = await storage.getClient(clientId);
+    if (!client || client.practitionerId !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to update this client" });
+    }
+    
+    try {
+      const file = req.file;
+      
+      if (!file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+      
+      // Create relative file path and URL
+      const relativeFilePath = `/uploads/${file.filename}`;
+      
+      // Serve static files from uploads directory if not already configured
+      if (!app._router.stack.some((layer: any) => 
+        layer.route && layer.route.path === '/uploads')) {
+        app.use('/uploads', express.static(uploadDir));
+      }
+      
+      // Create field for avatarUrl in clients table if not already present
+      // In a real app, we'd have this as part of the database schema
+      // Here we're storing it as part of the notes field (JSON) as a workaround
+      let notesObj = {};
+      if (client.notes) {
+        try {
+          notesObj = JSON.parse(client.notes);
+        } catch (e) {
+          notesObj = { text: client.notes };
+        }
+      }
+      
+      notesObj = {
+        ...notesObj,
+        avatarUrl: relativeFilePath
+      };
+      
+      // Update client record with the avatar URL in notes
+      await storage.updateClient(clientId, {
+        notes: JSON.stringify(notesObj)
+      });
+      
+      res.json({
+        message: "Avatar uploaded successfully",
+        avatarUrl: relativeFilePath
+      });
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      res.status(500).json({ message: "Failed to upload avatar" });
+    }
+  });
 
   // Data entry routes
   app.get("/api/clients/:clientId/data", async (req, res) => {

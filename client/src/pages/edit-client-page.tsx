@@ -97,7 +97,7 @@ export default function EditClientPage() {
   useEffect(() => {
     if (client) {
       // Format date of birth if exists
-      let formattedDateOfBirth = client.dateOfBirth;
+      let formattedDateOfBirth = "";
       if (client.dateOfBirth) {
         try {
           formattedDateOfBirth = format(new Date(client.dateOfBirth), "yyyy-MM-dd");
@@ -106,17 +106,31 @@ export default function EditClientPage() {
         }
       }
 
+      // Get email from user relationship if available
+      const userEmail = client.user?.email || "";
+      
+      // Convert JSON treatment goals to string if available
+      let goalString = "";
+      if (client.treatmentGoals && Array.isArray(client.treatmentGoals)) {
+        goalString = client.treatmentGoals.join(", ");
+      }
+      
+      // Convert JSON treatment plan to string if available
+      let planString = "";
+      if (client.treatmentPlan) {
+        planString = JSON.stringify(client.treatmentPlan);
+      }
+
       form.reset({
         firstName: client.firstName || "",
         lastName: client.lastName || "",
-        email: client.user?.email || "",
-        phone: client.phone || "",
-        dateOfBirth: formattedDateOfBirth || "",
+        email: userEmail,
+        dateOfBirth: formattedDateOfBirth,
         diagnosis: client.diagnosis || "",
-        treatmentPlan: client.treatmentPlan || "",
-        treatmentGoals: client.treatmentGoals?.join(", ") || "",
+        treatmentPlan: planString,
+        treatmentGoals: goalString,
         guardianName: client.guardianName || "",
-        guardianRelationship: client.guardianRelationship || "",
+        guardianRelation: client.guardianRelation || "",
         guardianPhone: client.guardianPhone || "",
         guardianEmail: client.guardianEmail || "",
         notes: client.notes || "",
@@ -321,19 +335,7 @@ export default function EditClientPage() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
 
                 <FormField
                   control={form.control}
@@ -413,7 +415,7 @@ export default function EditClientPage() {
                   />
                   <FormField
                     control={form.control}
-                    name="guardianRelationship"
+                    name="guardianRelation"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Relationship</FormLabel>
