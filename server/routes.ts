@@ -3,10 +3,12 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { z } from "zod";
-import { insertClientSchema, insertDataEntrySchema, insertSessionSchema, insertUserSchema } from "@shared/schema";
+import { insertClientSchema, insertDataEntrySchema, insertSessionSchema, insertUserSchema, users } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 // Setup multer for file uploads
 const uploadDir = path.join(process.cwd(), 'uploads');

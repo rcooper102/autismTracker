@@ -93,6 +93,21 @@ export default function EditClientPage() {
     },
   });
 
+  // Extract avatar URL from client notes if available
+  const getAvatarUrl = (clientData: any): string | null => {
+    if (!clientData?.notes) return null;
+    
+    try {
+      // Try to parse notes as JSON to get avatarUrl
+      const notesObj = JSON.parse(clientData.notes);
+      if (notesObj.avatarUrl) return notesObj.avatarUrl;
+    } catch (e) {
+      // Not JSON or no avatar URL
+    }
+    
+    return null;
+  };
+  
   // Set form values when client data is loaded
   useEffect(() => {
     if (client) {
@@ -106,8 +121,13 @@ export default function EditClientPage() {
         }
       }
 
-      // Get email from user relationship if available
-      const userEmail = client.user?.email || "";
+      // Get email - try to fetch from related data first
+      let userEmail = "";
+      // @ts-ignore - we might get user data from the API
+      if (client.user && client.user.email) {
+        // @ts-ignore
+        userEmail = client.user.email;
+      }
       
       // Convert JSON treatment goals to string if available
       let goalString = "";
@@ -119,6 +139,12 @@ export default function EditClientPage() {
       let planString = "";
       if (client.treatmentPlan) {
         planString = JSON.stringify(client.treatmentPlan);
+      }
+      
+      // Check for avatar in notes
+      const avatarUrl = getAvatarUrl(client);
+      if (avatarUrl) {
+        setAvatarPreview(avatarUrl);
       }
 
       form.reset({
@@ -502,12 +528,6 @@ export default function EditClientPage() {
                     <img 
                       src={avatarPreview} 
                       alt="Avatar Preview" 
-                      className="w-32 h-32 rounded-full object-cover border"
-                    />
-                  ) : client?.avatar ? (
-                    <img 
-                      src={client.avatar} 
-                      alt={`${client.firstName} ${client.lastName}`} 
                       className="w-32 h-32 rounded-full object-cover border"
                     />
                   ) : (
