@@ -9,7 +9,6 @@ import ClientHeader from "@/components/client-detail/ClientHeader";
 import MoodChart from "@/components/client-detail/MoodChart";
 import DataEntries from "@/components/client-detail/DataEntries";
 import ClientInfo from "@/components/client-detail/ClientInfo";
-import TreatmentGoals from "@/components/client-detail/TreatmentGoals";
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -86,13 +85,6 @@ export default function ClientDetailPage() {
             <div className="col-span-1">
               {/* Client Details */}
               <ClientInfo client={client} />
-              
-              {/* Treatment Goals */}
-              <TreatmentGoals 
-                goals={client.treatmentGoals || []} 
-                canUpdate={user?.role === "practitioner"} 
-                clientId={client.id} 
-              />
             </div>
           </div>
         </div>
