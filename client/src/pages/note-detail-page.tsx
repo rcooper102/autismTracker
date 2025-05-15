@@ -309,7 +309,7 @@ export default function NoteDetailPage() {
               )}
             </div>
             <CardDescription>
-              Client Note | Last updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy h:mm a') : 'Unknown'}
+              Last updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy h:mm a') : 'Unknown'}
             </CardDescription>
           </CardHeader>
         </Card>
