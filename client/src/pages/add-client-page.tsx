@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -48,9 +48,16 @@ export default function AddClientPage() {
   const { toast } = useToast();
   
   // Check if user is practitioner
-  if (user?.role !== "practitioner") {
-    setLocation("/");
-  }
+  useEffect(() => {
+    if (user && user.role !== "practitioner") {
+      setLocation("/");
+      toast({
+        title: "Access denied",
+        description: "Only practitioners can add clients",
+        variant: "destructive",
+      });
+    }
+  }, [user, setLocation, toast]);
   
   const form = useForm<AddClientFormValues>({
     resolver: zodResolver(addClientSchema),

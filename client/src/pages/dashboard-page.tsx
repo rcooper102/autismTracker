@@ -1,6 +1,8 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { Redirect, useLocation } from "wouter";
+import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 import Sidebar from "@/components/layout/Sidebar";
 import Stats from "@/components/dashboard/Stats";
 import ClientList from "@/components/dashboard/ClientList";
