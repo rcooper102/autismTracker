@@ -299,14 +299,14 @@ export default function EditClientPage() {
 
   return (
     <div className="container mx-auto py-6">
-      <div className="flex items-center mb-6">
+      <div className="mb-6">
         <button 
-          className="text-primary flex items-center text-sm"
+          className="text-primary flex items-center text-sm mb-4"
           onClick={handleBack}
         >
           <i className="ri-arrow-left-line mr-1"></i> Back to Client
         </button>
-        <h1 className="text-2xl font-bold ml-4">Edit Client</h1>
+        <h1 className="text-2xl font-bold">Edit Client</h1>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
