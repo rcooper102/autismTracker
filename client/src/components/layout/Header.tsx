@@ -34,14 +34,14 @@ export default function Header() {
   if (!user) return null;
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 w-full bg-gray-900 border-b border-gray-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <BrainCog className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold text-primary">AutiTrack</span>
+              <BrainCog className="h-8 w-8 text-white" />
+              <span className="text-xl font-bold text-white">AutiTrack</span>
             </Link>
           </div>
 
@@ -49,23 +49,23 @@ export default function Header() {
           <nav className="hidden md:flex items-center space-x-4">
             {user.role === "practitioner" && (
               <>
-                <Link href="/" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                <Link href="/" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
                   Dashboard
                 </Link>
-                <Link href="/add-client" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                <Link href="/add-client" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
                   Add Client
                 </Link>
-                <Button variant="ghost" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                <Button variant="ghost" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
                   Reports
                 </Button>
               </>
             )}
             {user.role === "client" && (
               <>
-                <Link href="/log-data" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                <Link href="/log-data" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
                   Log Data
                 </Link>
-                <Link href="/" className="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                <Link href="/" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">
                   Progress
                 </Link>
               </>
@@ -76,7 +76,7 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full flex items-center justify-center">
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full flex items-center justify-center text-white hover:bg-gray-800">
                   <User className="h-4 w-4" />
                   <span className="sr-only">User menu</span>
                 </Button>
@@ -149,7 +149,7 @@ export default function Header() {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="md:hidden" 
+              className="md:hidden text-white hover:bg-gray-800" 
               onClick={() => setMobileMenuOpen(true)}
             >
               <Menu className="h-6 w-6" />
