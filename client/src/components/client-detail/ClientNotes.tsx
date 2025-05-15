@@ -186,26 +186,35 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
               No notes available. Click "Add Note" to create one.
             </div>
           ) : (
-            <div className="space-y-2">
-              {notes.map((note) => (
-                <Card 
-                  key={note.id} 
-                  className="border shadow-sm hover:shadow cursor-pointer" 
-                  onClick={() => navigate(`/notes/${note.id}`)}
-                >
-                  <CardHeader className="pb-2 pt-2 px-3">
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="text-lg">{note.title}</CardTitle>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-0">
-                      Updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy') : 'Unknown'} • 
-                      {(note.entries && Array.isArray(note.entries) && note.entries.length > 0) ? 
-                        ` ${note.entries.length} entries` : 
-                        " No entries"}
-                    </p>
-                  </CardHeader>
-                </Card>
-              ))}
+            <div className="overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-50 text-left">
+                  <tr>
+                    <th className="px-3 py-2 text-sm font-medium text-gray-500">Title</th>
+                    <th className="px-3 py-2 text-sm font-medium text-gray-500">Last Updated</th>
+                    <th className="px-3 py-2 text-sm font-medium text-gray-500">Entries</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {notes.map((note) => (
+                    <tr 
+                      key={note.id}
+                      className="border-t hover:bg-gray-50 cursor-pointer"
+                      onClick={() => navigate(`/notes/${note.id}`)}
+                    >
+                      <td className="px-3 py-3 text-base">{note.title}</td>
+                      <td className="px-3 py-3 text-sm text-gray-500">
+                        {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy') : 'Unknown'}
+                      </td>
+                      <td className="px-3 py-3 text-sm text-gray-500">
+                        {(note.entries && Array.isArray(note.entries) && note.entries.length > 0) ? 
+                          `${note.entries.length} entries` : 
+                          "No entries"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </CardContent>
