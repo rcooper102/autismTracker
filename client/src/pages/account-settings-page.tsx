@@ -252,8 +252,14 @@ export default function AccountSettingsPage() {
             <CardContent className="p-6 flex flex-col items-center">
               <Avatar className="h-24 w-24 mb-4">
                 <AvatarImage 
-                  src={avatarPreview || practitioner?.avatarUrl || ""} 
+                  src={avatarPreview || (practitioner?.avatarUrl ? practitioner.avatarUrl : "")}
                   alt={user?.username || "User"} 
+                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                    console.error("Avatar image failed to load:", e);
+                    // If the image fails to load, log the URL that failed
+                    const target = e.target as HTMLImageElement;
+                    console.error("Failed URL:", target.src);
+                  }}
                 />
                 <AvatarFallback className="text-2xl">
                   {user?.username?.substring(0, 2).toUpperCase() || "U"}

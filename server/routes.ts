@@ -819,8 +819,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const relativeFilePath = `/uploads/${file.filename}`;
       const absoluteFilePath = file.path;
       
-      // Create a URL to serve the file
-      const fileUrl = relativeFilePath;
+      // Create a URL to serve the file with timestamp to prevent caching
+      const timestamp = Date.now();
+      const fileUrl = `${relativeFilePath}?t=${timestamp}`;
       
       // Serve static files from uploads directory
       if (!app._router.stack.some((layer: any) => 
