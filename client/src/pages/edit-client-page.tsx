@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { apiRequest, queryClient } from "../lib/queryClient";
 import { Client } from "@shared/schema";
 import clientConfig from "@/config/client-config.json";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -708,29 +709,19 @@ export default function EditClientPage() {
             <CardContent>
               <div className="flex flex-col items-center">
                 <div className="relative mb-4">
-                  {console.log("Rendering avatar - preview:", avatarPreview, "client avatarUrl:", client?.avatarUrl)}
-                  {avatarPreview ? (
-                    <img 
-                      src={avatarPreview} 
-                      alt="Client Avatar" 
-                      className="w-32 h-32 rounded-full object-cover border"
-                    />
-                  ) : (client?.avatarUrl) ? (
-                    <img 
-                      src={client.avatarUrl} 
-                      alt="Client Avatar" 
-                      className="w-32 h-32 rounded-full object-cover border"
-                    />
-                  ) : (
-                    <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center">
-                      <span className="text-2xl font-semibold text-gray-400">
-                        {client?.firstName && client?.lastName 
-                          ? `${client.firstName[0]}${client.lastName[0]}`
-                          : "??"
-                        }
-                      </span>
-                    </div>
-                  )}
+                  <Avatar size="xl" className="border">
+                    {avatarPreview ? (
+                      <AvatarImage src={avatarPreview} alt="Client Avatar" />
+                    ) : (client?.avatarUrl ? (
+                      <AvatarImage src={client.avatarUrl} alt="Client Avatar" />
+                    ) : null)}
+                    <AvatarFallback className="text-2xl">
+                      {client?.firstName && client?.lastName 
+                        ? `${client.firstName[0]}${client.lastName[0]}`
+                        : "??"
+                      }
+                    </AvatarFallback>
+                  </Avatar>
                 </div>
 
                 <div className="mb-4">
