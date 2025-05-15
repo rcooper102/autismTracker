@@ -17,7 +17,8 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import RichTextEditor from "@/components/RichTextEditor";
@@ -252,172 +253,170 @@ export default function NoteDetailPage() {
   }
 
   return (
-    <>
-      <div className="container mx-auto py-6">
-        <div className="mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => note?.clientId ? navigate(`/clients/${note.clientId}`) : navigate("/")}
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Back to Client
-          </Button>
-        </div>
+    <div className="container mx-auto py-6">
+      <div className="mb-6">
+        <Button 
+          variant="outline" 
+          onClick={() => note?.clientId ? navigate(`/clients/${note.clientId}`) : navigate("/")}
+        >
+          <ChevronLeft className="h-4 w-4 mr-2" />
+          Back to Client
+        </Button>
+      </div>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              {isEditing ? (
-                <div className="flex items-center space-x-2 w-full">
-                  <Input
-                    value={editingTitle}
-                    onChange={(e) => setEditingTitle(e.target.value)}
-                    className="font-medium text-lg"
-                  />
-                  <Button 
-                    size="sm" 
-                    onClick={handleUpdateTitle}
-                    disabled={updateNoteMutation.isPending}
-                  >
-                    <Save className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => setIsEditing(false)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-4">
-                  <CardTitle className="text-xl">{note.title}</CardTitle>
-                  <Button 
-                    size="sm" 
-                    variant="ghost"
-                    onClick={handleStartEditing}
-                    className="h-8 w-8 p-0"
-                    aria-label="Edit title"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
-            <CardDescription>
-              Client Note | Last updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy h:mm a') : 'Unknown'}
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="space-y-4">
-              <RichTextEditor
-                content={newEntryText}
-                onChange={setNewEntryText}
-                placeholder="Add a new note entry..."
-              />
-              <div className="flex justify-end">
+      <Card className="mb-6">
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            {isEditing ? (
+              <div className="flex items-center space-x-2 w-full">
+                <Input
+                  value={editingTitle}
+                  onChange={(e) => setEditingTitle(e.target.value)}
+                  className="font-medium text-lg"
+                />
                 <Button 
-                  onClick={handleAddEntry}
-                  disabled={updateNoteMutation.isPending || newEntryText.trim() === ""}
+                  size="sm" 
+                  onClick={handleUpdateTitle}
+                  disabled={updateNoteMutation.isPending}
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  {updateNoteMutation.isPending ? "Adding..." : "Add Entry"}
+                  <Save className="h-4 w-4" />
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => setIsEditing(false)}
+                >
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Note History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {(note.entries as { text: string; date: string }[] || []).length === 0 ? (
-              <div className="text-center py-6 text-gray-500">
-                No entries yet. Add your first entry above.
-              </div>
             ) : (
-              <ScrollArea className="h-[400px] pr-4">
-                <div className="space-y-6">
-                  {(note.entries as { text: string; date: string }[] || []).map((entry, index) => (
-                    <div key={index} className="border-b pb-4 last:border-0">
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="text-gray-500 text-sm font-medium">
-                          {format(new Date(entry.date), 'MMM d, yyyy h:mm a')}
-                        </div>
-                        <div className="flex space-x-1">
+              <div className="flex items-center space-x-4">
+                <CardTitle className="text-xl">{note.title}</CardTitle>
+                <Button 
+                  size="sm" 
+                  variant="ghost"
+                  onClick={handleStartEditing}
+                  className="h-8 w-8 p-0"
+                  aria-label="Edit title"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
+          <CardDescription>
+            Client Note | Last updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy h:mm a') : 'Unknown'}
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <div className="space-y-4">
+            <RichTextEditor
+              content={newEntryText}
+              onChange={setNewEntryText}
+              placeholder="Add a new note entry..."
+            />
+            <div className="flex justify-end">
+              <Button 
+                onClick={handleAddEntry}
+                disabled={updateNoteMutation.isPending || newEntryText.trim() === ""}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {updateNoteMutation.isPending ? "Adding..." : "Add Entry"}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Note History</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {(note.entries as { text: string; date: string }[] || []).length === 0 ? (
+            <div className="text-center py-6 text-gray-500">
+              No entries yet. Add your first entry above.
+            </div>
+          ) : (
+            <ScrollArea className="h-[400px] pr-4">
+              <div className="space-y-6">
+                {(note.entries as { text: string; date: string }[] || []).map((entry, index) => (
+                  <div key={index} className="border-b pb-4 last:border-0">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="text-gray-500 text-sm font-medium">
+                        {format(new Date(entry.date), 'MMM d, yyyy h:mm a')}
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => handleStartEditingEntry(index)}
+                          aria-label="Edit entry"
+                        >
+                          <Edit className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-red-500 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => openDeleteEntryDialog(index)}
+                          aria-label="Delete entry"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {editingEntryIndex === index ? (
+                      <div className="space-y-3">
+                        <RichTextEditor
+                          content={editingEntryText}
+                          onChange={setEditingEntryText}
+                          placeholder="Edit entry..."
+                        />
+                        <div className="flex justify-end space-x-2">
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7"
-                            onClick={() => handleStartEditingEntry(index)}
-                            aria-label="Edit entry"
+                            size="sm"
+                            variant="outline"
+                            onClick={handleCancelEditEntry}
                           >
-                            <Edit className="h-3.5 w-3.5" />
+                            <X className="h-3.5 w-3.5 mr-1" />
+                            Cancel
                           </Button>
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7 text-red-500 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => openDeleteEntryDialog(index)}
-                            aria-label="Delete entry"
+                            size="sm"
+                            onClick={handleUpdateEntry}
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <Check className="h-3.5 w-3.5 mr-1" />
+                            Save
                           </Button>
                         </div>
                       </div>
-                      
-                      {editingEntryIndex === index ? (
-                        <div className="space-y-3">
-                          <RichTextEditor
-                            content={editingEntryText}
-                            onChange={setEditingEntryText}
-                            placeholder="Edit entry..."
-                          />
-                          <div className="flex justify-end space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={handleCancelEditEntry}
-                            >
-                              <X className="h-3.5 w-3.5 mr-1" />
-                              Cancel
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={handleUpdateEntry}
-                            >
-                              <Check className="h-3.5 w-3.5 mr-1" />
-                              Save
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <RichTextContent content={entry.text} className="text-gray-800" />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            )}
-          </CardContent>
-        </Card>
-        
-        <div className="mt-8 border-t pt-6 flex justify-center">
-          <Button 
-            variant="outline"
-            className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
-            onClick={() => setDeleteNoteDialogOpen(true)}
-            disabled={deleteNoteMutation.isPending}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            {deleteNoteMutation.isPending ? "Deleting..." : "Delete this note"}
-          </Button>
-        </div>
+                    ) : (
+                      <RichTextContent content={entry.text} className="text-gray-800" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          )}
+        </CardContent>
+      </Card>
+      
+      <div className="mt-8 border-t pt-6 flex justify-center">
+        <Button 
+          variant="outline"
+          className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
+          onClick={() => setDeleteNoteDialogOpen(true)}
+          disabled={deleteNoteMutation.isPending}
+        >
+          <Trash2 className="h-4 w-4 mr-2" />
+          {deleteNoteMutation.isPending ? "Deleting..." : "Delete this note"}
+        </Button>
       </div>
 
       {/* Delete Entry Confirmation Dialog */}
@@ -461,6 +460,6 @@ export default function NoteDetailPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 }
