@@ -5,28 +5,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { RequiredField } from "@/components/ui/required-field";
+import clientConfig from "@/config/client-config.json";
 
 interface TreatmentInfoFormProps {
   form: UseFormReturn<any>;
 }
 
 export default function TreatmentInfoForm({ form }: TreatmentInfoFormProps) {
-  const treatmentPlans = [
-    { id: "cbt", label: "Cognitive Behavioral Therapy" },
-    { id: "aba", label: "Applied Behavior Analysis" },
-    { id: "social-skills", label: "Social Skills Training" },
-    { id: "speech", label: "Speech Therapy" },
-    { id: "occupational", label: "Occupational Therapy" },
-    { id: "custom", label: "Custom Plan (specify in notes)" },
-  ];
+  // Convert treatment plan options from the config to the format used in this component
+  const treatmentPlans = clientConfig.treatmentPlanOptions.map(option => ({
+    id: option.value,
+    label: option.label
+  }));
   
-  const treatmentGoals = [
-    { id: "social", label: "Improve social interaction skills" },
-    { id: "anxiety", label: "Reduce anxiety in specific settings" },
-    { id: "coping", label: "Develop coping mechanisms" },
-    { id: "executive", label: "Improve executive functioning" },
-    { id: "routines", label: "Establish consistent routines" },
-  ];
+  // Convert treatment goal options from the config to the format used in this component
+  const treatmentGoals = clientConfig.treatmentGoalOptions.map((option, index) => ({
+    id: `goal-${index}`,
+    label: option
+  }));
 
   const handlePlanChange = (checked: boolean, plan: string) => {
     const currentPlans = form.getValues("treatmentPlan") || [];
