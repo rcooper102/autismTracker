@@ -10,7 +10,8 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import RichTextEditor from "@/components/RichTextEditor";
+import RichTextContent from "@/components/RichTextContent";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -232,11 +233,10 @@ export default function NoteDetailPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <Textarea
+            <RichTextEditor
+              content={newEntryText}
+              onChange={setNewEntryText}
               placeholder="Add a new note entry..."
-              rows={4}
-              value={newEntryText}
-              onChange={(e) => setNewEntryText(e.target.value)}
             />
             <div className="flex justify-end">
               <Button 
@@ -268,7 +268,7 @@ export default function NoteDetailPage() {
                     <div className="text-gray-500 text-sm mb-2 font-medium">
                       {format(new Date(entry.date), 'MMM d, yyyy h:mm a')}
                     </div>
-                    <div className="text-gray-800 whitespace-pre-wrap">{entry.text}</div>
+                    <RichTextContent content={entry.text} className="text-gray-800" />
                   </div>
                 ))}
               </div>
