@@ -78,6 +78,18 @@ export default function ClientInfo({ client }: ClientInfoProps) {
             <p className="text-gray-900">Not specified</p>
           )}
         </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Treatment Goals</label>
+          {client.treatmentGoals && Array.isArray(client.treatmentGoals) && client.treatmentGoals.length > 0 ? (
+            <ul className="list-disc pl-5 space-y-1 text-gray-900">
+              {client.treatmentGoals.map((goal, index) => (
+                <li key={index}>{goal}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-900">Not specified</p>
+          )}
+        </div>
         <div className="pt-3">
           <Link href={`/clients/${client.id}/edit`}>
             <Button 
