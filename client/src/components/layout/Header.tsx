@@ -96,11 +96,9 @@ export default function Header() {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <Link href="/add-client">
-                        <a className="flex items-center w-full">
-                          <UserPlus className="mr-2 h-4 w-4" />
-                          <span>Add Client</span>
-                        </a>
+                      <Link href="/add-client" className="flex items-center w-full">
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        <span>Add Client</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
@@ -120,19 +118,15 @@ export default function Header() {
                 {user.role === "client" && (
                   <>
                     <DropdownMenuItem>
-                      <Link href="/log-data">
-                        <a className="flex items-center w-full">
-                          <PieChart className="mr-2 h-4 w-4" />
-                          <span>Log Data</span>
-                        </a>
+                      <Link href="/log-data" className="flex items-center w-full">
+                        <PieChart className="mr-2 h-4 w-4" />
+                        <span>Log Data</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <Link href="/">
-                        <a className="flex items-center w-full">
-                          <CalendarDays className="mr-2 h-4 w-4" />
-                          <span>Sessions</span>
-                        </a>
+                      <Link href="/" className="flex items-center w-full">
+                        <CalendarDays className="mr-2 h-4 w-4" />
+                        <span>Sessions</span>
                       </Link>
                     </DropdownMenuItem>
                   </>

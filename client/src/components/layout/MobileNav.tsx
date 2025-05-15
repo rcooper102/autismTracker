@@ -56,20 +56,16 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
           {user.role === "practitioner" && (
             <>
               <SheetClose asChild>
-                <Link href="/">
-                  <a className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
-                    <LayoutDashboard className="mr-3 h-5 w-5 text-gray-600" />
-                    <span>Dashboard</span>
-                  </a>
+                <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
+                  <LayoutDashboard className="mr-3 h-5 w-5 text-gray-600" />
+                  <span>Dashboard</span>
                 </Link>
               </SheetClose>
               
               <SheetClose asChild>
-                <Link href="/add-client">
-                  <a className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
-                    <UserPlus className="mr-3 h-5 w-5 text-gray-600" />
-                    <span>Add Client</span>
-                  </a>
+                <Link href="/add-client" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
+                  <UserPlus className="mr-3 h-5 w-5 text-gray-600" />
+                  <span>Add Client</span>
                 </Link>
               </SheetClose>
               
@@ -94,20 +90,16 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
           {user.role === "client" && (
             <>
               <SheetClose asChild>
-                <Link href="/log-data">
-                  <a className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
-                    <PieChart className="mr-3 h-5 w-5 text-gray-600" />
-                    <span>Log Data</span>
-                  </a>
+                <Link href="/log-data" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
+                  <PieChart className="mr-3 h-5 w-5 text-gray-600" />
+                  <span>Log Data</span>
                 </Link>
               </SheetClose>
               
               <SheetClose asChild>
-                <Link href="/">
-                  <a className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
-                    <CalendarDays className="mr-3 h-5 w-5 text-gray-600" />
-                    <span>Sessions</span>
-                  </a>
+                <Link href="/" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-100">
+                  <CalendarDays className="mr-3 h-5 w-5 text-gray-600" />
+                  <span>Sessions</span>
                 </Link>
               </SheetClose>
             </>
