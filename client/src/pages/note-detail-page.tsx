@@ -255,13 +255,17 @@ export default function NoteDetailPage() {
     <>
       <div className="container mx-auto py-6">
         <div className="mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => note?.clientId ? navigate(`/clients/${note.clientId}`) : navigate("/")}
+          <a 
+            href="#" 
+            onClick={(e) => {
+              e.preventDefault();
+              note?.clientId ? navigate(`/clients/${note.clientId}`) : navigate("/");
+            }}
+            className="text-blue-600 hover:text-blue-800 inline-flex items-center"
           >
-            <ChevronLeft className="h-4 w-4 mr-2" />
+            <ChevronLeft className="h-4 w-4 mr-1" />
             Back to Client
-          </Button>
+          </a>
         </div>
 
         <Card className="mb-6">
