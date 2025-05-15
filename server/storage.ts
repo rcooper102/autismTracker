@@ -120,26 +120,49 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateClient(id: number, clientData: Partial<Client>): Promise<Client | undefined> {
-    // Handle date conversion if dateOfBirth is a string
-    const processedData = { ...clientData };
+    // Create a clean data object to avoid modifying the original
+    const cleanData: Record<string, any> = {};
     
-    if (processedData.dateOfBirth && typeof processedData.dateOfBirth === 'string') {
-      // Convert string to Date object if it's a valid date string, otherwise set to null
-      try {
-        processedData.dateOfBirth = new Date(processedData.dateOfBirth);
-      } catch (e) {
-        console.error("Invalid date format:", processedData.dateOfBirth);
-        processedData.dateOfBirth = null;
+    // Copy all valid properties except dateOfBirth
+    Object.keys(clientData).forEach(key => {
+      if (key !== 'dateOfBirth') {
+        // @ts-ignore
+        cleanData[key] = clientData[key];
+      }
+    });
+    
+    // Special handling for dateOfBirth
+    if (clientData.dateOfBirth !== undefined) {
+      if (clientData.dateOfBirth === null || clientData.dateOfBirth === '') {
+        // Explicitly set null for empty dates
+        cleanData.dateOfBirth = null;
+      } else if (typeof clientData.dateOfBirth === 'string') {
+        try {
+          // Try to parse as valid date
+          const date = new Date(clientData.dateOfBirth);
+          if (!isNaN(date.getTime())) {
+            cleanData.dateOfBirth = date;
+          } else {
+            cleanData.dateOfBirth = null;
+          }
+        } catch (e) {
+          console.error("Invalid date format:", clientData.dateOfBirth);
+          cleanData.dateOfBirth = null;
+        }
+      } else if (clientData.dateOfBirth instanceof Date) {
+        cleanData.dateOfBirth = clientData.dateOfBirth;
       }
     }
     
     try {
+      console.log("Updating client with cleaned data:", cleanData);
       const [updatedClient] = await db
         .update(clients)
-        .set(processedData)
+        .set(cleanData)
         .where(eq(clients.id, id))
         .returning();
       
+      console.log("Client updated successfully:", updatedClient);
       return updatedClient;
     } catch (error) {
       console.error("Error updating client:", error);
