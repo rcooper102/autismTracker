@@ -261,7 +261,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                         </Button>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 mt-0">
                       Updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy') : 'Unknown'} • 
                       {(note.entries && Array.isArray(note.entries) && note.entries.length > 0) ? 
                         ` ${note.entries.length} entries` : 
