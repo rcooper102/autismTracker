@@ -395,16 +395,16 @@ export default function AccountSettingsPage() {
           </Card>
           
           {/* Password change */}
-          <Card>
-            <CardHeader>
+          <Card className="shadow-sm">
+            <CardHeader className="px-6">
               <CardTitle>Change Password</CardTitle>
               <CardDescription>
                 Update your password to enhance your account security
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-6">
               <Form {...passwordForm}>
-                <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
+                <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-6">
                   <FormField
                     control={passwordForm.control}
                     name="currentPassword"
