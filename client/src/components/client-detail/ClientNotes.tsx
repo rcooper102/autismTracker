@@ -38,7 +38,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
 
   // Create a new note mutation
   const createNoteMutation = useMutation({
-    mutationFn: async (data: { title: string; entries: { text: string; date: Date }[] }) => {
+    mutationFn: async (data: { title: string; entries: { text: string; date: string | Date }[] }) => {
       const res = await apiRequest("POST", `/api/clients/${clientId}/notes`, data);
       return await res.json();
     },
@@ -70,7 +70,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
       noteId: number; 
       data: { 
         title?: string; 
-        entries?: { text: string; date?: Date }[] 
+        entries?: Array<{ text: string; date?: string | Date }> 
       } 
     }) => {
       const res = await apiRequest("PATCH", `/api/clients/${clientId}/notes/${noteId}`, data);
@@ -156,7 +156,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
     if (!note) return;
 
     // Get the existing entries
-    let entries = [...(note.entries as { text: string; date: string | Date }[] || [])];
+    let entries = [...(note.entries as Array<{ text: string; date: string | Date }> || [])];
 
     // Add the new entry if there's text
     if (editingNoteText.trim()) {
@@ -317,7 +317,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                       </div>
                     )}
                     <CardDescription>
-                      Last updated: {format(new Date(note.lastUpdated), 'MMM d, yyyy h:mm a')}
+                      Last updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy h:mm a') : 'Unknown'}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>

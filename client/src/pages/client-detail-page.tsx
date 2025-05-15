@@ -9,6 +9,7 @@ import ClientHeader from "@/components/client-detail/ClientHeader";
 import MoodChart from "@/components/client-detail/MoodChart";
 import DataEntries from "@/components/client-detail/DataEntries";
 import ClientInfo from "@/components/client-detail/ClientInfo";
+import ClientNotes from "@/components/client-detail/ClientNotes";
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -80,6 +81,9 @@ export default function ClientDetailPage() {
               
               {/* Recent Data Entries */}
               <DataEntries dataEntries={dataEntries || []} isLoading={isLoadingData} />
+              
+              {/* Client Notes */}
+              <ClientNotes clientId={parseInt(id)} />
             </div>
             
             <div className="col-span-1">
