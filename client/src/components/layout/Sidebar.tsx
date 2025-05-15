@@ -34,16 +34,13 @@ export default function Sidebar() {
     logoutMutation.mutate();
   };
 
-  // Use practitioner data for avatar if available
-  const avatarUrl = practitioner?.avatarUrl;
-
   return (
     <div className="hidden md:flex flex-col h-[calc(100vh-4rem)] bg-[rgb(32,148,243)] text-white w-[240px] fixed top-16 left-0 py-6 px-4 overflow-y-auto">
       <div className="flex flex-col space-y-2">
         <div className="py-4 px-4 mb-2 bg-white/10 rounded-md flex flex-col items-center">
           <Avatar className="h-16 w-16 mb-3 border-2 border-white/30">
-            {avatarUrl && (
-              <AvatarImage src={avatarUrl} alt={user.name || "User"} />
+            {practitioner?.avatarUrl && (
+              <AvatarImage src={practitioner.avatarUrl} alt={user.name || "User"} />
             )}
             <AvatarFallback className="bg-white/20 text-white">
               {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-8 w-8" />}

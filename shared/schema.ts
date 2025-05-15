@@ -11,7 +11,6 @@ export const users = pgTable("users", {
   role: text("role").notNull().default("client"), // 'practitioner' or 'client'
   name: text("name").notNull(),
   email: text("email"),
-  avatarUrl: text("avatar_url"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
