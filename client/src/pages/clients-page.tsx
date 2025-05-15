@@ -18,6 +18,12 @@ export default function ClientsPage() {
   const { data: clients, isLoading } = useQuery<ClientWithUser[]>({
     queryKey: ["/api/clients"],
     enabled: !!user && user.role === "practitioner",
+    onSuccess: (data) => {
+      console.log("Clients data:", data);
+      // Check if any clients have avatarUrl
+      const clientsWithAvatars = data?.filter(client => client.avatarUrl);
+      console.log("Clients with avatars:", clientsWithAvatars);
+    }
   });
   
   // Generate colors for initials circles
@@ -131,7 +137,7 @@ export default function ClientsPage() {
                         <div className="flex items-center space-x-3">
                           <Avatar className="w-10 h-10">
                             {client.avatarUrl ? (
-                              // Using Avatar component to handle image with fallback
+                              // Using client's avatarUrl field directly from the client record
                               <img 
                                 src={client.avatarUrl.includes('?') ? 
                                   `${client.avatarUrl}&_t=${Date.now()}` : 
