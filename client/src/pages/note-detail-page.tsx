@@ -1,7 +1,7 @@
 import { useParams, useLocation, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { ChevronLeft, Save, Plus, Check, X, Trash2 } from "lucide-react";
+import { ChevronLeft, Save, Plus, Check, X, Trash2, Edit } from "lucide-react";
 import { 
   Card, 
   CardContent, 
