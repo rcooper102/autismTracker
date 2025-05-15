@@ -261,7 +261,7 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
                         </Button>
                       </div>
                     </div>
-                    <CardDescription className="text-xs mt-0">
+                    <CardDescription className="text-xs -mt-1">
                       Updated: {note.lastUpdated ? format(new Date(note.lastUpdated), 'MMM d, yyyy') : 'Unknown'} • 
                       {(note.entries && Array.isArray(note.entries) && note.entries.length > 0) ? 
                         ` ${note.entries.length} entries` : 
