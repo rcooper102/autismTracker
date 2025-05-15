@@ -1,9 +1,45 @@
-import type { Express } from "express";
+import express, { type Express, type Request } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { z } from "zod";
 import { insertClientSchema, insertDataEntrySchema, insertSessionSchema, insertUserSchema } from "@shared/schema";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Setup multer for file uploads
+const uploadDir = path.join(process.cwd(), 'uploads');
+
+// Create the upload directory if it doesn't exist
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage_config = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+  }
+});
+
+const upload = multer({ 
+  storage: storage_config,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: function (req, file, cb) {
+    // Accept images only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      return cb(new Error('Only image files are allowed!'));
+    }
+    cb(null, true);
+  }
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes (/api/register, /api/login, /api/logout, /api/user)
@@ -317,23 +353,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Placeholder for avatar upload - in a real app, this would save the file to a storage service
-  app.post("/api/practitioners/me/avatar", async (req, res) => {
+  // Handle avatar upload with multer middleware
+  app.post("/api/practitioners/me/avatar", upload.single('avatar'), async (req, res) => {
     if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
       return res.status(403).json({ message: "Unauthorized. Practitioners only." });
     }
 
     try {
-      // In a real app, you would:
-      // 1. Use multer or another middleware to handle file uploads
-      // 2. Process and validate the image
-      // 3. Upload to a storage service (S3, etc.)
-      // 4. Save the URL to the database
+      const file = req.file;
       
-      // For now, we just return as if the upload was successful
+      if (!file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+      
+      // In a production app, we'd store this path in a database
+      // and associate it with the user record
+      const userId = req.user.id;
+      const relativeFilePath = `/uploads/${file.filename}`;
+      const absoluteFilePath = file.path;
+      
+      // Create a URL to serve the file
+      const fileUrl = relativeFilePath;
+      
+      // Serve static files from uploads directory
+      if (!app._router.stack.some((layer: any) => 
+        layer.route && layer.route.path === '/uploads')) {
+        app.use('/uploads', express.static(uploadDir));
+      }
+      
       res.json({
         message: "Avatar uploaded successfully",
-        avatarUrl: "/placeholder-avatar.png" // This would be the real URL in a production app
+        avatarUrl: fileUrl
       });
     } catch (error) {
       console.error("Error uploading avatar:", error);
