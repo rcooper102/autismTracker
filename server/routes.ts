@@ -755,36 +755,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         avatarUrl: req.user.avatarUrl // Check if avatarUrl is in the user object
       });
       
-      // For now, we just return the user data with a placeholder for additional practitioner data
-      // In a real app, you might have a separate practitioners table
-      const { password, ...userWithoutPassword } = req.user;
+      // Get the user from the database to ensure we have the most up-to-date information
+      const user = await storage.getUser(req.user.id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
       
-      // Get any existing profile data or use defaults
-      const existingProfile = practitionerProfiles.get(req.user.id) || {
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@example.com",
-        phone: "(555) 123-4567",
-        bio: "Licensed therapist specializing in autism spectrum disorder",
-      };
+      // Remove password from the response
+      const { password, ...userWithoutPassword } = user;
       
-      // Use the avatarUrl from the user object instead of the in-memory profile
       console.log('GET /api/practitioners/me - Retrieved profile data:', { 
-        userId: req.user.id,
-        profileData: existingProfile,
-        hasAvatar: !!userWithoutPassword.avatarUrl
+        userId: user.id,
+        profileData: {
+          avatarUrl: user.avatarUrl,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          bio: user.bio
+        },
+        hasAvatar: !!user.avatarUrl
       });
       
-      const responseData = {
-        ...userWithoutPassword,  // This includes the avatarUrl from the database
-        ...existingProfile
-      };
-      
-      console.log('GET /api/practitioners/me - Sending response:', {
-        responseWithAvatar: !!responseData.avatarUrl
-      });
-      
-      res.json(responseData);
+      res.json(userWithoutPassword);
     } catch (error) {
       console.error("Error fetching practitioner profile:", error);
       res.status(500).json({ message: "Failed to fetch practitioner profile" });
@@ -808,25 +801,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = profileUpdateSchema.parse(req.body);
       
-      // Get existing profile data or create empty object
-      const existingProfile = practitionerProfiles.get(req.user.id) || {};
+      // Update the user profile in the database
+      const updatedUser = await storage.updateUserProfile(req.user.id, validatedData);
       
-      // Update the profile data
-      const updatedProfile = {
-        ...existingProfile,
-        ...validatedData,
-      };
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
       
-      // Store the updated profile
-      practitionerProfiles.set(req.user.id, updatedProfile);
+      // Return the updated user data without the password
+      const { password, ...userWithoutPassword } = updatedUser;
       
-      // Return the updated user data
-      const { password, ...userWithoutPassword } = req.user;
-      
-      res.json({
-        ...userWithoutPassword,
-        ...updatedProfile,
-      });
+      res.json(userWithoutPassword);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid profile data", errors: error.errors });
