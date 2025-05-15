@@ -228,7 +228,7 @@ export default function NoteDetailPage() {
       </Card>
 
       <Card className="mb-6">
-        <CardContent>
+        <CardContent className="p-4">
           <div className="space-y-4">
             <RichTextEditor
               content={newEntryText}
