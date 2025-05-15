@@ -6,8 +6,12 @@ import {
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
+import connectPg from "connect-pg-simple";
+import { db, pool } from "./db";
+import { eq, and, gt, desc, sql } from "drizzle-orm";
 
 const MemoryStore = createMemoryStore(session);
+const PostgresSessionStore = connectPg(session);
 
 // Interface for all storage operations
 export interface IStorage {
@@ -42,187 +46,174 @@ export interface IStorage {
   countPendingReviewsByPractitionerId(practitionerId: number): Promise<number>;
   
   // Session store for authentication
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
 }
 
-export class MemStorage implements IStorage {
-  // Storage maps for data
-  private usersStore: Map<number, User>;
-  private clientsStore: Map<number, Client>;
-  private dataEntriesStore: Map<number, DataEntry>;
-  private sessionsStore: Map<number, Session>;
-  
-  // Auto-increment counters
-  private userIdCounter: number;
-  private clientIdCounter: number;
-  private dataEntryIdCounter: number;
-  private sessionIdCounter: number;
-  
+export class DatabaseStorage implements IStorage {
   // Session store for authentication
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
 
   constructor() {
-    this.usersStore = new Map();
-    this.clientsStore = new Map();
-    this.dataEntriesStore = new Map();
-    this.sessionsStore = new Map();
-    
-    this.userIdCounter = 1;
-    this.clientIdCounter = 1;
-    this.dataEntryIdCounter = 1;
-    this.sessionIdCounter = 1;
-    
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000, // Prune expired entries every 24h
+    this.sessionStore = new PostgresSessionStore({ 
+      pool, 
+      createTableIfMissing: true 
     });
     
-    // Create a default practitioner for testing
-    this.createUser({
-      username: "practitioner",
-      password: "password",
-      role: "practitioner",
-      name: "Dr. Rebecca Chen",
-      email: "rebecca.chen@example.com"
-    });
+    // We'll create a default practitioner in the database migration
+    // No need to call createUser here as the database might not be
+    // initialized yet
   }
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
-    return this.usersStore.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.usersStore.values()).find(
-      (user) => user.username === username
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(userData: InsertUser): Promise<User> {
-    const id = this.userIdCounter++;
-    const createdAt = new Date();
-    const user: User = { ...userData, id, createdAt };
-    this.usersStore.set(id, user);
+    const [user] = await db.insert(users).values(userData).returning();
     return user;
   }
 
   // Client operations
   async getClient(id: number): Promise<Client | undefined> {
-    return this.clientsStore.get(id);
+    const [client] = await db.select().from(clients).where(eq(clients.id, id));
+    return client;
   }
 
   async getClientWithUser(id: number): Promise<(Client & { user: User }) | undefined> {
-    const client = this.clientsStore.get(id);
+    const [client] = await db.select().from(clients).where(eq(clients.id, id));
     if (!client) return undefined;
     
-    const user = this.usersStore.get(client.userId);
+    const [user] = await db.select().from(users).where(eq(users.id, client.userId));
     if (!user) return undefined;
     
     return { ...client, user };
   }
 
   async getClientByUserId(userId: number): Promise<Client | undefined> {
-    return Array.from(this.clientsStore.values()).find(
-      (client) => client.userId === userId
-    );
+    const [client] = await db.select().from(clients).where(eq(clients.userId, userId));
+    return client;
   }
 
   async getClientsByPractitionerId(practitionerId: number): Promise<ClientWithUser[]> {
-    const clients = Array.from(this.clientsStore.values())
-      .filter((client) => client.practitionerId === practitionerId);
+    const clientsList = await db.select().from(clients).where(eq(clients.practitionerId, practitionerId));
     
-    return Promise.all(
-      clients.map(async (client) => {
-        const user = await this.getUser(client.userId);
+    const clientsWithUsers = await Promise.all(
+      clientsList.map(async (client) => {
+        const [user] = await db.select().from(users).where(eq(users.id, client.userId));
         return { ...client, user: user! };
       })
     );
+    
+    return clientsWithUsers;
   }
 
   async createClient(clientData: InsertClient): Promise<Client> {
-    const id = this.clientIdCounter++;
-    const createdAt = new Date();
-    const client: Client = { ...clientData, id, createdAt };
-    this.clientsStore.set(id, client);
+    const [client] = await db.insert(clients).values(clientData).returning();
     return client;
   }
 
   async updateClient(id: number, clientData: Partial<Client>): Promise<Client | undefined> {
-    const client = this.clientsStore.get(id);
-    if (!client) return undefined;
+    const [updatedClient] = await db
+      .update(clients)
+      .set(clientData)
+      .where(eq(clients.id, id))
+      .returning();
     
-    const updatedClient = { ...client, ...clientData };
-    this.clientsStore.set(id, updatedClient);
     return updatedClient;
   }
 
   // Data entry operations
   async getDataEntry(id: number): Promise<DataEntry | undefined> {
-    return this.dataEntriesStore.get(id);
+    const [entry] = await db.select().from(dataEntries).where(eq(dataEntries.id, id));
+    return entry;
   }
 
   async getDataEntriesByClientId(clientId: number): Promise<DataEntry[]> {
-    return Array.from(this.dataEntriesStore.values())
-      .filter((entry) => entry.clientId === clientId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Most recent first
+    const entries = await db
+      .select()
+      .from(dataEntries)
+      .where(eq(dataEntries.clientId, clientId))
+      .orderBy(dataEntries.createdAt);
+    
+    return entries;
   }
 
   async createDataEntry(entryData: InsertDataEntry): Promise<DataEntry> {
-    const id = this.dataEntryIdCounter++;
-    const createdAt = new Date();
-    const entry: DataEntry = { ...entryData, id, createdAt };
-    this.dataEntriesStore.set(id, entry);
+    const [entry] = await db.insert(dataEntries).values(entryData).returning();
     return entry;
   }
 
   // Session operations
   async getSession(id: number): Promise<Session | undefined> {
-    return this.sessionsStore.get(id);
+    const [session] = await db.select().from(sessions).where(eq(sessions.id, id));
+    return session;
   }
 
   async getSessionsByClientId(clientId: number): Promise<Session[]> {
-    return Array.from(this.sessionsStore.values())
-      .filter((session) => session.clientId === clientId)
-      .sort((a, b) => a.date.getTime() - b.date.getTime()); // Ascending by date
+    const sessionsList = await db
+      .select()
+      .from(sessions)
+      .where(eq(sessions.clientId, clientId))
+      .orderBy(sessions.date);
+    
+    return sessionsList;
   }
 
   async getSessionsByPractitionerId(practitionerId: number): Promise<Session[]> {
-    return Array.from(this.sessionsStore.values())
-      .filter((session) => session.practitionerId === practitionerId)
-      .sort((a, b) => a.date.getTime() - b.date.getTime()); // Ascending by date
+    const sessionsList = await db
+      .select()
+      .from(sessions)
+      .where(eq(sessions.practitionerId, practitionerId))
+      .orderBy(sessions.date);
+    
+    return sessionsList;
   }
 
   async createSession(sessionData: InsertSession): Promise<Session> {
-    const id = this.sessionIdCounter++;
-    const createdAt = new Date();
-    const session: Session = { ...sessionData, id, createdAt };
-    this.sessionsStore.set(id, session);
+    const [session] = await db.insert(sessions).values(sessionData).returning();
     return session;
   }
 
   async updateSession(id: number, sessionData: Partial<Session>): Promise<Session | undefined> {
-    const session = this.sessionsStore.get(id);
-    if (!session) return undefined;
+    const [updatedSession] = await db
+      .update(sessions)
+      .set(sessionData)
+      .where(eq(sessions.id, id))
+      .returning();
     
-    const updatedSession = { ...session, ...sessionData };
-    this.sessionsStore.set(id, updatedSession);
     return updatedSession;
   }
 
   // Statistics operations
   async countClientsByPractitionerId(practitionerId: number): Promise<number> {
-    return Array.from(this.clientsStore.values()).filter(
-      (client) => client.practitionerId === practitionerId
-    ).length;
+    const result = await db
+      .select({ count: db.fn.count() })
+      .from(clients)
+      .where(eq(clients.practitionerId, practitionerId));
+    
+    return Number(result[0]?.count || 0);
   }
 
   async countActiveSessionsByPractitionerId(practitionerId: number): Promise<number> {
     const now = new Date();
-    return Array.from(this.sessionsStore.values()).filter(
-      (session) => 
-        session.practitionerId === practitionerId && 
-        session.status === "confirmed" &&
-        session.date > now
-    ).length;
+    
+    const result = await db
+      .select({ count: db.fn.count() })
+      .from(sessions)
+      .where(and(
+        eq(sessions.practitionerId, practitionerId),
+        eq(sessions.status, "confirmed"),
+        gt(sessions.date, now)
+      ));
+    
+    return Number(result[0]?.count || 0);
   }
 
   async countPendingReviewsByPractitionerId(practitionerId: number): Promise<number> {
@@ -230,18 +221,29 @@ export class MemStorage implements IStorage {
     const twoDaysAgo = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
     
-    // First get all clients for this practitioner
-    const clientIds = Array.from(this.clientsStore.values())
-      .filter(client => client.practitionerId === practitionerId)
-      .map(client => client.id);
+    // Get all client IDs belonging to this practitioner
+    const clientsResult = await db
+      .select({ id: clients.id })
+      .from(clients)
+      .where(eq(clients.practitionerId, practitionerId));
     
-    // Then count recent entries for these clients
-    return Array.from(this.dataEntriesStore.values()).filter(
-      (entry) => 
-        clientIds.includes(entry.clientId) && 
-        entry.createdAt > twoDaysAgo
-    ).length;
+    const clientIds = clientsResult.map(c => c.id);
+    
+    if (clientIds.length === 0) {
+      return 0;
+    }
+    
+    // Count recent data entries for these clients
+    const result = await db
+      .select({ count: db.fn.count() })
+      .from(dataEntries)
+      .where(and(
+        db.inArray(dataEntries.clientId, clientIds),
+        gt(dataEntries.createdAt, twoDaysAgo)
+      ));
+    
+    return Number(result[0]?.count || 0);
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

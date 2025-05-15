@@ -1,4 +1,5 @@
 import { pgTable, text, serial, integer, boolean, timestamp, json } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -75,6 +76,46 @@ export const insertSessionSchema = createInsertSchema(sessions).omit({
   id: true,
   createdAt: true,
 });
+
+// Relation definitions
+export const usersRelations = relations(users, ({ many }) => ({
+  clientsAsUser: many(clients, { relationName: "user_clients" }),
+  clientsAsPractitioner: many(clients, { relationName: "practitioner_clients" }),
+  sessions: many(sessions)
+}));
+
+export const clientsRelations = relations(clients, ({ one, many }) => ({
+  user: one(users, {
+    fields: [clients.userId],
+    references: [users.id],
+    relationName: "user_clients"
+  }),
+  practitioner: one(users, {
+    fields: [clients.practitionerId],
+    references: [users.id],
+    relationName: "practitioner_clients"
+  }),
+  dataEntries: many(dataEntries),
+  sessions: many(sessions)
+}));
+
+export const dataEntriesRelations = relations(dataEntries, ({ one }) => ({
+  client: one(clients, {
+    fields: [dataEntries.clientId],
+    references: [clients.id]
+  })
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  client: one(clients, {
+    fields: [sessions.clientId],
+    references: [clients.id]
+  }),
+  practitioner: one(users, {
+    fields: [sessions.practitionerId],
+    references: [users.id]
+  })
+}));
 
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
