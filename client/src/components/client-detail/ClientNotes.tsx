@@ -188,18 +188,11 @@ export default function ClientNotes({ clientId }: ClientNotesProps) {
           ) : (
             <div className="overflow-hidden">
               <table className="w-full">
-                <thead className="bg-gray-50 text-left">
-                  <tr>
-                    <th className="px-3 py-2 text-sm font-medium text-gray-500">Title</th>
-                    <th className="px-3 py-2 text-sm font-medium text-gray-500">Last Updated</th>
-                    <th className="px-3 py-2 text-sm font-medium text-gray-500">Entries</th>
-                  </tr>
-                </thead>
                 <tbody>
-                  {notes.map((note) => (
+                  {notes.map((note, index) => (
                     <tr 
                       key={note.id}
-                      className="border-t hover:bg-gray-50 cursor-pointer"
+                      className={`${index > 0 ? 'border-t' : ''} hover:bg-gray-50 cursor-pointer`}
                       onClick={() => navigate(`/notes/${note.id}`)}
                     >
                       <td className="px-3 py-3 text-base">{note.title}</td>
