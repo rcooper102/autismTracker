@@ -174,8 +174,10 @@ export default function EditClientPage() {
       console.log("Client data:", JSON.stringify(client, null, 2));
       console.log("Setting treatment plan:", treatmentPlan);
       console.log("Setting treatment goals:", treatmentGoals);
+      console.log("Setting guardian relation:", client.guardianRelation);
 
-      form.reset({
+      // Create form values object with all the client data
+      const formValues = {
         firstName: client.firstName || "",
         lastName: client.lastName || "",
         email: userEmail,
@@ -188,7 +190,15 @@ export default function EditClientPage() {
         guardianPhone: client.guardianPhone || "",
         guardianEmail: client.guardianEmail || "",
         notes: client.notes || "",
-      });
+      };
+
+      console.log("Resetting form with values:", formValues);
+      
+      // Reset the form with the values
+      form.reset(formValues);
+      
+      // Explicitly set the guardian relation field value
+      form.setValue("guardianRelation", client.guardianRelation || "");
     }
   }, [client, form]);
 
@@ -463,7 +473,7 @@ export default function EditClientPage() {
                         <FormLabel>Diagnosis</FormLabel>
                         <Select 
                           onValueChange={field.onChange}
-                          defaultValue="asd-2"
+                          value={field.value || ""}
                         >
                           <FormControl>
                             <SelectTrigger>
