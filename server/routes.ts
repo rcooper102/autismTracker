@@ -296,10 +296,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         app.use('/uploads', express.static(uploadDir));
       }
       
-      // Now we have a dedicated avatarUrl field, use it directly
-      // Update client record with the avatar URL
+      // Get current client to access current notes
+      const currentClient = await storage.getClient(clientId);
+      
+      // Parse existing notes if any
+      let notesObj = {};
+      if (currentClient?.notes) {
+        try {
+          notesObj = JSON.parse(currentClient.notes);
+          // Remove avatarUrl from notes as we're now using the dedicated field
+          delete notesObj.avatarUrl;
+        } catch (e) {
+          console.error("Error parsing notes:", e);
+        }
+      }
+      
+      // Update client record with the avatar URL and clean notes
       await storage.updateClient(clientId, {
-        avatarUrl: relativeFilePath
+        avatarUrl: relativeFilePath,
+        notes: Object.keys(notesObj).length > 0 ? JSON.stringify(notesObj) : null
       });
       
       res.json({

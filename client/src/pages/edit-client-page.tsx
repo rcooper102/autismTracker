@@ -681,9 +681,9 @@ export default function EditClientPage() {
                       alt="Client Avatar" 
                       className="w-32 h-32 rounded-full object-cover border"
                     />
-                  ) : (client?.notes && client.notes.includes("avatarUrl")) ? (
+                  ) : (client?.avatarUrl) ? (
                     <img 
-                      src={getAvatarUrl(client)} 
+                      src={client.avatarUrl} 
                       alt="Client Avatar" 
                       className="w-32 h-32 rounded-full object-cover border"
                     />
