@@ -13,6 +13,7 @@ import clientConfig from "@/config/client-config.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -416,29 +417,99 @@ export default function EditClientPage() {
                 <FormField
                   control={form.control}
                   name="treatmentPlan"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Treatment Plan</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} rows={3} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    // Ensure field.value is an array, if it's a string (from database) convert it
+                    const treatmentPlans = Array.isArray(field.value) 
+                      ? field.value 
+                      : field.value ? [field.value] : [];
+
+                    const handlePlanChange = (checked: boolean, plan: string) => {
+                      if (checked) {
+                        field.onChange([...treatmentPlans, plan]);
+                      } else {
+                        field.onChange(treatmentPlans.filter((p: string) => p !== plan));
+                      }
+                    };
+
+                    return (
+                      <FormItem>
+                        <FormLabel>Treatment Plans</FormLabel>
+                        <div className="space-y-2">
+                          {clientConfig.treatmentPlanOptions.map((plan) => {
+                            const isChecked = treatmentPlans.includes(plan.value);
+                            
+                            return (
+                              <div key={plan.value} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`plan-${plan.value}`}
+                                  checked={isChecked}
+                                  onCheckedChange={(checked: boolean | "indeterminate") => 
+                                    handlePlanChange(checked === true, plan.value)
+                                  }
+                                />
+                                <label
+                                  htmlFor={`plan-${plan.value}`}
+                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                  {plan.label}
+                                </label>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 <FormField
                   control={form.control}
                   name="treatmentGoals"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Treatment Goals (comma separated)</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} rows={3} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    // Ensure field.value is an array, if it's a string (from database) convert it
+                    const treatmentGoals = Array.isArray(field.value) 
+                      ? field.value 
+                      : field.value ? field.value.split(",").map(g => g.trim()) : [];
+
+                    const handleGoalChange = (checked: boolean, goal: string) => {
+                      if (checked) {
+                        field.onChange([...treatmentGoals, goal]);
+                      } else {
+                        field.onChange(treatmentGoals.filter((g: string) => g !== goal));
+                      }
+                    };
+
+                    return (
+                      <FormItem>
+                        <FormLabel>Treatment Goals</FormLabel>
+                        <div className="space-y-2 max-h-40 overflow-y-auto p-2 border rounded-md">
+                          {clientConfig.treatmentGoalOptions.map((goal, index) => {
+                            const isChecked = treatmentGoals.includes(goal);
+                            
+                            return (
+                              <div key={`goal-${index}`} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`goal-${index}`}
+                                  checked={isChecked}
+                                  onCheckedChange={(checked: boolean | "indeterminate") => 
+                                    handleGoalChange(checked === true, goal)
+                                  }
+                                />
+                                <label
+                                  htmlFor={`goal-${index}`}
+                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                  {goal}
+                                </label>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 <Separator className="my-4" />
@@ -464,9 +535,23 @@ export default function EditClientPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Relationship</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
+                        <Select 
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select relationship" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {clientConfig.guardianRelationOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
