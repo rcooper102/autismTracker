@@ -1,5 +1,6 @@
 import { Client } from "@shared/schema";
 import { Button } from "@/components/ui/button";
+import { Avatar } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { Link } from "wouter";
 
@@ -38,10 +39,20 @@ export default function ClientHeader({ client, onBack }: ClientHeaderProps) {
         >
           <i className="ri-arrow-left-line mr-1"></i> Back to Dashboard
         </button>
-        <h1 className="text-2xl font-semibold text-gray-800">{fullName}</h1>
-        <div className="flex items-center mt-1 text-gray-500">
-          <span className="text-sm mr-4">Age: {getAge()}</span>
-          <span className="text-sm">Client since: {clientSince}</span>
+        <div className="flex items-center">
+          <Avatar 
+            src={client.avatarUrl || null} 
+            alt={fullName}
+            size="lg"
+            className="mr-4"
+          />
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-800">{fullName}</h1>
+            <div className="flex items-center mt-1 text-gray-500">
+              <span className="text-sm mr-4">Age: {getAge()}</span>
+              <span className="text-sm">Client since: {clientSince}</span>
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex">

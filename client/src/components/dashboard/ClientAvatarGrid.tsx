@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar } from "@/components/ui/avatar";
 import { ClientWithUser } from "@shared/schema";
 
 interface ClientAvatarGridProps {
@@ -78,9 +79,17 @@ export default function ClientAvatarGrid({ clients, isLoading }: ClientAvatarGri
             return (
               <Link key={client.id} href={`/clients/${client.id}`}>
                 <div className="flex flex-col items-center group cursor-pointer">
-                  <div className={`w-16 h-16 rounded-full ${colorClass} flex items-center justify-center group-hover:shadow-md transition-all`}>
-                    <span className="text-lg font-medium">{initials}</span>
-                  </div>
+                  <Avatar 
+                    src={client.avatarUrl || null}
+                    alt={`${client.firstName} ${client.lastName}`}
+                    size="lg"
+                    className="group-hover:shadow-md transition-all"
+                    fallback={
+                      <div className={`h-full w-full ${colorClass} flex items-center justify-center`}>
+                        <span className="text-lg font-medium">{initials}</span>
+                      </div>
+                    }
+                  />
                   <span className="mt-2 text-sm font-medium text-center truncate w-full">
                     {client.firstName} {client.lastName}
                   </span>

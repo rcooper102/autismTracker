@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar } from "@/components/ui/avatar";
 import { ClientWithUser } from "@shared/schema";
 
 interface ClientListProps {
@@ -20,7 +21,7 @@ export default function ClientList({ clients, isLoading }: ClientListProps) {
             <div key={i} className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Skeleton className="w-10 h-10 rounded-full" />
+                  <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
                   <div>
                     <Skeleton className="h-5 w-32" />
                     <Skeleton className="h-4 w-24 mt-1" />
@@ -93,9 +94,15 @@ export default function ClientList({ clients, isLoading }: ClientListProps) {
             <Link key={client.id} href={`/clients/${client.id}`} className="p-4 hover:bg-gray-50 transition-colors cursor-pointer block">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className={`w-10 h-10 rounded-full ${colorClass} flex items-center justify-center`}>
-                    <span className="font-medium">{initials}</span>
-                  </div>
+                  <Avatar 
+                    src={client.avatarUrl || null}
+                    alt={`${client.firstName} ${client.lastName}`}
+                    fallback={
+                      <div className={`h-full w-full ${colorClass} flex items-center justify-center`}>
+                        <span className="font-medium">{initials}</span>
+                      </div>
+                    }
+                  />
                   <div>
                     <p className="font-medium">{`${client.firstName} ${client.lastName}`}</p>
                     <p className="text-xs text-gray-500">
