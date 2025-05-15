@@ -33,29 +33,32 @@ export default function GuardianInfoForm({ form }: GuardianInfoFormProps) {
         <FormField
           control={form.control}
           name="guardianRelation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel><RequiredField>Relationship to Client</RequiredField></FormLabel>
-              <Select 
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select relationship" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {clientConfig.guardianRelationOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            console.log("Guardian relation field value:", field.value);
+            return (
+              <FormItem>
+                <FormLabel><RequiredField>Relationship to Client</RequiredField></FormLabel>
+                <Select 
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select relationship" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {clientConfig.guardianRelationOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
         
         <FormField
