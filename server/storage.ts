@@ -221,29 +221,24 @@ export class DatabaseStorage implements IStorage {
     const twoDaysAgo = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
     
-    // Get all client IDs belonging to this practitioner
-    const clientsResult = await db
-      .select({ id: clients.id })
-      .from(clients)
-      .where(eq(clients.practitionerId, practitionerId));
-    
-    const clientIds = clientsResult.map(c => c.id);
-    
-    if (clientIds.length === 0) {
+    try {
+      // Simplified approach using a subquery
+      const result = await db
+        .select({ count: sql`count(*)` })
+        .from(dataEntries)
+        .where(and(
+          sql`${dataEntries.clientId} IN (
+            SELECT ${clients.id} FROM ${clients} 
+            WHERE ${clients.practitionerId} = ${practitionerId}
+          )`,
+          gt(dataEntries.createdAt, twoDaysAgo)
+        ));
+      
+      return Number(result[0]?.count || 0);
+    } catch (error) {
+      console.error("Error counting pending reviews:", error);
       return 0;
     }
-    
-    // Count recent data entries for these clients
-    const result = await db
-      .select({ count: sql`count(*)` })
-      .from(dataEntries)
-      .where(and(
-        // Use the in operator for this
-        sql`${dataEntries.clientId} IN (${clientIds.join(',')})`,
-        gt(dataEntries.createdAt, twoDaysAgo)
-      ));
-    
-    return Number(result[0]?.count || 0);
   }
 }
 
