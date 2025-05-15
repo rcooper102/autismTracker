@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -386,9 +387,24 @@ export default function EditClientPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Diagnosis</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
+                      <Select 
+                        onValueChange={field.onChange}
+                        value={field.value || ""}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select diagnosis" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="asd-1">Autism Spectrum Disorder (Level 1)</SelectItem>
+                          <SelectItem value="asd-2">Autism Spectrum Disorder (Level 2)</SelectItem>
+                          <SelectItem value="asd-3">Autism Spectrum Disorder (Level 3)</SelectItem>
+                          <SelectItem value="aspergers">Asperger's Syndrome</SelectItem>
+                          <SelectItem value="pdd-nos">PDD-NOS</SelectItem>
+                          <SelectItem value="other">Other (specify in notes)</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
