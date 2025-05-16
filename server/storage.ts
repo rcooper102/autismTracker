@@ -30,6 +30,7 @@ export interface IStorage {
   getClientsByPractitionerId(practitionerId: number): Promise<ClientWithUser[]>;
   createClient(client: InsertClient): Promise<Client>;
   updateClient(id: number, client: Partial<Client>): Promise<Client | undefined>;
+  deleteClient(id: number): Promise<boolean>;
   
   // Data entry operations
   getDataEntry(id: number): Promise<DataEntry | undefined>;
@@ -240,6 +241,40 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error updating client:", error);
       return undefined;
+    }
+  }
+  
+  async deleteClient(id: number): Promise<boolean> {
+    try {
+      // First get the client to check if it exists and get userId
+      const client = await this.getClient(id);
+      if (!client) {
+        console.error("Client not found for deletion:", id);
+        return false;
+      }
+      
+      // First, delete all related client notes
+      await db.delete(clientNotes).where(eq(clientNotes.clientId, id));
+      
+      // Delete the client data entries
+      await db.delete(dataEntries).where(eq(dataEntries.clientId, id));
+      
+      // Delete the client sessions
+      await db.delete(sessions).where(eq(sessions.clientId, id));
+      
+      // Delete the client record
+      await db.delete(clients).where(eq(clients.id, id));
+      
+      // Also delete the associated user account
+      if (client.userId) {
+        await db.delete(users).where(eq(users.id, client.userId));
+      }
+      
+      console.log("Client and related data deleted successfully:", id);
+      return true;
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      return false;
     }
   }
 
