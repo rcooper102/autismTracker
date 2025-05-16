@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import MobileNav from "./MobileNav";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  BrainCog,
   User,
   LayoutDashboard,
   LogOut,
@@ -40,7 +40,7 @@ export default function Header() {
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <BrainCog className="h-8 w-8 text-white" />
+              <Logo size={32} className="text-white" />
               <span className="text-xl font-bold text-white">AutiTrack</span>
             </Link>
           </div>
