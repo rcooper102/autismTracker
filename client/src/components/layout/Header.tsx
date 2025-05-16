@@ -48,78 +48,8 @@ export default function Header() {
           {/* Desktop Navigation is now in the Sidebar */}
           <div className="hidden md:block"></div>
 
-          {/* User dropdown */}
+          {/* User actions */}
           <div className="flex items-center gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full flex items-center justify-center text-white hover:bg-gray-800">
-                  <User className="h-4 w-4" />
-                  <span className="sr-only">User menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
-                <DropdownMenuLabel className="text-xs text-gray-500 font-normal">
-                  {user.role === "practitioner" ? "Healthcare Provider" : "Client"}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {user.role === "practitioner" && (
-                  <>
-                    <DropdownMenuItem>
-                      <Link href="/" className="flex items-center w-full">
-                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                        <span>Dashboard</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link href="/add-client" className="flex items-center w-full">
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        <span>Add Client</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <div className="flex items-center w-full">
-                        <CalendarDays className="mr-2 h-4 w-4" />
-                        <span>Schedule</span>
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <div className="flex items-center w-full">
-                        <PieChart className="mr-2 h-4 w-4" />
-                        <span>Reports</span>
-                      </div>
-                    </DropdownMenuItem>
-                  </>
-                )}
-                {user.role === "client" && (
-                  <>
-                    <DropdownMenuItem>
-                      <Link href="/log-data" className="flex items-center w-full">
-                        <PieChart className="mr-2 h-4 w-4" />
-                        <span>Log Data</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link href="/" className="flex items-center w-full">
-                        <CalendarDays className="mr-2 h-4 w-4" />
-                        <span>Sessions</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link href="/account" className="flex items-center w-full">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Account Settings</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
             {/* Mobile menu button */}
             <Button 
