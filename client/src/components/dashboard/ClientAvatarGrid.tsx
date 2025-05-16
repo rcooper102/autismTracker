@@ -80,14 +80,12 @@ export default function ClientAvatarGrid({ clients, isLoading }: ClientAvatarGri
               <Link key={client.id} href={`/clients/${client.id}`}>
                 <div className="flex flex-col items-center group cursor-pointer">
                   <Avatar 
-                    src={client.avatarUrl || null}
+                    src={client.avatarUrl ? `${client.avatarUrl}?t=${Date.now()}` : null}
                     alt={`${client.firstName} ${client.lastName}`}
                     size="lg"
                     className="group-hover:shadow-md transition-all"
                   >
-                    <AvatarFallback className={colorClass}>
-                      <span className="text-lg font-medium">{initials}</span>
-                    </AvatarFallback>
+                    <AvatarFallback />
                   </Avatar>
                   <span className="mt-2 text-sm font-medium text-center truncate w-full">
                     {client.firstName} {client.lastName}

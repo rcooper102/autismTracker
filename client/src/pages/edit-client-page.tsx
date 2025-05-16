@@ -361,12 +361,12 @@ export default function EditClientPage() {
 
   const handleUploadAvatar = () => {
     if (selectedFile) {
-      // Simply start the upload mutation without changing any state
       uploadAvatarMutation.mutate(selectedFile);
       
-      // We'll keep the selectedFile and the preview as is
-      // The success handler will just show a toast notification
-      // But will NOT invalidate the query or reset the state
+      // Force a reload of the page after a short delay to ensure the image is updated
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500); // Give server time to process and store the image
     }
   };
 
@@ -713,12 +713,11 @@ export default function EditClientPage() {
                 <div className="relative mb-4">
                   <Avatar size="xl" className="border">
                     {avatarPreview ? (
-                      <AvatarImage src={avatarPreview} alt="Client Avatar" />
+                      <AvatarImage src={`${avatarPreview}?t=${Date.now()}`} alt="Client Avatar" />
                     ) : (client?.avatarUrl ? (
-                      <AvatarImage src={client.avatarUrl} alt="Client Avatar" />
+                      <AvatarImage src={`${client.avatarUrl}?t=${Date.now()}`} alt="Client Avatar" />
                     ) : null)}
                     <AvatarFallback />
-                    {/* Note: We removed the initials fallback since we now use a human silhouette icon */}
                   </Avatar>
                 </div>
 

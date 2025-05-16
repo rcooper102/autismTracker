@@ -51,14 +51,12 @@ export default function ClientHeader({ client, onBack, onOpenMobileMenu }: Clien
         </button>
         <div className="flex items-center">
           <Avatar 
-            src={client.avatarUrl || null} 
+            src={client.avatarUrl ? `${client.avatarUrl}?t=${Date.now()}` : null} 
             alt={fullName}
             size="lg"
             className="mr-4"
           >
-            <AvatarFallback>
-              {client.firstName[0]}{client.lastName[0]}
-            </AvatarFallback>
+            <AvatarFallback />
           </Avatar>
           <div>
             <h1 className="text-2xl font-semibold text-gray-800">{fullName}</h1>
