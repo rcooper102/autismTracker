@@ -81,19 +81,40 @@ export default function Sidebar() {
                 )
               : null
             }
-            alt={(user.firstName && user.lastName) ? `${user.firstName} ${user.lastName}` : user.username}
+            alt={
+              user.role === "practitioner" && user.firstName && user.lastName ?
+                `${user.firstName} ${user.lastName}` 
+              : user.role === "client" && client ?
+                `${client.firstName} ${client.lastName}`
+              : user.username
+            }
             fallback={
               <span className="bg-white/20 text-white">
-                {user.firstName && user.lastName ? 
-                  `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase() : 
-                  <User className="h-8 w-8" />}
+                {user.role === "practitioner" && user.firstName && user.lastName ? 
+                  `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase() 
+                : user.role === "client" && client ? 
+                  `${client.firstName.charAt(0)}${client.lastName.charAt(0)}`.toUpperCase()
+                : <User className="h-8 w-8" />}
               </span>
             }
           />
           <div className="text-center">
-            {user.firstName && user.lastName && (
+            {user.role === "practitioner" ? (
+              // Display practitioner's name from user object
+              user.firstName && user.lastName && (
+                <p className="font-medium text-white">
+                  {`${user.firstName} ${user.lastName}`}
+                </p>
+              )
+            ) : user.role === "client" && client ? (
+              // Display client's name from client record
               <p className="font-medium text-white">
-                {`${user.firstName} ${user.lastName}`}
+                {`${client.firstName} ${client.lastName}`}
+              </p>
+            ) : (
+              // Fallback in case neither is available
+              <p className="font-medium text-white">
+                {user.username}
               </p>
             )}
             <p className="text-sm text-white/70">{user.email}</p>
