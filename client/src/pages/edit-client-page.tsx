@@ -303,11 +303,13 @@ export default function EditClientPage() {
         description: "Client avatar has been updated successfully.",
       });
       
-      // Here's the key fix: DO NOT invalidate queries or clear the selected file
-      // Just keep showing the current preview and leave the state as is
+      // Invalidate the client query to refresh data from server
+      queryClient.invalidateQueries({ queryKey: [`/api/clients/${id}`] });
       
-      // The server already stored the file, and we already have a preview
-      // So we don't need to do anything else
+      // Clear the selected file to reset the upload button state
+      setSelectedFile(null);
+      
+      // Note: We keep the avatarPreview as is since it's already showing the correct image
     },
     onError: (error: Error) => {
       toast({
@@ -715,12 +717,8 @@ export default function EditClientPage() {
                     ) : (client?.avatarUrl ? (
                       <AvatarImage src={client.avatarUrl} alt="Client Avatar" />
                     ) : null)}
-                    <AvatarFallback className="text-2xl">
-                      {client?.firstName && client?.lastName 
-                        ? `${client.firstName[0]}${client.lastName[0]}`
-                        : "??"
-                      }
-                    </AvatarFallback>
+                    <AvatarFallback />
+                    {/* Note: We removed the initials fallback since we now use a human silhouette icon */}
                   </Avatar>
                 </div>
 
