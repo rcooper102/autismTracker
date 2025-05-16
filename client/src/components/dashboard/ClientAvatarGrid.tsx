@@ -82,10 +82,9 @@ export default function ClientAvatarGrid({ clients, isLoading }: ClientAvatarGri
                   <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-white shadow-md transition-all group-hover:shadow-lg">
                     {client.avatarUrl ? (
                       <img 
-                        src={`${client.avatarUrl}?t=${new Date().getTime()}`} 
+                        src={client.avatarUrl} 
                         alt={`${client.firstName} ${client.lastName}`}
                         className="w-full h-full object-cover"
-                        key={`${client.id}-avatar-${Date.now()}`} // Force remount on each render
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gray-100">
