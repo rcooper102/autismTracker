@@ -77,13 +77,23 @@ export default function ClientsPage() {
               <h1 className="text-2xl font-semibold text-gray-800">All Clients</h1>
               <p className="text-gray-500">View and manage all your clients</p>
             </div>
-            <Button 
-              onClick={() => setLocation("/add-client")}
-              className="hidden md:flex items-center"
-            >
-              <i className="ri-user-add-line mr-2"></i>
-              Add New Client
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline"
+                onClick={() => setLocation("/clients/archived")}
+                className="hidden md:flex items-center"
+              >
+                <i className="ri-archive-line mr-2"></i>
+                Archived
+              </Button>
+              <Button 
+                onClick={() => setLocation("/add-client")}
+                className="hidden md:flex items-center"
+              >
+                <i className="ri-user-add-line mr-2"></i>
+                Add New Client
+              </Button>
+            </div>
           </header>
 
           {/* Client list */}
@@ -153,8 +163,15 @@ export default function ClientsPage() {
             )}
           </div>
 
-          {/* Mobile add button (visible only on small screens) */}
-          <div className="fixed bottom-6 right-6 md:hidden">
+          {/* Mobile buttons (visible only on small screens) */}
+          <div className="fixed bottom-6 right-6 md:hidden flex flex-col gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setLocation("/clients/archived")}
+              className="w-12 h-12 rounded-full flex items-center justify-center bg-white"
+            >
+              <i className="ri-archive-line text-xl"></i>
+            </Button>
             <Button 
               onClick={() => setLocation("/add-client")}
               className="w-12 h-12 rounded-full flex items-center justify-center"

@@ -78,8 +78,8 @@ export default function ArchivedClientsPage() {
       <Sidebar />
       <div className="flex-1">
         <MobileNav
-          isOpen={mobileNavOpen}
-          onOpenChange={setMobileNavOpen}
+          open={mobileNavOpen}
+          onClose={() => setMobileNavOpen(false)}
         />
         <main className="flex-1 p-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
