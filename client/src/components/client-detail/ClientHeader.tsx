@@ -35,14 +35,6 @@ export default function ClientHeader({ client, onBack, onOpenMobileMenu }: Clien
   return (
     <div className="flex justify-between items-start mb-6">
       <div className="flex items-center md:block">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="md:hidden mr-2"
-          onClick={onOpenMobileMenu}
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
         <button 
           className="mb-2 text-primary flex items-center text-sm"
           onClick={onBack}
