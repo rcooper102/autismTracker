@@ -298,18 +298,18 @@ export default function EditClientPage() {
       return await res.json();
     },
     onSuccess: (data) => {
-      toast({
-        title: "Avatar uploaded",
-        description: "Client avatar has been updated successfully.",
-      });
+      // Update the avatar preview with the new URL
+      if (data?.avatarUrl) {
+        // Add timestamp to ensure the browser gets the latest image
+        const timestampedUrl = `${data.avatarUrl}${data.avatarUrl.includes('?') ? '&' : '?'}ts=${Date.now()}`;
+        setAvatarPreview(timestampedUrl);
+      }
       
       // Invalidate the client query to refresh data from server
       queryClient.invalidateQueries({ queryKey: [`/api/clients/${id}`] });
       
       // Clear the selected file to reset the upload button state
       setSelectedFile(null);
-      
-      // Note: We keep the avatarPreview as is since it's already showing the correct image
     },
     onError: (error: Error) => {
       toast({
@@ -326,12 +326,11 @@ export default function EditClientPage() {
       const file = e.target.files[0];
       setSelectedFile(file);
       
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = () => {
-        setAvatarPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      // Create preview URL immediately using URL.createObjectURL
+      // This is faster and more reliable than FileReader for image previews
+      const objectUrl = URL.createObjectURL(file);
+      setAvatarPreview(objectUrl);
+      console.log("Created temporary preview URL:", objectUrl);
     }
   };
   
@@ -370,15 +369,20 @@ export default function EditClientPage() {
           
           // Update imagePreview with the new URL from the server response
           if (data?.avatarUrl) {
-            setAvatarPreview(data.avatarUrl);
-            console.log("Setting new avatar preview:", data.avatarUrl);
+            // Add timestamp to ensure the browser gets the latest image
+            const timestampedUrl = `${data.avatarUrl}${data.avatarUrl.includes('?') ? '&' : '?'}ts=${Date.now()}`;
+            setAvatarPreview(timestampedUrl);
+            console.log("Setting new avatar preview:", timestampedUrl);
+            
+            // Clear the file input to allow selecting the same file again if needed
+            setSelectedFile(null);
+            
+            // Show success toast
+            toast({
+              title: "Avatar updated",
+              description: "The client's profile picture has been updated successfully.",
+            });
           }
-          
-          // Force a reload of the page after a short delay
-          setTimeout(() => {
-            console.log("Reloading page to refresh avatar display");
-            window.location.reload();
-          }, 1000);
         }
       });
     }
