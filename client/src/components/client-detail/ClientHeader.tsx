@@ -76,17 +76,11 @@ export default function ClientHeader({ client, onBack, onOpenMobileMenu }: Clien
         </div>
       </div>
       <div className="flex">
-        <Button variant="outline" className="gap-0 px-2 h-9 mr-1">
-          <i className="ri-file-download-line mr-1"></i> Export
-        </Button>
         <Link href={`/clients/${client.id}/edit`}>
-          <Button variant="outline" className="gap-0 px-2 h-9 mr-1">
+          <Button variant="outline" className="gap-0 px-2 h-9">
             <i className="ri-edit-line mr-1"></i> Edit
           </Button>
         </Link>
-        <Button className="gap-0 px-2 h-9">
-          <i className="ri-user-settings-line mr-1"></i> Manage
-        </Button>
       </div>
     </div>
   );
