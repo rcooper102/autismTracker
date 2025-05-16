@@ -761,29 +761,31 @@ export default function EditClientPage() {
                     onChange={handleFileChange}
                     className="hidden"
                     id="avatar-upload"
+                    // Adding a key to force the component to re-render and allow selecting the same file again
+                    key={`file-input-${Date.now()}`}
                   />
-                  <Button 
-                    variant="outline" 
-                    onClick={() => document.getElementById("avatar-upload")?.click()}
-                    className="mb-2"
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Select Image
-                  </Button>
-
-                  {selectedFile && (
+                  <div className="flex items-center mb-2">
                     <Button 
-                      onClick={handleUploadAvatar}
-                      disabled={uploadAvatarMutation.isPending}
-                      className="ml-2"
+                      variant="outline" 
+                      onClick={() => document.getElementById("avatar-upload")?.click()}
                     >
-                      {uploadAvatarMutation.isPending ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        "Upload"
-                      )}
+                      <Upload className="h-4 w-4 mr-2" />
+                      {selectedFile ? selectedFile.name.substring(0, 15) + '...' : 'Select Image'}
                     </Button>
-                  )}
+
+                    {selectedFile && (
+                      <Button 
+                        onClick={handleUploadAvatar}
+                        disabled={uploadAvatarMutation.isPending}
+                        className="ml-2"
+                      >
+                        {uploadAvatarMutation.isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : null}
+                        {uploadAvatarMutation.isPending ? "Uploading..." : "Upload"}
+                      </Button>
+                    )}
+                  </div>
                 </div>
                 <p className="text-xs text-gray-500 text-center">
                   Upload a profile picture for the client. JPG, PNG or GIF, max 5MB.
