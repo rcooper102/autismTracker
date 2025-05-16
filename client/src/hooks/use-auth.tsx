@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       toast({
         title: "Login successful",
-        description: `Welcome back, ${user.name}`,
+        description: `Welcome back, ${user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username}`,
       });
     },
     onError: (error: Error) => {
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       toast({
         title: "Registration successful",
-        description: `Welcome, ${user.name}`,
+        description: `Welcome, ${user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username}`,
       });
     },
     onError: (error: Error) => {
