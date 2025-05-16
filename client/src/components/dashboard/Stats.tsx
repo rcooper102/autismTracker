@@ -43,9 +43,6 @@ export default function Stats({
             <p className="text-gray-500 text-xs font-medium">Total Clients</p>
             <div className="flex items-baseline">
               <p className="text-2xl font-semibold">{totalClients}</p>
-              <p className="text-xs text-green-500 ml-2 flex items-center">
-                <i className="ri-arrow-up-line mr-1"></i>{Math.max(2, Math.floor(totalClients * 0.2))}
-              </p>
             </div>
           </div>
         </div>
