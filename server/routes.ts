@@ -1,6 +1,6 @@
 import express, { type Express, type Request } from "express";
 import { createServer, type Server } from "http";
-import { setupAuth } from "./auth";
+import { setupAuth, hashPassword, comparePasswords } from "./auth";
 import { storage } from "./storage";
 import { z } from "zod";
 import { insertClientSchema, insertDataEntrySchema, insertSessionSchema, insertUserSchema, insertClientNoteSchema, users } from "@shared/schema";
@@ -65,6 +65,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
       uploadDirContents: fs.readdirSync(uploadDir),
       testImageUrl: files.length > 0 ? files[files.length-1] : null
     });
+  });
+  
+  // Client Profile - Get client's own profile data
+  app.get("/api/clients/me", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "client") {
+      return res.status(403).json({ message: "Unauthorized. Clients only." });
+    }
+
+    try {
+      const client = await storage.getClientByUserId(req.user.id);
+      
+      if (!client) {
+        return res.status(404).json({ message: "Client profile not found" });
+      }
+      
+      res.json(client);
+    } catch (error) {
+      console.error("Error getting client profile:", error);
+      res.status(500).json({ message: "Failed to fetch client profile" });
+    }
+  });
+
+  // Client Profile - Update avatar
+  app.post("/api/clients/me/avatar", upload.single("avatar"), async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "client") {
+      return res.status(403).json({ message: "Unauthorized. Clients only." });
+    }
+    
+    if (!req.file) {
+      return res.status(400).json({ message: "No avatar file uploaded" });
+    }
+    
+    try {
+      const client = await storage.getClientByUserId(req.user.id);
+      
+      if (!client) {
+        return res.status(404).json({ message: "Client profile not found" });
+      }
+      
+      // Add timestamp query parameter to prevent caching
+      const avatarUrl = `/uploads/${req.file.filename}?t=${Date.now()}`;
+      
+      // Update the client's avatar URL
+      const updatedClient = await storage.updateClient(client.id, { avatarUrl });
+      
+      // Also update the user's avatar in the user table
+      await storage.updateUserAvatar(req.user.id, avatarUrl);
+      
+      res.json({
+        message: "Avatar updated successfully",
+        avatarUrl
+      });
+    } catch (error) {
+      console.error("Error updating client avatar:", error);
+      res.status(500).json({ message: "Failed to update avatar" });
+    }
+  });
+
+  // Client Profile - Update password
+  app.post("/api/clients/me/password", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "client") {
+      return res.status(403).json({ message: "Unauthorized. Clients only." });
+    }
+    
+    const { currentPassword, newPassword } = req.body;
+    
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current password and new password are required" });
+    }
+    
+    try {
+      const user = await storage.getUser(req.user.id);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Verify current password
+      const isPasswordValid = await comparePasswords(currentPassword, user.password);
+      
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Current password is incorrect" });
+      }
+      
+      // Hash the new password
+      const hashedPassword = await hashPassword(newPassword);
+      
+      // Update the user's password
+      const client = await storage.getClientByUserId(req.user.id);
+      if (!client) {
+        return res.status(404).json({ message: "Client profile not found" });
+      }
+      
+      // Update the password in the user record
+      await db.update(users)
+        .set({ password: hashedPassword })
+        .where(eq(users.id, req.user.id));
+      
+      res.json({ message: "Password updated successfully" });
+    } catch (error) {
+      console.error("Error updating client password:", error);
+      res.status(500).json({ message: "Failed to update password" });
+    }
   });
 
   // Client management routes
@@ -340,7 +443,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Reset client password
+  // Reset client password (practitioner route)
   app.patch("/api/clients/:clientId/reset-password", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
       return res.status(403).json({ message: "Unauthorized. Practitioners only." });
