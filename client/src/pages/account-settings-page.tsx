@@ -11,7 +11,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -28,7 +27,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import { Loader2, Upload } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -64,11 +62,11 @@ export default function AccountSettingsPage() {
   const { data: practitioner, isLoading, refetch } = useQuery({
     queryKey: ["/api/practitioners/me"],
     queryFn: async () => {
-      console.log("Account page: Fetching practitioner data");
+      console.log("Fetching practitioner data for avatar");
       const res = await fetch("/api/practitioners/me");
       if (!res.ok) throw new Error("Failed to fetch practitioner details");
       const data = await res.json();
-      console.log("Account page: Received practitioner data:", data);
+      console.log("Received practitioner data:", data);
       return data;
     },
   });
@@ -160,8 +158,6 @@ export default function AccountSettingsPage() {
   // Avatar upload mutation
   const uploadAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
-      console.log("Uploading file:", file.name, file.type, file.size);
-      
       const formData = new FormData();
       formData.append("avatar", file);
       
@@ -172,24 +168,17 @@ export default function AccountSettingsPage() {
       });
       
       if (!res.ok) {
-        console.error("Avatar upload failed with status:", res.status);
         throw new Error("Avatar upload failed");
       }
       
-      const result = await res.json();
-      console.log("Upload successful, response:", result);
-      return result;
+      return await res.json();
     },
     onSuccess: (data) => {
       // Clear the file after successful upload
       setAvatarFile(null);
       
-      // Update the avatarUrl directly with the returned URL, including the timestamp
-      if (data && data.avatarUrl) {
-        console.log("Setting new avatar URL:", data.avatarUrl);
-        // Force a refetch of practitioner data to update the avatar in all components
-        refetch();
-      }
+      // Force a refetch of practitioner data to update the avatar in all components
+      refetch();
       
       toast({
         title: "Avatar uploaded",
@@ -200,7 +189,6 @@ export default function AccountSettingsPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/practitioners/me"] });
     },
     onError: (error: Error) => {
-      console.error("Upload mutation error:", error);
       toast({
         title: "Upload failed",
         description: error.message,
@@ -250,7 +238,7 @@ export default function AccountSettingsPage() {
   }
 
   return (
-    <div className="container max-w-5xl py-10 px-4 md:px-6 lg:px-8 mx-auto">
+    <div className="max-w-6xl mx-auto py-10 px-4 md:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-8">Account Settings</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6">
@@ -471,9 +459,6 @@ export default function AccountSettingsPage() {
                         <FormControl>
                           <Input {...field} type="password" />
                         </FormControl>
-                        <FormDescription>
-                          Must be at least 6 characters
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -484,7 +469,7 @@ export default function AccountSettingsPage() {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm New Password</FormLabel>
+                        <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
                           <Input {...field} type="password" />
                         </FormControl>
@@ -496,7 +481,7 @@ export default function AccountSettingsPage() {
                   <div className="pt-2">
                     <Button 
                       type="submit" 
-                      className="w-full md:w-auto" 
+                      className="w-full md:w-auto"
                       disabled={changePasswordMutation.isPending}
                     >
                       {changePasswordMutation.isPending ? (
