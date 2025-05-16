@@ -256,10 +256,12 @@ export default function AccountSettingsPage() {
                       `${practitioner.avatarUrl}?_t=${Date.now()}`) 
                     : null
                 }
-                alt={user?.username || "User"}
+                alt={(user?.firstName && user?.lastName) ? `${user.firstName} ${user.lastName}` : "User"}
                 fallback={
                   <span className="text-2xl">
-                    {user?.username?.substring(0, 2).toUpperCase() || "U"}
+                    {(user?.firstName && user?.lastName) ? 
+                      `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase() : 
+                      (user?.email?.charAt(0) || "U").toUpperCase()}
                   </span>
                 }
               />
