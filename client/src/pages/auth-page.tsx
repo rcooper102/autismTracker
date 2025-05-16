@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Redirect } from "wouter";
+import { BrainCog } from "lucide-react";
 
 const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -65,7 +66,7 @@ export default function AuthPage() {
       {/* Hero Section */}
       <div className="hidden md:flex w-1/2 bg-primary-50 flex-col justify-center items-center p-8">
         <div className="flex items-center mb-6">
-          <i className="ri-mental-health-line text-primary text-4xl mr-2"></i>
+          <BrainCog className="h-8 w-8 text-primary mr-2" />
           <h1 className="text-4xl font-bold text-primary">AutiTrack</h1>
         </div>
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Empowering Autism Care</h2>
@@ -99,7 +100,7 @@ export default function AuthPage() {
       <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8">
         <div className="w-full max-w-md">
           <div className="flex items-center justify-center mb-8 md:hidden">
-            <i className="ri-mental-health-line text-primary text-3xl mr-2"></i>
+            <BrainCog className="h-7 w-7 text-primary mr-2" />
             <h1 className="text-3xl font-bold text-primary">AutiTrack</h1>
           </div>
           <Tabs defaultValue="login" className="w-full">
