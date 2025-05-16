@@ -40,7 +40,7 @@ export default function Header() {
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <Logo size={32} className="text-white" />
+              <Logo size={32} variant="white" />
               <span className="text-xl font-bold text-white">AutiTrack</span>
             </Link>
           </div>

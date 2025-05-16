@@ -1,14 +1,24 @@
 import { CSSProperties } from 'react';
-import logoSrc from '@/assets/brain-cog-logo.svg';
+import defaultLogoSrc from '@/assets/brain-cog-logo.svg';
+import whiteLogoSrc from '@/assets/brain-cog-logo-white.svg';
 
 interface LogoProps {
   size?: number;
   className?: string;
   style?: CSSProperties;
   alt?: string;
+  variant?: 'default' | 'white';
 }
 
-export function Logo({ size = 24, className = "", style, alt = "AutiTrack Logo" }: LogoProps) {
+export function Logo({ 
+  size = 24, 
+  className = "", 
+  style, 
+  alt = "AutiTrack Logo",
+  variant = 'default' 
+}: LogoProps) {
+  const logoSrc = variant === 'white' ? whiteLogoSrc : defaultLogoSrc;
+  
   return (
     <img 
       src={logoSrc} 
@@ -18,7 +28,6 @@ export function Logo({ size = 24, className = "", style, alt = "AutiTrack Logo" 
       className={className}
       style={{
         ...style,
-        color: 'currentColor' // Ensures the SVG inherits the text color
       }}
     />
   );
