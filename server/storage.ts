@@ -28,9 +28,11 @@ export interface IStorage {
   getClientWithUser(id: number): Promise<(Client & { user: User }) | undefined>;
   getClientByUserId(userId: number): Promise<Client | undefined>;
   getClientsByPractitionerId(practitionerId: number): Promise<ClientWithUser[]>;
+  getArchivedClientsByPractitionerId(practitionerId: number): Promise<ClientWithUser[]>;
   createClient(client: InsertClient): Promise<Client>;
   updateClient(id: number, client: Partial<Client>): Promise<Client | undefined>;
   archiveClient(id: number): Promise<Client | undefined>;
+  unarchiveClient(id: number): Promise<Client | undefined>;
   deleteClient(id: number): Promise<boolean>;
   
   // Data entry operations
