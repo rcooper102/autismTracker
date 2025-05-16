@@ -19,6 +19,7 @@ export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUserAvatar(userId: number, avatarUrl: string): Promise<User | undefined>;
   updateUserProfile(userId: number, profileData: Partial<User>): Promise<User | undefined>;
@@ -112,6 +113,24 @@ export class DatabaseStorage implements IStorage {
       avatarUrl: users.avatarUrl,
       createdAt: users.createdAt
     }).from(users).where(eq(users.username, username));
+    return user;
+  }
+  
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    // Be explicit about which columns to select to avoid issues with schema changes
+    const [user] = await db.select({
+      id: users.id,
+      username: users.username,
+      password: users.password,
+      role: users.role,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      email: users.email,
+      phone: users.phone,
+      bio: users.bio,
+      avatarUrl: users.avatarUrl,
+      createdAt: users.createdAt
+    }).from(users).where(eq(users.email, email));
     return user;
   }
 

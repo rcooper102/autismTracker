@@ -11,7 +11,7 @@ import { Redirect } from "wouter";
 import { Logo } from "@/components/ui/logo";
 
 const loginSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -30,7 +30,7 @@ export default function AuthPage() {
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -121,15 +121,15 @@ export default function AuthPage() {
                 <form onSubmit={loginForm.handleSubmit(onLoginSubmit)}>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="login-username">Username</Label>
+                      <Label htmlFor="login-email">Email</Label>
                       <Input
-                        id="login-username"
-                        type="text"
-                        placeholder="Enter your username"
-                        {...loginForm.register("username")}
+                        id="login-email"
+                        type="email"
+                        placeholder="Enter your email address"
+                        {...loginForm.register("email")}
                       />
-                      {loginForm.formState.errors.username && (
-                        <p className="text-sm text-red-500">{loginForm.formState.errors.username.message}</p>
+                      {loginForm.formState.errors.email && (
+                        <p className="text-sm text-red-500">{loginForm.formState.errors.email.message}</p>
                       )}
                     </div>
                     <div className="space-y-2">
