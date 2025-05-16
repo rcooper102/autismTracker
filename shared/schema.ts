@@ -35,6 +35,7 @@ export const clients = pgTable("clients", {
   treatmentGoals: json("treatment_goals").default([]),
   avatarUrl: text("avatar_url"),
   notes: text("notes"),
+  archived: boolean("archived").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

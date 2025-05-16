@@ -30,6 +30,7 @@ export interface IStorage {
   getClientsByPractitionerId(practitionerId: number): Promise<ClientWithUser[]>;
   createClient(client: InsertClient): Promise<Client>;
   updateClient(id: number, client: Partial<Client>): Promise<Client | undefined>;
+  archiveClient(id: number): Promise<Client | undefined>;
   deleteClient(id: number): Promise<boolean>;
   
   // Data entry operations
@@ -159,7 +160,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getClientsByPractitionerId(practitionerId: number): Promise<ClientWithUser[]> {
-    const clientsList = await db.select().from(clients).where(eq(clients.practitionerId, practitionerId));
+    const clientsList = await db.select()
+      .from(clients)
+      .where(
+        and(
+          eq(clients.practitionerId, practitionerId),
+          eq(clients.archived, false)
+        )
+      );
     
     const clientsWithUsers = await Promise.all(
       clientsList.map(async (client) => {
