@@ -98,14 +98,14 @@ export default function ClientsPage() {
                 onClick={() => setLocation("/clients/archived")}
                 className="hidden md:flex items-center justify-center"
               >
-                <i className="ri-archive-line mr-2"></i>
+                <i className="ri-archive-line"></i>
                 Archived
               </Button>
               <Button 
                 onClick={() => setLocation("/add-client")}
                 className="hidden md:flex items-center justify-center"
               >
-                <i className="ri-user-add-line mr-2"></i>
+                <i className="ri-user-add-line"></i>
                 Add New Client
               </Button>
             </div>
@@ -143,8 +143,8 @@ export default function ClientsPage() {
                 <p className="text-gray-500 mb-4">
                   You don't have any clients at the moment. Add your first client to get started.
                 </p>
-                <Link href="/add-client" className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg">
-                  <i className="ri-user-add-line mr-2"></i>
+                <Link href="/add-client" className="inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg">
+                  <i className="ri-user-add-line"></i>
                   Add Your First Client
                 </Link>
               </div>
