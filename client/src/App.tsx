@@ -16,6 +16,7 @@ import AddClientPage from "@/pages/add-client-page";
 import ClientsPage from "@/pages/clients-page";
 import ArchivedClientsPage from "@/pages/archived-clients-page";
 import AccountSettingsPage from "@/pages/account-settings-page";
+import ClientAccountSettingsPage from "@/pages/client-account-settings-page";
 import EditClientPage from "@/pages/edit-client-page";
 import NoteDetailPage from "@/pages/note-detail-page";
 
@@ -31,7 +32,9 @@ function Router() {
       <ProtectedRoute path="/notes/:noteId" component={NoteDetailPage} />
       <ProtectedRoute path="/log-data" component={DataEntryPage} />
       <ProtectedRoute path="/add-client" component={AddClientPage} />
-      <ProtectedRoute path="/account" component={AccountSettingsPage} />
+      <ProtectedRoute path="/account" component={({ user }) => 
+        user?.role === "client" ? <ClientAccountSettingsPage /> : <AccountSettingsPage />
+      } />
       <Route component={NotFound} />
     </Switch>
   );

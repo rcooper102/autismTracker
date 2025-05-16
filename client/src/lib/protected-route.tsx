@@ -7,7 +7,7 @@ export function ProtectedRoute({
   component: Component,
 }: {
   path: string;
-  component: (params: { id?: string }) => React.JSX.Element;
+  component: (props: { user?: any; id?: string }) => React.JSX.Element;
 }) {
   const { user, isLoading } = useAuth();
 
@@ -29,5 +29,9 @@ export function ProtectedRoute({
     );
   }
 
-  return <Route path={path} component={Component} />
+  return (
+    <Route path={path}>
+      {(params) => <Component {...params} user={user} />}
+    </Route>
+  )
 }
