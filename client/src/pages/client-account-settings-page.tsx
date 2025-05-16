@@ -142,7 +142,7 @@ export default function ClientAccountSettingsPage() {
                 
                 <Button 
                   type="submit" 
-                  className="w-full md:w-auto"
+                  className="w-full md:w-auto flex items-center justify-center"
                   disabled={updatePasswordMutation.isPending}
                 >
                   {updatePasswordMutation.isPending ? (

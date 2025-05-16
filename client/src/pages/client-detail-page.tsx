@@ -226,7 +226,7 @@ export default function ClientDetailPage() {
                   </p>
                   <Button 
                     variant="outline" 
-                    className="mt-4 flex items-center gap-2 border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800"
+                    className="mt-4 flex items-center justify-center gap-2 border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800"
                     onClick={() => setShowArchiveConfirmation(true)}
                   >
                     <Archive className="h-4 w-4" />
@@ -241,7 +241,7 @@ export default function ClientDetailPage() {
                 </p>
                 <Button 
                   variant="destructive" 
-                  className="mt-4 flex items-center gap-2"
+                  className="mt-4 flex items-center justify-center gap-2"
                   onClick={() => setShowDeleteConfirmation(true)}
                 >
                   <Trash2 className="h-4 w-4" />
@@ -263,7 +263,7 @@ export default function ClientDetailPage() {
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  className="bg-primary hover:bg-primary/90"
+                  className="bg-primary hover:bg-primary/90 flex items-center justify-center"
                   onClick={() => archiveClientMutation.mutate()}
                 >
                   {archiveClientMutation.isPending ? (
@@ -291,7 +291,7 @@ export default function ClientDetailPage() {
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  className="bg-red-600 hover:bg-red-700"
+                  className="bg-red-600 hover:bg-red-700 flex items-center justify-center"
                   onClick={() => deleteClientMutation.mutate()}
                 >
                   {deleteClientMutation.isPending ? (
