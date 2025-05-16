@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Loader2, AlertTriangle, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import Sidebar from "@/components/layout/Sidebar";
 import MobileNav from "@/components/layout/MobileNav";
 import ClientHeader from "@/components/client-detail/ClientHeader";
@@ -10,11 +12,24 @@ import MoodChart from "@/components/client-detail/MoodChart";
 import DataEntries from "@/components/client-detail/DataEntries";
 import ClientInfo from "@/components/client-detail/ClientInfo";
 import ClientNotes from "@/components/client-detail/ClientNotes";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   
   // Redirect if we don't have a valid ID
   useEffect(() => {
@@ -22,6 +37,28 @@ export default function ClientDetailPage() {
       setLocation("/");
     }
   }, [id, setLocation]);
+  
+  // Delete client mutation
+  const deleteClientMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("DELETE", `/api/clients/${id}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Client deleted",
+        description: "Client and all associated data have been deleted successfully.",
+      });
+      setLocation("/");
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error deleting client",
+        description: error.message || "Failed to delete client. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   // Fetch client details
   const { data: client, isLoading: isLoadingClient } = useQuery({
@@ -60,10 +97,13 @@ export default function ClientDetailPage() {
     );
   }
 
+  // Mobile navigation state
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <MobileNav />
+      <MobileNav open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
 
       <main className="main-content min-h-screen pb-16">
         <div className="p-4 md:p-6">
@@ -91,6 +131,57 @@ export default function ClientDetailPage() {
               <ClientInfo client={client} />
             </div>
           </div>
+          
+          {/* Delete Client Section - only visible to practitioners */}
+          {user?.role === "practitioner" && (
+            <div className="mt-12 border-t pt-8">
+              <div className="bg-red-50 border border-red-200 rounded-md p-6">
+                <h3 className="text-lg font-semibold text-red-800 flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  Danger Zone
+                </h3>
+                <p className="mt-2 text-red-700">
+                  Deleting this client will permanently remove all associated data including notes, data entries, and user account information. This action cannot be undone.
+                </p>
+                <Button 
+                  variant="destructive" 
+                  className="mt-4 flex items-center gap-2"
+                  onClick={() => setShowDeleteConfirmation(true)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete Client
+                </Button>
+              </div>
+            </div>
+          )}
+          
+          {/* Delete Confirmation Dialog */}
+          <AlertDialog open={showDeleteConfirmation} onOpenChange={setShowDeleteConfirmation}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action will permanently delete <strong>{client?.firstName} {client?.lastName}</strong> and all their associated data. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-red-600 hover:bg-red-700"
+                  onClick={() => deleteClientMutation.mutate()}
+                >
+                  {deleteClientMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    "Delete Client"
+                  )}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </main>
     </div>

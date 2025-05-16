@@ -239,6 +239,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Delete client
+  app.delete("/api/clients/:clientId", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    
+    // Verify the client belongs to this practitioner
+    const client = await storage.getClient(clientId);
+    if (!client || client.practitionerId !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to delete this client" });
+    }
+    
+    try {
+      const success = await storage.deleteClient(clientId);
+      
+      if (!success) {
+        return res.status(500).json({ message: "Failed to delete client" });
+      }
+      
+      res.json({ message: "Client deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      res.status(500).json({ message: "Failed to delete client" });
+    }
+  });
+  
   // Reset client password
   app.patch("/api/clients/:clientId/reset-password", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
