@@ -181,6 +181,26 @@ export class DatabaseStorage implements IStorage {
     return clientsWithUsers;
   }
 
+  async getArchivedClientsByPractitionerId(practitionerId: number): Promise<ClientWithUser[]> {
+    const clientsList = await db.select()
+      .from(clients)
+      .where(
+        and(
+          eq(clients.practitionerId, practitionerId),
+          eq(clients.archived, true)
+        )
+      );
+    
+    const clientsWithUsers = await Promise.all(
+      clientsList.map(async (client) => {
+        const [user] = await db.select().from(users).where(eq(users.id, client.userId));
+        return { ...client, user: user! };
+      })
+    );
+    
+    return clientsWithUsers;
+  }
+
   async createClient(clientData: InsertClient): Promise<Client> {
     const [client] = await db.insert(clients).values(clientData).returning();
     return client;
@@ -267,6 +287,23 @@ export class DatabaseStorage implements IStorage {
       return archivedClient;
     } catch (error) {
       console.error("Error archiving client:", error);
+      return undefined;
+    }
+  }
+  
+  async unarchiveClient(id: number): Promise<Client | undefined> {
+    try {
+      console.log("Unarchiving client:", id);
+      const [unarchivedClient] = await db
+        .update(clients)
+        .set({ archived: false })
+        .where(eq(clients.id, id))
+        .returning();
+      
+      console.log("Client unarchived successfully:", unarchivedClient);
+      return unarchivedClient;
+    } catch (error) {
+      console.error("Error unarchiving client:", error);
       return undefined;
     }
   }

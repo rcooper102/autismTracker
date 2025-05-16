@@ -14,6 +14,7 @@ import ClientDetailPage from "@/pages/client-detail-page";
 import DataEntryPage from "@/pages/data-entry-page";
 import AddClientPage from "@/pages/add-client-page";
 import ClientsPage from "@/pages/clients-page";
+import ArchivedClientsPage from "@/pages/archived-clients-page";
 import AccountSettingsPage from "@/pages/account-settings-page";
 import EditClientPage from "@/pages/edit-client-page";
 import NoteDetailPage from "@/pages/note-detail-page";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <ProtectedRoute path="/" component={DashboardPage} />
       <ProtectedRoute path="/clients" component={ClientsPage} />
+      <ProtectedRoute path="/clients/archived" component={ArchivedClientsPage} />
       <ProtectedRoute path="/clients/:id" component={ClientDetailPage} />
       <ProtectedRoute path="/clients/:id/edit" component={EditClientPage} />
       <ProtectedRoute path="/notes/:noteId" component={NoteDetailPage} />

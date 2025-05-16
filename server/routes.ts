@@ -77,6 +77,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const clients = await storage.getClientsByPractitionerId(practitionerId);
     res.json(clients);
   });
+  
+  // Get archived clients
+  app.get("/api/clients/archived", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const practitionerId = req.user.id;
+    const clients = await storage.getArchivedClientsByPractitionerId(practitionerId);
+    res.json(clients);
+  });
 
   app.post("/api/clients", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
@@ -267,6 +278,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error archiving client:", error);
       res.status(500).json({ message: "Failed to archive client" });
+    }
+  });
+  
+  // Unarchive client
+  app.patch("/api/clients/:clientId/unarchive", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    
+    // Verify the client belongs to this practitioner
+    const client = await storage.getClient(clientId);
+    if (!client || client.practitionerId !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to unarchive this client" });
+    }
+    
+    try {
+      const unarchivedClient = await storage.unarchiveClient(clientId);
+      
+      if (!unarchivedClient) {
+        return res.status(500).json({ message: "Failed to unarchive client" });
+      }
+      
+      res.json({ 
+        message: "Client unarchived successfully",
+        client: unarchivedClient
+      });
+    } catch (error) {
+      console.error("Error unarchiving client:", error);
+      res.status(500).json({ message: "Failed to unarchive client" });
     }
   });
   
