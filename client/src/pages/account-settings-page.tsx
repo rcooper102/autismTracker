@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -403,7 +404,11 @@ export default function AccountSettingsPage() {
                       <FormItem>
                         <FormLabel>Bio</FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <Textarea 
+                            {...field} 
+                            className="min-h-[100px]" 
+                            placeholder="Tell us a bit about yourself and your practice"
+                          />
                         </FormControl>
                         <FormDescription>A brief description about yourself</FormDescription>
                         <FormMessage />
