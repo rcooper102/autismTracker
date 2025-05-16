@@ -92,7 +92,7 @@ export default function ClientsPage() {
               <h1 className="text-2xl font-semibold text-gray-800">All Clients</h1>
               <p className="text-gray-500">View and manage all your clients</p>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex">
               <Button 
                 variant="outline"
                 onClick={() => setLocation("/clients/archived")}
