@@ -47,9 +47,6 @@ export default function Stats({
           <p className="text-gray-500 text-xs font-medium">Pending Reviews</p>
           <div className="flex items-baseline">
             <p className="text-2xl font-semibold">{pendingReviews}</p>
-            <p className="text-xs text-orange-500 ml-2">
-              {pendingReviews > 0 ? "Attention needed" : "All caught up"}
-            </p>
           </div>
         </div>
       </div>
@@ -58,9 +55,6 @@ export default function Stats({
           <p className="text-gray-500 text-xs font-medium">Active Sessions</p>
           <div className="flex items-baseline">
             <p className="text-2xl font-semibold">0</p>
-            <p className="text-xs text-blue-500 ml-2">
-              Today
-            </p>
           </div>
         </div>
       </div>
