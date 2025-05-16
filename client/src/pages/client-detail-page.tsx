@@ -52,12 +52,36 @@ export default function ClientDetailPage() {
         title: "Client archived",
         description: "Client has been archived successfully. They will no longer appear in your client list.",
       });
-      setLocation("/");
+      // Refetch the client data to show the archive status
+      queryClient.invalidateQueries({ queryKey: [`/api/clients/${id}`] });
     },
     onError: (error: Error) => {
       toast({
         title: "Error archiving client",
         description: error.message || "Failed to archive client. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Unarchive client mutation
+  const unarchiveClientMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("PATCH", `/api/clients/${id}/unarchive`);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Client unarchived",
+        description: "Client has been unarchived successfully and is now active again.",
+      });
+      // Refetch the client data to show the archive status update
+      queryClient.invalidateQueries({ queryKey: [`/api/clients/${id}`] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error unarchiving client",
+        description: error.message || "Failed to unarchive client. Please try again.",
         variant: "destructive",
       });
     },
@@ -127,7 +151,37 @@ export default function ClientDetailPage() {
       <Sidebar />
       <MobileNav open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
 
-      <main className="main-content min-h-screen pb-16">
+      <main className="main-content min-h-screen pb-16 relative">
+        {/* Archived Client Overlay */}
+        {client?.archived && (
+          <div className="absolute inset-0 bg-gray-900/60 z-30 flex flex-col items-center justify-center backdrop-blur-sm">
+            <div className="bg-white p-8 rounded-lg shadow-xl max-w-md text-center">
+              <Archive className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-2">Archived Client</h2>
+              <p className="text-gray-600 mb-6">
+                This client has been archived and is no longer active. You can still view their information, but they won't appear in your active client list.
+              </p>
+              
+              {user?.role === "practitioner" && (
+                <Button 
+                  onClick={() => unarchiveClientMutation.mutate()}
+                  className="w-full"
+                  disabled={unarchiveClientMutation.isPending}
+                >
+                  {unarchiveClientMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Unarchiving...
+                    </>
+                  ) : (
+                    "Unarchive Client"
+                  )}
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+        
         <div className="px-4 pt-6 pb-4 md:px-6 md:pb-6">
           {/* Client Header with back button, name, etc. */}
           <ClientHeader 
