@@ -241,7 +241,9 @@ export default function EditClientPage() {
       return await res.json();
     },
     onSuccess: () => {
+      // Invalidate both the specific client query and the client list query
       queryClient.invalidateQueries({queryKey: [`/api/clients/${id}`]});
+      queryClient.invalidateQueries({queryKey: ['/api/clients']});
       toast({
         title: "Client updated",
         description: "Client information has been updated successfully.",
@@ -305,8 +307,9 @@ export default function EditClientPage() {
         setAvatarPreview(timestampedUrl);
       }
       
-      // Invalidate the client query to refresh data from server
+      // Invalidate both the individual client and the clients list queries
       queryClient.invalidateQueries({ queryKey: [`/api/clients/${id}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/clients'] });
       
       // Clear the selected file to reset the upload button state
       setSelectedFile(null);

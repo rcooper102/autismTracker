@@ -18,6 +18,8 @@ export default function ClientsPage() {
   const { data: clients, isLoading } = useQuery<ClientWithUser[]>({
     queryKey: ["/api/clients"],
     enabled: !!user && user.role === "practitioner",
+    staleTime: 0, // Always revalidate data when navigating to this page
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
   
   // Add logging when clients data changes
