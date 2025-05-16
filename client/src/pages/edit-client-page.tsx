@@ -711,14 +711,29 @@ export default function EditClientPage() {
             <CardContent>
               <div className="flex flex-col items-center">
                 <div className="relative mb-4">
-                  <Avatar size="xl" className="border">
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white shadow-sm bg-gray-100">
                     {avatarPreview ? (
-                      <AvatarImage src={`${avatarPreview}?t=${Date.now()}`} alt="Client Avatar" />
+                      <img 
+                        src={`${avatarPreview}?t=${new Date().getTime()}`} 
+                        alt="Client Avatar"
+                        className="w-full h-full object-cover"
+                        key={`avatar-preview-${Date.now()}`} 
+                      />
                     ) : (client?.avatarUrl ? (
-                      <AvatarImage src={`${client.avatarUrl}?t=${Date.now()}`} alt="Client Avatar" />
-                    ) : null)}
-                    <AvatarFallback />
-                  </Avatar>
+                      <img 
+                        src={`${client.avatarUrl}?t=${new Date().getTime()}`} 
+                        alt="Client Avatar"
+                        className="w-full h-full object-cover"
+                        key={`client-avatar-${Date.now()}`}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="mb-4">

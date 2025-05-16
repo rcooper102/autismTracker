@@ -79,14 +79,22 @@ export default function ClientAvatarGrid({ clients, isLoading }: ClientAvatarGri
             return (
               <Link key={client.id} href={`/clients/${client.id}`}>
                 <div className="flex flex-col items-center group cursor-pointer">
-                  <Avatar 
-                    src={client.avatarUrl ? `${client.avatarUrl}?t=${Date.now()}` : null}
-                    alt={`${client.firstName} ${client.lastName}`}
-                    size="lg"
-                    className="group-hover:shadow-md transition-all"
-                  >
-                    <AvatarFallback />
-                  </Avatar>
+                  <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-white shadow-md transition-all group-hover:shadow-lg">
+                    {client.avatarUrl ? (
+                      <img 
+                        src={`${client.avatarUrl}?t=${new Date().getTime()}`} 
+                        alt={`${client.firstName} ${client.lastName}`}
+                        className="w-full h-full object-cover"
+                        key={`${client.id}-avatar-${Date.now()}`} // Force remount on each render
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                   <span className="mt-2 text-sm font-medium text-center truncate w-full">
                     {client.firstName} {client.lastName}
                   </span>

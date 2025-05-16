@@ -50,14 +50,22 @@ export default function ClientHeader({ client, onBack, onOpenMobileMenu }: Clien
           <i className="ri-arrow-left-line mr-1"></i> Back to Dashboard
         </button>
         <div className="flex items-center">
-          <Avatar 
-            src={client.avatarUrl ? `${client.avatarUrl}?t=${Date.now()}` : null} 
-            alt={fullName}
-            size="lg"
-            className="mr-4"
-          >
-            <AvatarFallback />
-          </Avatar>
+          <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-white shadow-sm mr-4 bg-gray-100">
+            {client.avatarUrl ? (
+              <img 
+                src={`${client.avatarUrl}?t=${new Date().getTime()}`} 
+                alt={fullName}
+                className="w-full h-full object-cover"
+                key={`${client.avatarUrl}?t=${new Date().getTime()}`} // Force remount on URL change
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                </svg>
+              </div>
+            )}
+          </div>
           <div>
             <h1 className="text-2xl font-semibold text-gray-800">{fullName}</h1>
             <div className="flex items-center mt-1 text-gray-500">
