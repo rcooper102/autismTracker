@@ -252,6 +252,23 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
+  async archiveClient(id: number): Promise<Client | undefined> {
+    try {
+      console.log("Archiving client:", id);
+      const [archivedClient] = await db
+        .update(clients)
+        .set({ archived: true })
+        .where(eq(clients.id, id))
+        .returning();
+      
+      console.log("Client archived successfully:", archivedClient);
+      return archivedClient;
+    } catch (error) {
+      console.error("Error archiving client:", error);
+      return undefined;
+    }
+  }
+  
   async deleteClient(id: number): Promise<boolean> {
     try {
       // First get the client to check if it exists and get userId

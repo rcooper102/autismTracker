@@ -239,6 +239,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Archive client
+  app.patch("/api/clients/:clientId/archive", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
+      return res.status(403).json({ message: "Unauthorized. Practitioners only." });
+    }
+
+    const clientId = parseInt(req.params.clientId);
+    
+    // Verify the client belongs to this practitioner
+    const client = await storage.getClient(clientId);
+    if (!client || client.practitionerId !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to archive this client" });
+    }
+    
+    try {
+      const archivedClient = await storage.archiveClient(clientId);
+      
+      if (!archivedClient) {
+        return res.status(500).json({ message: "Failed to archive client" });
+      }
+      
+      res.json({ 
+        message: "Client archived successfully",
+        client: archivedClient
+      });
+    } catch (error) {
+      console.error("Error archiving client:", error);
+      res.status(500).json({ message: "Failed to archive client" });
+    }
+  });
+  
   // Delete client
   app.delete("/api/clients/:clientId", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.role !== "practitioner") {
