@@ -47,7 +47,7 @@ export function Avatar({
       {src && !imageError ? (
         <AvatarImage src={src} alt={alt} onError={handleImageError} />
       ) : (
-        fallback || <AvatarFallback>{alt.slice(0, 2)}</AvatarFallback>
+        fallback || <AvatarFallback />
       )}
     </div>
   );
@@ -80,10 +80,10 @@ export interface AvatarFallbackProps extends React.HTMLAttributes<HTMLDivElement
 export function AvatarFallback({ className, children, ...props }: AvatarFallbackProps) {
   return (
     <div 
-      className={cn("flex h-full w-full items-center justify-center bg-muted text-muted-foreground", className)} 
+      className={cn("flex h-full w-full items-center justify-center bg-gray-200 text-gray-600", className)} 
       {...props}
     >
-      {children || <User className="h-1/2 w-1/2" />}
+      {children || <User className="h-3/5 w-3/5" />}
     </div>
   );
 }
