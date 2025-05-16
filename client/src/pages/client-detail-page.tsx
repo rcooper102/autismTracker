@@ -159,7 +159,7 @@ export default function ClientDetailPage() {
               <Archive className="h-12 w-12 text-amber-500 mx-auto mb-4" />
               <h2 className="text-2xl font-bold mb-2">Archived Client</h2>
               <p className="text-gray-600 mb-6">
-                This client has been archived and is no longer active. You can still view their information, but they won't appear in your active client list.
+                This client has been archived and is no longer active. You need to unarchive this client to view and access their information. Archived clients don't appear in your active client list.
               </p>
               
               {user?.role === "practitioner" && (
