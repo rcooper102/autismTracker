@@ -71,7 +71,13 @@ export class DatabaseStorage implements IStorage {
   constructor() {
     this.sessionStore = new PostgresSessionStore({ 
       pool, 
-      createTableIfMissing: true 
+      createTableIfMissing: true,
+      tableName: 'session', // Use explicit table name
+      pruneSessionInterval: 60 * 15, // Prune expired sessions every 15 minutes instead of the default 15 seconds
+      errorCallback: (error) => {
+        console.error('Session store error:', error);
+        // Continue even if there's an error with the session store
+      }
     });
     
     // We'll create a default practitioner in the database migration
