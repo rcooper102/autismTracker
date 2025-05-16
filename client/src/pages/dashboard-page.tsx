@@ -58,7 +58,7 @@ export default function DashboardPage() {
           {/* Header */}
           <header className="mb-6">
             <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
-            <p className="text-gray-500">Welcome back, {user?.name?.split(' ')[0]}</p>
+            <p className="text-gray-500">Welcome back, {user?.firstName || 'Practitioner'}</p>
           </header>
 
           {/* Stats */}
