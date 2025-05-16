@@ -100,10 +100,10 @@ export default function ClientAvatarGrid({ clients, isLoading }: ClientAvatarGri
           {/* Add client button */}
           <Link href="/add-client">
             <div className="flex flex-col items-center group cursor-pointer">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-all">
-                <i className="ri-add-line text-gray-500 text-xl"></i>
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center group-hover:bg-primary/90 transition-all">
+                <span className="text-white text-2xl font-semibold">+</span>
               </div>
-              <span className="mt-2 text-sm font-medium text-center text-gray-500">
+              <span className="mt-2 text-sm font-medium text-center text-gray-700">
                 Add Client
               </span>
             </div>
