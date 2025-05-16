@@ -6,12 +6,11 @@ import { z } from "zod";
 // User schema for both practitioners and clients
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
+  email: text("email").notNull().unique(),
   password: text("password").notNull(),
   role: text("role").notNull().default("client"), // 'practitioner' or 'client'
   firstName: text("first_name"),
   lastName: text("last_name"),
-  email: text("email"),
   phone: text("phone"),
   bio: text("bio"),
   avatarUrl: text("avatar_url"),
