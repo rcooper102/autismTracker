@@ -46,7 +46,7 @@ function App() {
             <Header />
             <div className="flex flex-1">
               <Sidebar />
-              <main className="flex-1 md:ml-[240px] p-4 md:p-6"> {/* Add margin-left and padding */}
+              <main className="flex-1 p-4 md:p-6" id="main-content"> {/* Removed fixed margin */}
                 <Router />
               </main>
             </div>
