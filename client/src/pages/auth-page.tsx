@@ -16,7 +16,6 @@ const loginSchema = z.object({
 });
 
 const registerSchema = z.object({
-  name: z.string().min(3, "Full name must be at least 3 characters"),
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -40,7 +39,6 @@ export default function AuthPage() {
   const registerForm = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: "",
       username: "",
       email: "",
       password: "",
@@ -169,18 +167,6 @@ export default function AuthPage() {
                 </CardHeader>
                 <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)}>
                   <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="register-name">Full Name</Label>
-                      <Input
-                        id="register-name"
-                        type="text"
-                        placeholder="Enter your full name"
-                        {...registerForm.register("name")}
-                      />
-                      {registerForm.formState.errors.name && (
-                        <p className="text-sm text-red-500">{registerForm.formState.errors.name.message}</p>
-                      )}
-                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="register-username">Username</Label>
                       <Input
