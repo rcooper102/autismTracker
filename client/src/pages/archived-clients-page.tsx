@@ -26,12 +26,27 @@ export default function ArchivedClientsPage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Fetch archived clients for the practitioner
-  const { data: clients, isLoading } = useQuery<ClientWithUser[]>({
+  const { data: clients, isLoading, refetch } = useQuery<ClientWithUser[]>({
     queryKey: ["/api/clients/archived"],
     enabled: !!user && user.role === "practitioner",
     staleTime: 0, // Always revalidate data when navigating to this page
     refetchOnWindowFocus: true, // Refetch when window regains focus
   });
+  
+  // Effect to refetch archived clients when this page becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refetch();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refetch]);
 
   // Mutation for unarchiving a client
   const unarchiveMutation = useMutation({
@@ -43,10 +58,29 @@ export default function ArchivedClientsPage() {
       );
       return await res.json();
     },
-    onSuccess: () => {
-      // Invalidate both archived and non-archived client queries to refresh both lists
+    onSuccess: (data, clientId) => {
+      // Remove this client from the current archived clients list in the cache
+      const previousArchivedClients = queryClient.getQueryData<ClientWithUser[]>(["/api/clients/archived"]);
+      if (previousArchivedClients) {
+        queryClient.setQueryData(
+          ["/api/clients/archived"],
+          previousArchivedClients.filter(client => client.id !== clientId)
+        );
+      }
+      
+      // Add the unarchived client to the active clients list
+      const previousClients = queryClient.getQueryData<ClientWithUser[]>(["/api/clients"]);
+      if (previousClients && data.client) {
+        queryClient.setQueryData(
+          ["/api/clients"],
+          [...previousClients, data.client]
+        );
+      }
+      
+      // Also invalidate the queries to ensure data consistency
       queryClient.invalidateQueries({ queryKey: ["/api/clients/archived"] });
       queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
+      
       toast({
         title: "Client unarchived",
         description: "Client has been successfully restored to active clients.",

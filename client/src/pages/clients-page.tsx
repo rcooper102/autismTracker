@@ -15,12 +15,27 @@ export default function ClientsPage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   
   // Fetch all clients for the practitioner
-  const { data: clients, isLoading } = useQuery<ClientWithUser[]>({
+  const { data: clients, isLoading, refetch } = useQuery<ClientWithUser[]>({
     queryKey: ["/api/clients"],
     enabled: !!user && user.role === "practitioner",
     staleTime: 0, // Always revalidate data when navigating to this page
     refetchOnWindowFocus: true, // Refetch when window regains focus
   });
+  
+  // Effect to refetch clients when this page becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refetch();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refetch]);
   
   // Add logging when clients data changes
   useEffect(() => {
