@@ -16,7 +16,6 @@ const loginSchema = z.object({
 });
 
 const registerSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
@@ -38,7 +37,6 @@ export default function AuthPage() {
   const registerForm = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      username: "",
       email: "",
       password: "",
     },
@@ -49,9 +47,16 @@ export default function AuthPage() {
   };
 
   const onRegisterSubmit = (values: RegisterFormValues) => {
+    // Generate a username from the email (before the @ symbol)
+    const emailPrefix = values.email.split('@')[0];
+    // Add random numbers to ensure uniqueness
+    const randomSuffix = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    const username = `${emailPrefix}${randomSuffix}`;
+    
     // Always set role to practitioner
     registerMutation.mutate({
       ...values,
+      username,
       role: "practitioner"
     });
   };
@@ -169,18 +174,7 @@ export default function AuthPage() {
                 </CardHeader>
                 <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)}>
                   <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="register-username">Username</Label>
-                      <Input
-                        id="register-username"
-                        type="text"
-                        placeholder="Choose a username"
-                        {...registerForm.register("username")}
-                      />
-                      {registerForm.formState.errors.username && (
-                        <p className="text-sm text-red-500">{registerForm.formState.errors.username.message}</p>
-                      )}
-                    </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="register-email">Email</Label>
                       <Input

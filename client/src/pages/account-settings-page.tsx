@@ -264,7 +264,6 @@ export default function AccountSettingsPage() {
                 }
               />
               
-              <p className="font-medium text-center">{user?.username}</p>
               <p className="text-sm text-muted-foreground text-center">
                 {user?.role === "practitioner" ? "Healthcare Practitioner" : "User"}
               </p>
