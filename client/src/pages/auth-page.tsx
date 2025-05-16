@@ -19,7 +19,6 @@ const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  role: z.enum(["practitioner", "client"]),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -42,7 +41,6 @@ export default function AuthPage() {
       username: "",
       email: "",
       password: "",
-      role: "practitioner",
     },
   });
 
@@ -51,7 +49,11 @@ export default function AuthPage() {
   };
 
   const onRegisterSubmit = (values: RegisterFormValues) => {
-    registerMutation.mutate(values);
+    // Always set role to practitioner
+    registerMutation.mutate({
+      ...values,
+      role: "practitioner"
+    });
   };
 
   // Redirect if user is already logged in
@@ -203,29 +205,9 @@ export default function AuthPage() {
                         <p className="text-sm text-red-500">{registerForm.formState.errors.password.message}</p>
                       )}
                     </div>
-                    <div className="space-y-2">
-                      <Label>Account Type</Label>
-                      <div className="flex space-x-4">
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            value="practitioner"
-                            {...registerForm.register("role")}
-                            className="text-primary"
-                            defaultChecked
-                          />
-                          <span>Practitioner</span>
-                        </label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            value="client"
-                            {...registerForm.register("role")}
-                            className="text-primary"
-                          />
-                          <span>Client</span>
-                        </label>
-                      </div>
+                    <div className="mt-4 p-4 bg-blue-50 rounded-md text-sm text-blue-800">
+                      <p className="font-medium">Practitioner Registration</p>
+                      <p className="mt-1">This form is for healthcare practitioners only. If you are a client, please contact your practitioner to have an account created for you.</p>
                     </div>
                   </CardContent>
                   <CardFooter>
