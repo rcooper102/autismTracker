@@ -732,10 +732,10 @@ export default function EditClientPage() {
                   <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white shadow-sm bg-gray-100">
                     {avatarPreview ? (
                       <img 
-                        src={`${avatarPreview}?t=${new Date().getTime()}`} 
+                        src={avatarPreview}
                         alt="Client Avatar"
                         className="w-full h-full object-cover"
-                        key={`avatar-preview-${Date.now()}`} 
+                        key={`preview-${Date.now()}`}
                       />
                     ) : (client?.avatarUrl ? (
                       <img 
@@ -770,7 +770,7 @@ export default function EditClientPage() {
                       onClick={() => document.getElementById("avatar-upload")?.click()}
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      {selectedFile ? selectedFile.name.substring(0, 15) + '...' : 'Select Image'}
+                      Select Image
                     </Button>
 
                     {selectedFile && (
