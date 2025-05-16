@@ -92,7 +92,7 @@ export default function ClientsPage() {
               <h1 className="text-2xl font-semibold text-gray-800">All Clients</h1>
               <p className="text-gray-500">View and manage all your clients</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex space-x-2">
               <Button 
                 variant="outline"
                 onClick={() => setLocation("/clients/archived")}
@@ -179,7 +179,7 @@ export default function ClientsPage() {
           </div>
 
           {/* Mobile buttons (visible only on small screens) */}
-          <div className="fixed bottom-6 right-6 md:hidden flex flex-col gap-2">
+          <div className="fixed bottom-6 right-6 md:hidden flex flex-col space-y-2">
             <Button 
               variant="outline"
               onClick={() => setLocation("/clients/archived")}
