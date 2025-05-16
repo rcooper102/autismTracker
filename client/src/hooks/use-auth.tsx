@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       toast({
         title: "Registration successful",
-        description: `Welcome, ${user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username}`,
+        description: `Welcome, ${user.username}`,
       });
     },
     onError: (error: Error) => {
