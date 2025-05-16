@@ -361,12 +361,26 @@ export default function EditClientPage() {
 
   const handleUploadAvatar = () => {
     if (selectedFile) {
-      uploadAvatarMutation.mutate(selectedFile);
-      
-      // Force a reload of the page after a short delay to ensure the image is updated
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500); // Give server time to process and store the image
+      uploadAvatarMutation.mutate(selectedFile, {
+        onSuccess: (data) => {
+          console.log("Upload successful, received data:", data);
+          
+          // Invalidate client queries to force fresh data
+          queryClient.invalidateQueries({ queryKey: [`/api/clients/${id}`] });
+          
+          // Update imagePreview with the new URL from the server response
+          if (data?.avatarUrl) {
+            setAvatarPreview(data.avatarUrl);
+            console.log("Setting new avatar preview:", data.avatarUrl);
+          }
+          
+          // Force a reload of the page after a short delay
+          setTimeout(() => {
+            console.log("Reloading page to refresh avatar display");
+            window.location.reload();
+          }, 1000);
+        }
+      });
     }
   };
 

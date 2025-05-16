@@ -367,9 +367,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Create relative file path and URL
+      // Add a timestamp to the file path to force cache invalidation
+      const timestamp = Date.now();
       const relativeFilePath = `/uploads/${file.filename}`;
       
-      // No need to set up uploads directory serving here as it's now done in registerRoutes
+      // Set cache control headers for this response
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       
       // Get current client to access current notes
       const currentClient = await storage.getClient(clientId);
@@ -387,14 +392,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Update client record with the avatar URL and clean notes
+      // Store the URL with timestamp parameter directly in the database
+      const avatarUrlWithTimestamp = `${relativeFilePath}?t=${timestamp}`;
+      console.log(`Saving avatar URL: ${avatarUrlWithTimestamp}`);
+      
       await storage.updateClient(clientId, {
-        avatarUrl: relativeFilePath,
+        avatarUrl: avatarUrlWithTimestamp,
         notes: Object.keys(notesObj).length > 0 ? JSON.stringify(notesObj) : null
       });
       
       res.json({
         message: "Avatar uploaded successfully",
-        avatarUrl: relativeFilePath
+        avatarUrl: avatarUrlWithTimestamp
       });
     } catch (error) {
       console.error("Error uploading avatar:", error);

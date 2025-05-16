@@ -36,6 +36,15 @@ app.use((req, res, next) => {
   next();
 });
 
+// Add cache control headers for image files
+app.use('/uploads', (req, res, next) => {
+  // Set cache-control headers to prevent caching for image files
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
 (async () => {
   const server = await registerRoutes(app);
 
