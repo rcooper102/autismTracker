@@ -36,6 +36,25 @@ export default function Sidebar() {
     staleTime: 0,
     refetchOnMount: true,
   });
+  
+  // Fetch client data to get avatarUrl if user is a client
+  const { data: client } = useQuery({
+    queryKey: ["/api/clients/me"],
+    queryFn: async () => {
+      console.log("Fetching client data for avatar");
+      // Add timestamp to prevent caching
+      const timestamp = Date.now();
+      const res = await fetch(`/api/clients/me?t=${timestamp}`);
+      if (!res.ok) throw new Error("Failed to fetch client details");
+      const data = await res.json();
+      console.log("Received client data:", data);
+      return data;
+    },
+    enabled: !!user && user.role === "client",
+    // Force refetch every time component mounts
+    staleTime: 0,
+    refetchOnMount: true,
+  });
 
   if (!user) return null;
 
@@ -49,11 +68,19 @@ export default function Sidebar() {
         <div className="py-4 px-4 mb-2 bg-white/10 rounded-md flex flex-col items-center">
           <Avatar 
             className="h-16 w-16 mb-3 border-2 border-white/30"
-            src={practitioner?.avatarUrl ? 
-              (practitioner.avatarUrl.includes('?') ? 
-                `${practitioner.avatarUrl}&_t=${Date.now()}` : 
-                `${practitioner.avatarUrl}?_t=${Date.now()}`) 
-              : null}
+            src={
+              user.role === "practitioner" && practitioner?.avatarUrl ? 
+                (practitioner.avatarUrl.includes('?') ? 
+                  `${practitioner.avatarUrl}&_t=${Date.now()}` : 
+                  `${practitioner.avatarUrl}?_t=${Date.now()}`
+                ) 
+              : user.role === "client" && client?.avatarUrl ?
+                (client.avatarUrl.includes('?') ? 
+                  `${client.avatarUrl}&_t=${Date.now()}` : 
+                  `${client.avatarUrl}?_t=${Date.now()}`
+                )
+              : null
+            }
             alt={(user.firstName && user.lastName) ? `${user.firstName} ${user.lastName}` : user.username}
             fallback={
               <span className="bg-white/20 text-white">
