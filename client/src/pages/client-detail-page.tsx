@@ -128,7 +128,7 @@ export default function ClientDetailPage() {
       <MobileNav open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
 
       <main className="main-content min-h-screen pb-16">
-        <div className="p-4 md:p-6">
+        <div className="px-4 pb-4 md:px-6 md:pb-6">
           {/* Client Header with back button, name, etc. */}
           <ClientHeader 
             client={client} 

@@ -405,7 +405,7 @@ export default function EditClientPage() {
   }
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto pb-6">
       <div className="mb-6">
         <button 
           className="text-primary flex items-center text-sm mb-4"
