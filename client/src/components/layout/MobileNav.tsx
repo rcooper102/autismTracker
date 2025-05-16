@@ -49,9 +49,11 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
         
         <div className="flex flex-col space-y-2">
           <div className="py-2 px-4 mb-2 bg-white/10 rounded-md">
-            <p className="font-medium text-white">
-              {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username}
-            </p>
+            {user.firstName && user.lastName && (
+              <p className="font-medium text-white">
+                {`${user.firstName} ${user.lastName}`}
+              </p>
+            )}
             <p className="text-sm text-white/70">{user.email}</p>
           </div>
           

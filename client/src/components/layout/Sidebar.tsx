@@ -64,11 +64,11 @@ export default function Sidebar() {
             }
           />
           <div className="text-center">
-            <p className="font-medium text-white">
-              {user.firstName && user.lastName 
-                ? `${user.firstName} ${user.lastName}` 
-                : user.username}
-            </p>
+            {user.firstName && user.lastName && (
+              <p className="font-medium text-white">
+                {`${user.firstName} ${user.lastName}`}
+              </p>
+            )}
             <p className="text-sm text-white/70">{user.email}</p>
           </div>
         </div>
