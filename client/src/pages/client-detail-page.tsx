@@ -154,7 +154,7 @@ export default function ClientDetailPage() {
       <main className="main-content min-h-screen pb-16 relative">
         {/* Archived Client Overlay */}
         {client?.archived && (
-          <div className="absolute inset-0 bg-gray-900/60 z-30 flex flex-col items-center justify-center backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gray-900/60 z-30 flex flex-col items-center pt-32 backdrop-blur-sm">
             <div className="bg-white p-8 rounded-lg shadow-xl max-w-md text-center">
               <Archive className="h-12 w-12 text-amber-500 mx-auto mb-4" />
               <h2 className="text-2xl font-bold mb-2">Archived Client</h2>
