@@ -185,6 +185,7 @@ export default function ArchivedClientsPage() {
                             size="sm"
                             onClick={() => handleUnarchive(client.id)}
                             disabled={unarchiveMutation.isPending}
+                            className="flex items-center justify-center"
                           >
                             <ArchiveRestoreIcon className="h-4 w-4 mr-2" />
                             Unarchive

@@ -96,14 +96,14 @@ export default function ClientsPage() {
               <Button 
                 variant="outline"
                 onClick={() => setLocation("/clients/archived")}
-                className="hidden md:flex items-center"
+                className="hidden md:flex items-center justify-center"
               >
                 <i className="ri-archive-line mr-2"></i>
                 Archived
               </Button>
               <Button 
                 onClick={() => setLocation("/add-client")}
-                className="hidden md:flex items-center"
+                className="hidden md:flex items-center justify-center"
               >
                 <i className="ri-user-add-line mr-2"></i>
                 Add New Client
