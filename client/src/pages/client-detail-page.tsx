@@ -30,6 +30,8 @@ export default function ClientDetailPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  // Mobile navigation state (declare before any conditional returns)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Redirect if we don't have a valid ID
   useEffect(() => {
@@ -96,9 +98,6 @@ export default function ClientDetailPage() {
       </div>
     );
   }
-
-  // Mobile navigation state
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -110,7 +109,8 @@ export default function ClientDetailPage() {
           {/* Client Header with back button, name, etc. */}
           <ClientHeader 
             client={client} 
-            onBack={() => setLocation("/")} 
+            onBack={() => setLocation("/")}
+            onOpenMobileMenu={() => setMobileMenuOpen(true)}
           />
 
           {/* Main content grid with client details */}

@@ -3,13 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { Link } from "wouter";
+import { Menu } from "lucide-react";
 
 interface ClientHeaderProps {
   client: Client & { user?: any };
   onBack: () => void;
+  onOpenMobileMenu?: () => void;
 }
 
-export default function ClientHeader({ client, onBack }: ClientHeaderProps) {
+export default function ClientHeader({ client, onBack, onOpenMobileMenu }: ClientHeaderProps) {
   const fullName = `${client.firstName} ${client.lastName}`;
   
   // Calculate age if date of birth is available
@@ -32,7 +34,15 @@ export default function ClientHeader({ client, onBack }: ClientHeaderProps) {
   
   return (
     <div className="flex justify-between items-start mb-6">
-      <div>
+      <div className="flex items-center md:block">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="md:hidden mr-2"
+          onClick={onOpenMobileMenu}
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
         <button 
           className="mb-2 text-primary flex items-center text-sm"
           onClick={onBack}
