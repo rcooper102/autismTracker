@@ -33,15 +33,20 @@ export default function ClientHeader({ client, onBack, onOpenMobileMenu }: Clien
     : "N/A";
   
   return (
-    <div className="flex justify-between items-start mb-6">
-      <div className="flex items-center md:block">
+    <div className="mb-6">
+      {/* Back button row */}
+      <div className="mb-2">
         <button 
-          className="mb-2 text-primary flex items-center text-sm"
+          className="text-primary flex items-center text-sm"
           onClick={onBack}
         >
           <i className="ri-arrow-left-line mr-1"></i> Back to Dashboard
         </button>
-        <div className="flex items-center">
+      </div>
+      
+      {/* Client info and edit button row */}
+      <div className="flex flex-col md:flex-row justify-between">
+        <div className="flex items-center mb-3 md:mb-0">
           <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-white shadow-sm mr-4 bg-gray-100">
             {client.avatarUrl ? (
               <img 
@@ -66,13 +71,13 @@ export default function ClientHeader({ client, onBack, onOpenMobileMenu }: Clien
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex">
-        <Link href={`/clients/${client.id}/edit`}>
-          <Button variant="outline" className="gap-0 px-2 h-9">
-            <i className="ri-edit-line mr-1"></i> Edit
-          </Button>
-        </Link>
+        <div className="flex">
+          <Link href={`/clients/${client.id}/edit`}>
+            <Button variant="outline" className="gap-0 px-2 h-9">
+              <i className="ri-edit-line mr-1"></i> Edit
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
